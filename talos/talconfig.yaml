@@ -1,0 +1,126 @@
+---
+# Talos Linux Configuration for New Cluster
+# Version: Talos v1.12.0, Kubernetes v1.35.0
+clusterName: new-cluster
+talosVersion: v1.12.0
+kubernetesVersion: v1.35.0
+endpoint: https://127.0.0.1:7445
+domain: cluster.local
+
+additionalApiServerCertSans:
+  - new-cluster.local
+  - 192.168.1.50  # Update this to your cluster VIP
+
+clusterPodNets:
+  - 10.244.0.0/16
+clusterSvcNets:
+  - 10.96.0.0/12
+
+cniConfig:
+  name: none  # Cilium will be installed in Layer 1
+
+# Node configurations
+# TODO: Customize for your hardware
+nodes:
+  # Example: Control plane node 1
+  # - hostname: cp1
+  #   ipAddress: 192.168.1.51
+  #   controlPlane: true
+  #   installDisk: /dev/disk/by-id/...  # Update with your disk ID
+  #   talosImageURL: factory.talos.dev/metal-installer-secureboot/...
+  #   networkInterfaces:
+  #     - deviceSelector:
+  #         hardwareAddr: aa:bb:cc:dd:ee:ff  # Update with your MAC
+  #       dhcp: false
+  #       addresses:
+  #         - 192.168.1.51/24
+  #       routes:
+  #         - network: 0.0.0.0/0
+  #           gateway: 192.168.1.1
+
+# Global cluster patches
+patches:
+  # Kubelet feature gates
+  - |-
+    - op: add
+      path: /machine/kubelet/extraArgs
+      value:
+        feature-gates: UserNamespacesSupport=true
+
+  # Registry mirrors (for Spegel P2P cache - deployed in Layer 3)
+  - |-
+    - op: add
+      path: /machine/registries
+      value:
+        mirrors:
+          docker.io:
+            endpoints:
+              - https://localhost:5001
+              - https://registry-1.docker.io
+            overridePath: true
+          ghcr.io:
+            endpoints:
+              - https://localhost:5001
+              - https://ghcr.io
+            overridePath: true
+          registry.k8s.io:
+            endpoints:
+              - https://localhost:5001
+              - https://registry.k8s.io
+            overridePath: true
+          quay.io:
+            endpoints:
+              - https://localhost:5001
+              - https://quay.io
+            overridePath: true
+        config:
+          localhost:5001:
+            tls:
+              insecureSkipVerify: true
+
+  # Spegel containerd configuration
+  - |-
+    machine:
+      files:
+        - content: |
+            [plugins."io.containerd.grpc.v1.cri"]
+              disable_snapshot_annotations = false
+              discard_unpacked_layers = false
+          path: /var/etc/cri/conf.d/spegel.toml
+          op: create
+
+# Control plane specific patches
+controlPlane:
+  patches:
+    # Kubelet-serving cert approver
+    - |-
+      cluster:
+        extraManifests:
+          - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
+
+    # Graceful node shutdown
+    - |-
+      - op: add
+        path: /machine/kubelet/extraArgs
+        value:
+          feature-gates: GracefulNodeShutdown=true
+
+    # etcd tuning for smaller clusters
+    - |-
+      - op: add
+        path: /cluster/etcd/extraArgs
+        value:
+          auto-compaction-mode: periodic
+          auto-compaction-retention: "5m"
+          heartbeat-interval: "250"
+          election-timeout: "2500"
+          quota-backend-bytes: "2147483648"
+          max-snapshots: "3"
+          max-wals: "3"
+
+    # API server feature gates
+    - |-
+      - op: add
+        path: /cluster/apiServer/extraArgs
+        value:
+        feature-gates: UserNamespacesSupport=true

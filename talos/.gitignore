@@ -1,0 +1,15 @@
+# Talos cluster configuration
+# Generated files - DO NOT COMMIT
+*.yaml
+!talconfig.yaml
+!talsecret.sops.yaml
+
+# Ignore cluster-specific generated configs
+clusterconfig/*.yaml
+!clusterconfig/.gitignore
+
+# Ignore talosconfig (contains sensitive admin credentials)
+talosconfig
+
+# Ignore kubeconfig (contains cluster admin credentials)
+kubeconfig

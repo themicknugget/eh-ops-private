@@ -1,4 +1,5 @@
 # SOPS Configuration for eh-ops-private
+# Matches eh-ops-repo configuration
 # https://github.com/getsops/sops
 
 creation_rules:
@@ -6,7 +7,7 @@ creation_rules:
   - path_regex: .+\.sops\.ya?ml$
     age: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c
 
-  # Secrets-related files
+  # Secrets-related files (Kubernetes secrets)
   - path_regex: .*secrets.*\.ya?ml$
     encrypted_regex: ^(data|stringData|password|token|key|secret|crt)$
     age: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c

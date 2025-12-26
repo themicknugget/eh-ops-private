@@ -1,0 +1,77 @@
+# ingress-nginx Helm values
+# Installed via: helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace -f values.yaml
+
+controller:
+  # Make nginx the default ingress class
+  ingressClassResource:
+    default: true
+
+  # Service configuration - LoadBalancer via Cilium L2
+  service:
+    type: LoadBalancer
+    annotations:
+      # Cilium will assign an IP from its L2 pool
+      io.cilium/lb-ipam-ips: ""
+
+  # ConfigMap settings (security headers, rate limiting)
+  config:
+    # Security settings
+    server-tokens: "false"
+    ssl-redirect: "true"
+    use-forwarded-headers: "true"
+
+    # Security headers via add-headers configmap
+    add-headers: "ingress-nginx/custom-headers"
+
+    # Rate limiting (per minute/second)
+    limit-req-status-code: "429"
+    limit-conn-status-code: "503"
+
+    # Body size limits
+    proxy-body-size: "50m"
+
+    # Enable metrics for Prometheus
+    enable-prometheus-metrics: "true"
+
+  # Prometheus metrics
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+
+  # Resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+  # Replicas for HA
+  replicaCount: 2
+
+  # Pod anti-affinity for HA
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/component: controller
+          topologyKey: kubernetes.io/hostname
+
+  # Admission webhook
+  admissionWebhooks:
+    enabled: true
+
+# Default backend
+defaultBackend:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 20Mi
+    limits:
+      memory: 50Mi

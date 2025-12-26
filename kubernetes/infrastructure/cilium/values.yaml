@@ -15,6 +15,10 @@ autoDirectNodeRoutes: true
 # Enable kube-proxy replacement
 kubeProxyReplacement: true
 
+# Gateway API support
+gatewayAPI:
+  enabled: true
+
 # WireGuard encryption
 encryption:
   enabled: true

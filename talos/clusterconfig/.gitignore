@@ -2,3 +2,4 @@
 # DO NOT COMMIT - These contain cluster secrets
 *.yaml
 !/.gitignore
+talosconfig

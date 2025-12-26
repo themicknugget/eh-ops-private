@@ -1,0 +1,55 @@
+---
+# Let's Encrypt Staging ClusterIssuer
+# Use for testing to avoid rate limits
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: admin@whydontyou.work
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+    # HTTP-01 solver for standard certificates
+    - http01:
+        ingress:
+          ingressClassName: nginx
+    # DNS-01 solver for wildcard certificates using Cloudflare
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+      selector:
+        dnsZones:
+        - "whydontyou.work"
+
+---
+# Let's Encrypt Production ClusterIssuer
+# Use for real certificates (has rate limits)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@whydontyou.work
+    privateKeySecretRef:
+      name: letsencrypt-production-account-key
+    solvers:
+    # HTTP-01 solver for standard certificates
+    - http01:
+        ingress:
+          ingressClassName: nginx
+    # DNS-01 solver for wildcard certificates using Cloudflare
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret
+            key: api-token
+      selector:
+        dnsZones:
+        - "whydontyou.work"

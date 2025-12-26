@@ -1,0 +1,27 @@
+# cert-manager Helm values
+# Installed via: helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace -f values.yaml
+
+# Install CRDs with the chart
+crds:
+  enabled: true
+
+# Webhook configuration for Talos compatibility
+webhook:
+  securePort: 10260
+
+# Resource limits for production
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 256Mi
+
+# Enable Prometheus metrics
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: false
+
+# DNS-01 solver configuration
+# Cloudflare API token stored in cloudflare-api-token-secret

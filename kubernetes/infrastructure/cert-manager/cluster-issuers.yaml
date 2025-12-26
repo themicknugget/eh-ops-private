@@ -8,7 +8,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: admin@whydontyou.work
+    email: ${ACME_EMAIL}
     privateKeySecretRef:
       name: letsencrypt-staging-account-key
     solvers:
@@ -24,7 +24,10 @@ spec:
             key: api-token
       selector:
         dnsZones:
-        - "whydontyou.work"
+        - "${DOMAIN1}"
+        - "${DOMAIN2}"
+        - "${DOMAIN3}"
+        - "${DOMAIN4}"
 
 ---
 # Let's Encrypt Production ClusterIssuer
@@ -36,7 +39,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: admin@whydontyou.work
+    email: ${ACME_EMAIL}
     privateKeySecretRef:
       name: letsencrypt-production-account-key
     solvers:
@@ -52,4 +55,7 @@ spec:
             key: api-token
       selector:
         dnsZones:
-        - "whydontyou.work"
+        - "${DOMAIN1}"
+        - "${DOMAIN2}"
+        - "${DOMAIN3}"
+        - "${DOMAIN4}"

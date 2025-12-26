@@ -1,0 +1,216 @@
+# Cilium Network Security Policies
+
+---
+# Default deny-all policy for kube-system namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: kube-system
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+---
+# Allow Cilium Agent communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cilium-agent
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: cilium
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          k8s-app: cilium
+    ports:
+    - protocol: TCP
+      port: 9876
+  # Allow Hubble metrics
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 9965
+  # Allow Cilium API
+  - from:
+    - podSelector:
+        matchLabels:
+          io.cilium/app: operator
+    ports:
+    - protocol: TCP
+      port: 9962
+  egress:
+  # Allow DNS
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow API server communication
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 6443
+  # Allow ETCD communication
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 2379
+    - protocol: TCP
+      port: 2380
+  # Allow inter-agent communication
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: cilium
+    ports:
+    - protocol: TCP
+      port: 9962
+  # Allow WireGuard tunnels
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 51871
+
+---
+# Allow Cilium Operator communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cilium-operator
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      io.cilium/app: operator
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow metrics scraping
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 9963
+  egress:
+  # Allow DNS
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow API server communication
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 6443
+  # Allow communication with Cilium agents
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: cilium
+    ports:
+    - protocol: TCP
+      port: 9962
+
+---
+# Allow CoreDNS communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: coredns
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: kube-dns
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow DNS queries from all pods
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow health checks
+  - from:
+    - podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: TCP
+      port: 8080
+  # Allow metrics scraping
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 9153
+  egress:
+  # Allow upstream DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow API server communication for service discovery
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 6443
+
+---
+# Allow Hubble Relay communication (if deployed)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hubble-relay
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: hubble-relay
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow gRPC API access
+  - from:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 4245
+  egress:
+  # Allow communication with Cilium agents
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: cilium
+    ports:
+    - protocol: TCP
+      port: 4244

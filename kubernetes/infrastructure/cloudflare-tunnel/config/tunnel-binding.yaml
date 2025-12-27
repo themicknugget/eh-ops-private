@@ -9,7 +9,7 @@ subjects:
   - name: external-gateway
     spec:
       # Wildcard domain for all subdomains
-      fqdn: "*.whydontyou.work"
+      fqdn: "*.${DOMAIN1}"
       protocol: http
       # Route to Cilium Gateway service (HTTP since gateway only has HTTP listener)
       target: http://cilium-gateway-external-gateway.kube-system.svc.cluster.local

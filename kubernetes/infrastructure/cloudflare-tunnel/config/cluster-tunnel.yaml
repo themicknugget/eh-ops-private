@@ -12,7 +12,7 @@ spec:
     name: eh-ops-cluster
   # Cloudflare configuration
   cloudflare:
-    domain: whydontyou.work
+    domain: ${DOMAIN1}
     secret: cloudflare-secrets
     accountId: 7716c9e8f3db61e9cb2eb1b33a153574
   # Customize the cloudflared deployment

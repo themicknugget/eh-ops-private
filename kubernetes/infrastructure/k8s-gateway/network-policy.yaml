@@ -1,0 +1,52 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: k8s-gateway
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: k8s-gateway
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow DNS queries from all namespaces (including Tailscale clients via Connector)
+    # Port 1053 is the actual container port (service maps 53 -> 1053)
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 1053
+          protocol: UDP
+        - port: 1053
+          protocol: TCP
+    # Allow health check probes (readiness/liveness)
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: k8s-gateway
+      ports:
+        - port: 8181
+          protocol: TCP
+        - port: 8080
+          protocol: TCP
+    # Allow metrics scraping from monitoring namespace
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 9153
+          protocol: TCP
+  egress:
+    # Allow access to Kubernetes API server (required for watching HTTPRoute/Gateway resources)
+    - ports:
+        - port: 6443
+          protocol: TCP
+        - port: 443
+          protocol: TCP
+    # Allow DNS resolution for upstream queries
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP

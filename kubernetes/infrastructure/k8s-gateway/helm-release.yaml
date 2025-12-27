@@ -1,0 +1,51 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k8s-gateway
+  namespace: kube-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: k8s-gateway
+      version: "2.4.0"
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-gateway
+        namespace: flux-system
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    # Catch-all domain - respond to any HTTPRoute hostname
+    # Tailscale Split DNS controls which domains are forwarded to k8s-gateway
+    domain: "."
+
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 53
+
+    # Resources to watch for DNS record creation
+    # k8s-gateway reads HTTPRoute spec.hostnames and creates A records
+    # pointing to the Gateway LoadBalancer IP from spec.parentRefs
+    watchedResources:
+      - HTTPRoute
+
+    # Resource limits
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+
+    # DNS TTL for created records (in seconds)
+    ttl: 300

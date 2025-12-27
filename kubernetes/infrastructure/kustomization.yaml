@@ -4,7 +4,6 @@ resources:
   - sources
   - cilium
   - cert-manager
-  - ingress-nginx
   - gateway
   - storage
   - tailscale

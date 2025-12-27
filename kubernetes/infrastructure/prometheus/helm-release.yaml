@@ -55,22 +55,6 @@ spec:
                 requests:
                   storage: 50Gi
         additionalScrapeConfigs:
-          # Talos API daemon metrics
-          - job_name: talos-apid
-            kubernetes_sd_configs:
-              - role: node
-            scheme: https
-            tls_config:
-              insecure_skip_verify: true
-            relabel_configs:
-              - source_labels: [__address__]
-                target_label: __address__
-                regex: (.+):(.+)
-                replacement: $1:50000
-              - source_labels: [__meta_kubernetes_node_name]
-                target_label: node
-              - source_labels: [__meta_kubernetes_node_name]
-                target_label: instance
           # Talos kubelet metrics
           - job_name: talos-kubelet
             kubernetes_sd_configs:

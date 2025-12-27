@@ -24,25 +24,15 @@ spec:
         - protocol: TCP
           port: 9153
   egress:
-    # Allow access to Kubernetes API (ClusterIP and node endpoints)
-    - to:
-        - ipBlock:
-            cidr: 10.96.0.0/12
-      ports:
+    # Allow access to Kubernetes API
+    - ports:
         - protocol: TCP
           port: 443
-    - to:
-        - ipBlock:
-            cidr: 192.168.1.0/24
-      ports:
         - protocol: TCP
           port: 6443
     # Allow DNS resolution
-    - to:
-        - namespaceSelector: {}
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
+    - ports:
         - protocol: UDP
+          port: 53
+        - protocol: TCP
           port: 53

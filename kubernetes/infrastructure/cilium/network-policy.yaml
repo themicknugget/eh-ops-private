@@ -240,6 +240,16 @@ spec:
     - protocol: TCP
       port: 4245
   egress:
+  # Allow DNS resolution
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
   # Allow communication with Cilium agents
   - to:
     - podSelector:

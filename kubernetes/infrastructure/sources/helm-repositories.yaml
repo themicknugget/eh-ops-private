@@ -83,8 +83,17 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: k8s-gateway
+  name: bitnami
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://ori-edge.github.io/k8s_gateway/
+  url: https://charts.bitnami.com/bitnami
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: coredns
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://coredns.github.io/helm

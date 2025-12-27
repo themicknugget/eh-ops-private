@@ -1,0 +1,54 @@
+---
+# etcd for storing DNS records (used by external-dns and CoreDNS)
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: etcd
+  namespace: dns-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: etcd
+      version: "10.2.12"
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Single replica for simplicity (use 3 for HA in production)
+    replicaCount: 1
+
+    # Disable authentication for internal use
+    auth:
+      rbac:
+        create: false
+      token:
+        enabled: false
+
+    # Persistence
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: "local-path"
+
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 2379
+      clientPortNameOverride: client
+
+    # Resource limits
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi

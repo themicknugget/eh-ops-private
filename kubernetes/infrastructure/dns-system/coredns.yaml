@@ -1,0 +1,97 @@
+---
+# CoreDNS for custom domains (reads from etcd, serves to Tailscale clients)
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: coredns-custom
+  namespace: dns-system
+spec:
+  interval: 30m
+  dependsOn:
+    - name: etcd
+  chart:
+    spec:
+      chart: coredns
+      version: "1.36.1"
+      sourceRef:
+        kind: HelmRepository
+        name: coredns
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    replicaCount: 2
+
+    # This is NOT the cluster DNS - it's for custom domains only
+    isClusterService: false
+
+    serviceAccount:
+      create: true
+
+    service:
+      name: coredns-custom
+      annotations: {}
+
+    # Corefile configuration for custom domains
+    servers:
+      # Primary domain
+      - zones:
+          - zone: "${DOMAIN1}."
+        port: 53
+        plugins:
+          - name: errors
+          - name: log
+          - name: health
+            configBlock: |-
+              lameduck 5s
+          - name: ready
+          - name: etcd
+            parameters: "${DOMAIN1}"
+            configBlock: |-
+              path /skydns
+              endpoint http://etcd.dns-system.svc.cluster.local:2379
+              fallthrough
+          - name: cache
+            parameters: 30
+          - name: reload
+          - name: loadbalance
+      # Secondary domain
+      - zones:
+          - zone: "${DOMAIN2}."
+        port: 53
+        plugins:
+          - name: errors
+          - name: etcd
+            parameters: "${DOMAIN2}"
+            configBlock: |-
+              path /skydns
+              endpoint http://etcd.dns-system.svc.cluster.local:2379
+              fallthrough
+          - name: cache
+            parameters: 30
+      # Third domain
+      - zones:
+          - zone: "${DOMAIN3}."
+        port: 53
+        plugins:
+          - name: errors
+          - name: etcd
+            parameters: "${DOMAIN3}"
+            configBlock: |-
+              path /skydns
+              endpoint http://etcd.dns-system.svc.cluster.local:2379
+              fallthrough
+          - name: cache
+            parameters: 30
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi

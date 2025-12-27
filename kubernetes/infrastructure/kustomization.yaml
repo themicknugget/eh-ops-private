@@ -8,7 +8,7 @@ resources:
   - gateway
   - storage
   - tailscale
-  - k8s-gateway
+  - dns-system
   - cloudflare-tunnel
   - prometheus
   - grafana

@@ -1,54 +1,57 @@
 ---
-# etcd for storing DNS records (used by external-dns and CoreDNS)
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
+# Lightweight etcd for DNS record cache
+# Uses in-memory storage - records recreated from HTTPRoutes by external-dns
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: etcd
   namespace: dns-system
 spec:
-  interval: 30m
-  chart:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd
+  template:
+    metadata:
+      labels:
+        app: etcd
     spec:
-      chart: etcd
-      version: "10.2.12"
-      sourceRef:
-        kind: HelmRepository
-        name: bitnami
-        namespace: flux-system
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
-  values:
-    # Single replica for simplicity (use 3 for HA in production)
-    replicaCount: 1
-
-    # Disable authentication for internal use
-    auth:
-      rbac:
-        create: false
-      token:
-        enabled: false
-
-    # Persistence
-    persistence:
-      enabled: true
-      size: 1Gi
-      storageClass: "local-path"
-
-    # Service configuration
-    service:
-      type: ClusterIP
-      port: 2379
-      clientPortNameOverride: client
-
-    # Resource limits
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
+      containers:
+        - name: etcd
+          image: quay.io/coreos/etcd:v3.5.17
+          command:
+            - etcd
+            - --listen-client-urls=http://0.0.0.0:2379
+            - --advertise-client-urls=http://etcd.dns-system.svc.cluster.local:2379
+            - --data-dir=/tmp/etcd-data
+          ports:
+            - containerPort: 2379
+              name: client
+          volumeMounts:
+            - name: data
+              mountPath: /tmp/etcd-data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+      volumes:
+        - name: data
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd
+  namespace: dns-system
+spec:
+  selector:
+    app: etcd
+  ports:
+    - port: 2379
+      targetPort: client
+      name: client

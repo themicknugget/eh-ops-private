@@ -7,8 +7,6 @@ metadata:
   namespace: dns-system
 spec:
   interval: 30m
-  dependsOn:
-    - name: etcd
   chart:
     spec:
       chart: coredns

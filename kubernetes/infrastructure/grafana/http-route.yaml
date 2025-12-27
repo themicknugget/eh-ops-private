@@ -10,7 +10,7 @@ spec:
   parentRefs:
     - name: external-gateway
       namespace: kube-system
-      sectionName: https
+      sectionName: https-domain1
     - name: external-gateway
       namespace: kube-system
       sectionName: http

@@ -35,9 +35,10 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: https
+    - name: https-domain1
       protocol: HTTPS
       port: 443
+      hostname: "*.${DOMAIN1}"
       allowedRoutes:
         namespaces:
           from: All
@@ -46,7 +47,27 @@ spec:
         certificateRefs:
           - name: wildcard-domain1-tls
             namespace: kube-system
+    - name: https-domain2
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${DOMAIN2}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
           - name: wildcard-domain2-tls
             namespace: kube-system
+    - name: https-domain3
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${DOMAIN3}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
           - name: wildcard-domain3-tls
             namespace: kube-system

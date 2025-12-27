@@ -34,3 +34,12 @@ metadata:
 spec:
   interval: 1h
   url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: tailscale
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://pkgs.tailscale.com/helmcharts

@@ -1,0 +1,18 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: subnet-router
+  namespace: tailscale
+spec:
+  # High availability with 2 replicas
+  replicas: 2
+  hostnamePrefix: eh-ops-subnet
+  subnetRouter:
+    advertiseRoutes:
+      # Service CIDR - access to all ClusterIP services
+      - "10.96.0.0/12"
+      # LoadBalancer pool - access to exposed services
+      - "192.168.1.64/28"
+  tags:
+    - "tag:k8s"

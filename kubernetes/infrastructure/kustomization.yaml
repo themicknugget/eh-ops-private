@@ -11,5 +11,6 @@ resources:
   - cloudflare-tunnel
   - prometheus
   - grafana
+  - snmp-exporter
   - metrics-server
   - kyverno

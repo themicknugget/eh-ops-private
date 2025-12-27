@@ -48,7 +48,8 @@ spec:
             namespace: kube-system
           - name: wildcard-domain2-tls
             namespace: kube-system
-          - name: wildcard-domain3-tls
-            namespace: kube-system
+          # TODO: Add back after Cloudflare token includes holidayhacker.app zone
+          # - name: wildcard-domain3-tls
+          #   namespace: kube-system
           - name: wildcard-domain4-tls
             namespace: kube-system

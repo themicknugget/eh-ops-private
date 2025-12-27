@@ -6,3 +6,11 @@ resources:
   - admin-secret.sops.yaml
   - helm-release.yaml
   - http-route.yaml
+  - dashboards/cert-manager-dashboard.yaml
+  - dashboards/cilium-dashboards.yaml
+  - dashboards/cloudflare-tunnel-dashboard.yaml
+  - dashboards/coredns-dashboard.yaml
+  - dashboards/flux-cluster-dashboard.yaml
+  - dashboards/flux-control-plane-dashboard.yaml
+  - dashboards/flux-podmonitor.yaml
+  - dashboards/kyverno-dashboard.yaml

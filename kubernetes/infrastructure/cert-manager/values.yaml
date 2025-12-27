@@ -21,7 +21,9 @@ resources:
 prometheus:
   enabled: true
   servicemonitor:
-    enabled: false
+    enabled: true
+    labels:
+      release: kube-prometheus-stack
 
 # DNS-01 solver configuration
 # Cloudflare API token stored in cloudflare-api-token-secret

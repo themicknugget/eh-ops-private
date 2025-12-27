@@ -8,3 +8,4 @@ resources:
   - namespace.yaml
   - cloudflare-secrets.sops.yaml
   - operator.yaml
+  - cloudflared-podmonitor.yaml

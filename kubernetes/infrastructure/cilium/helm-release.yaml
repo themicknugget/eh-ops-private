@@ -104,6 +104,36 @@ data:
     # Identity allocation mode for enhanced security
     identityAllocationMode: crd
 
+    # Prometheus metrics for Cilium Agent
+    prometheus:
+      enabled: true
+      port: 9962
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+
+    # Hubble observability
+    hubble:
+      enabled: true
+      relay:
+        enabled: true
+      ui:
+        enabled: false
+      metrics:
+        enabled:
+          - dns
+          - drop
+          - tcp
+          - flow
+          - icmp
+          - http
+          - port-distribution
+        serviceMonitor:
+          enabled: true
+          labels:
+            release: kube-prometheus-stack
+
     # Resource limits for production readiness
     resources:
       limits:
@@ -124,6 +154,10 @@ data:
       prometheus:
         enabled: true
         port: 9963
+        serviceMonitor:
+          enabled: true
+          labels:
+            release: kube-prometheus-stack
 
     l2podAnnouncements:
       enabled: true

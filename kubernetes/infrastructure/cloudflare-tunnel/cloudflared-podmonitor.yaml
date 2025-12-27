@@ -1,0 +1,23 @@
+---
+# PodMonitor for cloudflared tunnel pods
+# cloudflared exposes Prometheus metrics on port 2000
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cloudflared
+  namespace: cloudflare-operator-system
+  labels:
+    app.kubernetes.io/name: cloudflared
+    release: kube-prometheus-stack
+spec:
+  jobLabel: cloudflared
+  selector:
+    matchLabels:
+      cfargotunnel.com/app: cloudflared
+  namespaceSelector:
+    matchNames:
+      - cloudflare-operator-system
+  podMetricsEndpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

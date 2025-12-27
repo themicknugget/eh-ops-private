@@ -1,0 +1,23 @@
+---
+# ServiceMonitor for CoreDNS in kube-system namespace
+# CoreDNS exposes Prometheus metrics on port 9153
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: coredns
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: coredns
+    release: kube-prometheus-stack
+spec:
+  jobLabel: coredns
+  selector:
+    matchLabels:
+      k8s-app: kube-dns
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  endpoints:
+    - port: metrics
+      interval: 30s
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token

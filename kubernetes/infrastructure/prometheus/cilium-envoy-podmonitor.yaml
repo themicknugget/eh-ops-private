@@ -1,0 +1,24 @@
+---
+# PodMonitor for Cilium Envoy metrics
+# Cilium Envoy (Gateway API data plane) exposes Prometheus metrics on port 9964
+# Metrics are exported under the envoy_ namespace
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: cilium-envoy
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: cilium-envoy
+    release: kube-prometheus-stack
+spec:
+  jobLabel: cilium-envoy
+  selector:
+    matchLabels:
+      k8s-app: cilium-envoy
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  podMetricsEndpoints:
+    - port: envoy-metrics
+      interval: 30s
+      path: /metrics

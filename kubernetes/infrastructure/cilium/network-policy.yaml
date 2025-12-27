@@ -14,6 +14,30 @@ spec:
   - Egress
 
 ---
+# Allow Cloudflare Tunnel to reach Gateway API (HTTP/HTTPS)
+# Cilium Gateway handles traffic via eBPF, but we need to allow the
+# initial connection to the gateway service
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cloudflare-to-gateway
+  namespace: kube-system
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: cloudflare-operator-system
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+
+---
 # Allow Cilium Agent communication
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

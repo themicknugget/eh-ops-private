@@ -10,6 +10,7 @@ daemon.lock
 daemon.log
 daemon.pid
 bd.sock
+bd.sock.*
 
 # Legacy database files
 db.sqlite

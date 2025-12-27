@@ -165,11 +165,6 @@ spec:
           gnetId: 1860
           revision: 37
           datasource: Prometheus
-        # Node Exporter for Prometheus Dashboard
-        node-exporter:
-          gnetId: 11074
-          revision: 9
-          datasource: Prometheus
         # Prometheus Stats
         prometheus-stats:
           gnetId: 2

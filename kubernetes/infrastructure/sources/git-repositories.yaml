@@ -1,0 +1,12 @@
+---
+# Git repositories for Kustomize-based deployments
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: cloudflare-operator
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/adyanth/cloudflare-operator.git
+  ref:
+    tag: v0.13.1

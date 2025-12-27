@@ -1,0 +1,22 @@
+---
+# TunnelBinding routes traffic from Cloudflare to the internal gateway
+apiVersion: networking.cfargotunnel.com/v1alpha1
+kind: TunnelBinding
+metadata:
+  name: external-gateway-binding
+  namespace: cloudflare-operator-system
+subjects:
+  - name: external-gateway
+    spec:
+      # Wildcard domain for all subdomains
+      fqdn: "*.whydontyou.work"
+      protocol: https
+      # Route to Cilium Gateway service
+      target: https://cilium-gateway-external-gateway.kube-system.svc.cluster.local
+      # Skip TLS verification for internal service
+      noTlsVerify: true
+tunnelRef:
+  kind: ClusterTunnel
+  name: eh-ops-cluster
+  # Allow DNS updates for subdomains
+  disableDNSUpdates: false

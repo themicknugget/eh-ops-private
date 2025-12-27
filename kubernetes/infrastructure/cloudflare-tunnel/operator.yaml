@@ -1,0 +1,23 @@
+---
+# Flux Kustomization to deploy cloudflare-operator from upstream Git repository
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudflare-operator
+  namespace: flux-system
+spec:
+  interval: 1h
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: cloudflare-operator
+    namespace: flux-system
+  path: ./config/default
+  prune: true
+  wait: true
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: cloudflare-operator-controller-manager
+      namespace: cloudflare-operator-system

@@ -1,0 +1,31 @@
+---
+# ClusterTunnel creates a Cloudflare Tunnel that routes traffic to the cluster
+apiVersion: networking.cfargotunnel.com/v1alpha2
+kind: ClusterTunnel
+metadata:
+  name: eh-ops-cluster
+  namespace: cloudflare-operator-system
+spec:
+  # Create a new tunnel with this name
+  newTunnel:
+    name: eh-ops-cluster
+  # Cloudflare configuration
+  cloudflare:
+    domain: whydontyou.work
+    secret: cloudflare-secrets
+    accountId: 7716c9e8f3db61e9cb2eb1b33a153574
+  # Customize the cloudflared deployment
+  deployPatch: |
+    spec:
+      replicas: 2
+      template:
+        spec:
+          containers:
+          - name: cloudflared
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi

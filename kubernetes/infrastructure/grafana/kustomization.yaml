@@ -8,6 +8,7 @@ resources:
   - http-route.yaml
   - dashboards/cert-manager-dashboard.yaml
   - dashboards/cilium-dashboards.yaml
+  - dashboards/cilium-envoy-dashboard.yaml
   - dashboards/cloudflare-tunnel-dashboard.yaml
   - dashboards/coredns-dashboard.yaml
   - dashboards/flux-cluster-dashboard.yaml

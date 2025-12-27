@@ -67,6 +67,11 @@ data:
     loadBalancer:
       acceleration: disabled
 
+    # Bypass socket-level LB for pod traffic
+    # Required for Cilium Gateway API services which have no traditional backends
+    socketLB:
+      hostNamespaceOnly: true
+
     bpf:
       enableTCX: false
 

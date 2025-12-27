@@ -4,3 +4,4 @@ resources:
   - flux-system
   - cluster-secrets.sops.yaml
   - infrastructure.yaml
+  - tailscale-connector.yaml

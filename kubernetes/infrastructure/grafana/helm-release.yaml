@@ -160,11 +160,6 @@ spec:
           revision: 28
           datasource: Prometheus
       infrastructure:
-        # Node Exporter Full
-        node-exporter-full:
-          gnetId: 1860
-          revision: 37
-          datasource: Prometheus
         # Prometheus Stats
         prometheus-stats:
           gnetId: 2

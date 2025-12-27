@@ -83,8 +83,8 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: coredns
+  name: k8s-gateway
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://coredns.github.io/helm
+  url: https://k8s-gateway.github.io/k8s_gateway/

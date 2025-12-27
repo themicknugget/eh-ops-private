@@ -109,18 +109,20 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
 
-  # shadow - Worker node
+  # shadow - Worker node (large node for heavy workloads)
   - hostname: shadow
     ipAddress: 192.168.1.56
     controlPlane: false
     installDisk: /dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b4ab34307
-    talosImageURL: factory.talos.dev/metal-installer-secureboot/ebe1cded40f9dd956ffd9a6f9d36e821dbb4b6b96b6f27dcd9abeef0adaf31d7
+    talosImageURL: factory.talos.dev/metal-installer-secureboot/8d96872f9c21e99dc493b266fd586a5638f2af30a1aecf439aeaa6e9f8d9036b
 
     patches:
       - |-
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
+          nodeTaints:
+            workload-type: heavy:NoSchedule
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

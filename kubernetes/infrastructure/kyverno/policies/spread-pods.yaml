@@ -34,6 +34,7 @@ spec:
                   - maxSkew: 1
                     topologyKey: kubernetes.io/hostname
                     whenUnsatisfiable: ScheduleAnyway
+                    nodeTaintsPolicy: Ignore
                     labelSelector:
                       matchLabels:
                         app.kubernetes.io/instance: "{{request.object.metadata.name}}"

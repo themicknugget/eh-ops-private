@@ -60,6 +60,10 @@ data:
       enabled: true
       type: wireguard
 
+    # MTU for pods - 9000 (jumbo) minus 80 (WireGuard overhead)
+    # Without this, pods get MTU 9000 but WireGuard tunnel is 8920, causing PMTU black hole
+    mtu: 8920
+
     # L2 announcements for LoadBalancer services
     l2announcements:
       enabled: true

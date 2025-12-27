@@ -290,13 +290,13 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"} * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
+              "expr": "sum(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Total Disk (Root)",
+          "title": "Total Disk (/var)",
           "type": "stat"
         },
         {
@@ -357,13 +357,13 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"}) * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
+              "expr": "sum((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"}) * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Used Disk (Root)",
+          "title": "Used Disk (/var)",
           "type": "stat"
         },
         {
@@ -424,13 +424,13 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/\"} * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
+              "expr": "sum(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) node_uname_info{nodename=~\"$node\"})",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Free Disk (Root)",
+          "title": "Free Disk (/var)",
           "type": "stat"
         },
         {

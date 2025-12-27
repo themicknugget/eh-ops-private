@@ -214,7 +214,7 @@ data:
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 15},
           "id": 10,
           "options": {"legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
-          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"spegel\",container=\"registry\"}[5m]))", "legendFormat": "{{pod}}", "refId": "A"}],
+          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (node) (rate(container_cpu_usage_seconds_total{namespace=\"spegel\",container=\"registry\"}[5m]) * on(pod,namespace) group_left(node) kube_pod_info{namespace=\"spegel\"})", "legendFormat": "{{node}}", "refId": "A"}],
           "title": "Spegel CPU Usage",
           "type": "timeseries"
         },
@@ -240,7 +240,7 @@ data:
           "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
           "id": 12,
           "options": {"legend": {"calcs": ["last"], "displayMode": "table", "placement": "right", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
-          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (pod) (spegel_advertised_images)", "legendFormat": "{{pod}}", "refId": "A"}],
+          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (node) (spegel_advertised_images * on(pod,namespace) group_left(node) kube_pod_info{namespace=\"spegel\"})", "legendFormat": "{{node}}", "refId": "A"}],
           "title": "Images per Spegel Node",
           "type": "timeseries"
         },
@@ -258,7 +258,7 @@ data:
           "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
           "id": 13,
           "options": {"legend": {"calcs": ["last"], "displayMode": "table", "placement": "right", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}},
-          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (pod) (spegel_advertised_keys)", "legendFormat": "{{pod}}", "refId": "A"}],
+          "targets": [{"datasource": {"type": "prometheus", "uid": "$datasource"}, "expr": "sum by (node) (spegel_advertised_keys * on(pod,namespace) group_left(node) kube_pod_info{namespace=\"spegel\"})", "legendFormat": "{{node}}", "refId": "A"}],
           "title": "Layers per Spegel Node",
           "type": "timeseries"
         }

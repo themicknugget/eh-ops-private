@@ -3,11 +3,12 @@
 # https://github.com/getsops/sops
 
 creation_rules:
-  # Files with explicit .sops extension (excludes .sops.yaml config files)
+  # Kubernetes secrets with .sops extension - only encrypt data fields
   - path_regex: .+\.sops\.ya?ml$
+    encrypted_regex: ^(data|stringData)$
     age: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c
 
-  # Secrets-related files (Kubernetes secrets)
+  # Other secrets-related files
   - path_regex: .*secrets.*\.ya?ml$
     encrypted_regex: ^(data|stringData|password|token|key|secret|crt)$
     age: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c

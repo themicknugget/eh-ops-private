@@ -1,0 +1,41 @@
+---
+# Allow metrics-server communication
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: metrics-server
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: metrics-server
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow API server to reach metrics-server
+  - from: []
+    ports:
+    - protocol: TCP
+      port: 10250
+  egress:
+  # Allow DNS
+  - to:
+    - podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow API server communication
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 6443
+  # Allow kubelet communication (for scraping metrics)
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 10250

@@ -97,7 +97,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_memory_MemTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum(node_memory_MemTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -164,7 +164,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -231,7 +231,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_memory_MemAvailable_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum(node_memory_MemAvailable_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -290,7 +290,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -357,7 +357,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"}) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"}) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -424,7 +424,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum(node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint=\"/var\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -483,7 +483,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(count without(cpu, mode) (node_cpu_seconds_total{mode=\"idle\"}) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "sum(count without(cpu, mode) (node_cpu_seconds_total{mode=\"idle\"}) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -542,7 +542,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(node_time_seconds * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) - avg(node_boot_time_seconds * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "avg(node_time_seconds * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) - avg(node_boot_time_seconds * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "instant": true,
               "legendFormat": "",
               "refId": "A"
@@ -715,7 +715,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "100 - (avg by (nodename) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) * 100)",
+              "expr": "100 - (avg by (nodename) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) * 100)",
               "legendFormat": "{{nodename}}",
               "refId": "A"
             }
@@ -852,7 +852,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(node_load1 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "avg(node_load1 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "legendFormat": "Load 1m",
               "refId": "A"
             },
@@ -861,7 +861,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(node_load5 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "avg(node_load5 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "legendFormat": "Load 5m",
               "refId": "B"
             },
@@ -870,7 +870,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(node_load15 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "avg(node_load15 * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "legendFormat": "Load 15m",
               "refId": "C"
             }
@@ -970,7 +970,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(node_pressure_cpu_waiting_seconds_total * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "avg(node_pressure_cpu_waiting_seconds_total * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - CPU Pressure",
               "refId": "A"
             }
@@ -1068,7 +1068,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg by (nodename) (node_hwmon_temp_celsius * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"})",
+              "expr": "avg by (nodename) (node_hwmon_temp_celsius * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"})))",
               "legendFormat": "{{nodename}}",
               "refId": "A"
             }
@@ -1181,7 +1181,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "100 - ((node_memory_MemAvailable_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) / (node_memory_MemTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) * 100)",
+              "expr": "100 - ((node_memory_MemAvailable_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) / (node_memory_MemTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) * 100)",
               "legendFormat": "{{nodename}}",
               "refId": "A"
             }
@@ -1281,7 +1281,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "avg(rate(node_pressure_memory_waiting_seconds_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename) * 100",
+              "expr": "avg(rate(node_pressure_memory_waiting_seconds_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename) * 100",
               "legendFormat": "{{nodename}} - Memory Pressure",
               "refId": "A"
             }
@@ -1399,7 +1399,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(node_memory_SwapTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(node_memory_SwapTotal_bytes * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Swap Total",
               "refId": "A"
             },
@@ -1408,7 +1408,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum((node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Swap Used",
               "refId": "B"
             }
@@ -1524,7 +1524,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_disk_read_bytes_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_disk_read_bytes_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Read",
               "refId": "A"
             },
@@ -1533,7 +1533,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_disk_written_bytes_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_disk_written_bytes_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Write",
               "refId": "B"
             }
@@ -1636,7 +1636,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_disk_reads_completed_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_disk_reads_completed_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Read IOPS",
               "refId": "A"
             },
@@ -1645,7 +1645,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_disk_writes_completed_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_disk_writes_completed_total[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Write IOPS",
               "refId": "B"
             }
@@ -1717,7 +1717,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "100 - ((node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint!~\"/boot.*\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) / (node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!~\"/boot.*\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) * 100)",
+              "expr": "100 - ((node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint!~\"/boot.*\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) / (node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!~\"/boot.*\"} * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) * 100)",
               "instant": true,
               "legendFormat": "{{nodename}} - {{mountpoint}}",
               "refId": "A"
@@ -1834,7 +1834,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename) * 8",
+              "expr": "sum(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename) * 8",
               "legendFormat": "{{nodename}} - Receive",
               "refId": "A"
             },
@@ -1843,7 +1843,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename) * 8",
+              "expr": "sum(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename) * 8",
               "legendFormat": "{{nodename}} - Transmit",
               "refId": "B"
             }
@@ -1941,7 +1941,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_receive_errs_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_receive_errs_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Receive Errors",
               "refId": "A"
             },
@@ -1950,7 +1950,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_transmit_errs_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_transmit_errs_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Transmit Errors",
               "refId": "B"
             },
@@ -1959,7 +1959,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_receive_drop_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_receive_drop_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Receive Drops",
               "refId": "C"
             },
@@ -1968,7 +1968,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_transmit_drop_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_transmit_drop_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Transmit Drops",
               "refId": "D"
             }
@@ -2071,7 +2071,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_receive_packets_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_receive_packets_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Receive Packets",
               "refId": "A"
             },
@@ -2080,7 +2080,7 @@ data:
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
               },
-              "expr": "sum(rate(node_network_transmit_packets_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info)){nodename=~\"$node\"}) by (nodename)",
+              "expr": "sum(rate(node_network_transmit_packets_total{device!~\"lo|veth.*|docker.*|flannel.*|cali.*|cbr.*|cni.*\"}[$__rate_interval]) * on(instance) group_left(nodename) (max by (instance, nodename) (node_uname_info{nodename=~\"$node\"}))) by (nodename)",
               "legendFormat": "{{nodename}} - Transmit Packets",
               "refId": "B"
             }

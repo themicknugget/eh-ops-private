@@ -102,7 +102,6 @@ nodes:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
         dhcp: false
-        mtu: 9000
         addresses:
           - 192.168.1.55/24
         routes:
@@ -153,7 +152,6 @@ nodes:
     networkInterfaces:
       - interface: bond0
         dhcp: false
-        mtu: 9000
         bond:
           mode: 802.3ad
           lacpRate: fast
@@ -188,7 +186,6 @@ nodes:
     networkInterfaces:
       - interface: bond0
         dhcp: false
-        mtu: 9000
         bond:
           mode: 802.3ad
           lacpRate: fast
@@ -223,7 +220,6 @@ nodes:
     networkInterfaces:
       - interface: bond0
         dhcp: false
-        mtu: 9000
         bond:
           mode: 802.3ad
           lacpRate: fast

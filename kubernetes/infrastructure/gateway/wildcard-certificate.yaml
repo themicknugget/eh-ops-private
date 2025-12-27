@@ -1,0 +1,60 @@
+---
+# Wildcard certificate for DOMAIN1
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-domain1
+  namespace: kube-system
+spec:
+  secretName: wildcard-domain1-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.${DOMAIN1}"
+    - "${DOMAIN1}"
+---
+# Wildcard certificate for DOMAIN2
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-domain2
+  namespace: kube-system
+spec:
+  secretName: wildcard-domain2-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.${DOMAIN2}"
+    - "${DOMAIN2}"
+---
+# Wildcard certificate for DOMAIN3
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-domain3
+  namespace: kube-system
+spec:
+  secretName: wildcard-domain3-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.${DOMAIN3}"
+    - "${DOMAIN3}"
+---
+# Wildcard certificate for DOMAIN4
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-domain4
+  namespace: kube-system
+spec:
+  secretName: wildcard-domain4-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.${DOMAIN4}"
+    - "${DOMAIN4}"

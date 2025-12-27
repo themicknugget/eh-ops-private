@@ -1,6 +1,6 @@
 ---
 # HTTPRoute for Grafana via Cilium Gateway
-# Traffic flow: Cloudflare Tunnel -> Gateway -> Grafana
+# Traffic flow: Gateway (HTTP/HTTPS) -> Grafana
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -8,6 +8,9 @@ metadata:
   namespace: observability
 spec:
   parentRefs:
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: https
     - name: external-gateway
       namespace: kube-system
       sectionName: http

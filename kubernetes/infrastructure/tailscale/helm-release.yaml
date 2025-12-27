@@ -24,16 +24,8 @@ spec:
     remediation:
       retries: 3
   values:
-    # OAuth credentials from pre-created secret
-    oauth:
-      clientId: ""
-      clientSecret: ""
-
-    # Use existing secret for OAuth
-    oauthSecretVolume:
-      name: oauth-secret
-      secret:
-        secretName: operator-oauth
+    # OAuth credentials will be read from operator-oauth Secret
+    # (created via oauth-secret.sops.yaml)
 
     # Operator configuration
     operatorConfig:

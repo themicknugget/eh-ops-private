@@ -1,0 +1,96 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: storage
+resources:
+  - https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml
+
+patches:
+  # Delete the default namespace (we use 'storage' instead)
+  - target:
+      kind: Namespace
+      name: local-path-storage
+    patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: local-path-storage
+
+  # Update ConfigMap with Talos 1.12 compatible path
+  - target:
+      kind: ConfigMap
+      name: local-path-config
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: local-path-config
+      data:
+        config.json: |-
+          {
+            "nodePathMap": [
+              {
+                "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
+                "paths": ["/var/mnt/local-path-provisioner"]
+              }
+            ]
+          }
+        helperPod.yaml: |-
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: helper-pod
+          spec:
+            priorityClassName: system-node-critical
+            tolerations:
+              - key: node.kubernetes.io/disk-pressure
+                operator: Exists
+                effect: NoSchedule
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: node-role.kubernetes.io/control-plane
+                          operator: DoesNotExist
+            containers:
+              - name: helper-pod
+                image: busybox:stable
+                imagePullPolicy: IfNotPresent
+
+  # Make local-path the default StorageClass
+  - target:
+      kind: StorageClass
+      name: local-path
+    patch: |-
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: local-path
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "true"
+
+  # Update Deployment environment variable for Talos path
+  - target:
+      kind: Deployment
+      name: local-path-provisioner
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: local-path-provisioner
+      spec:
+        template:
+          spec:
+            containers:
+              - name: local-path-provisioner
+                env:
+                  - name: POD_NAMESPACE
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.namespace
+                  - name: CONFIG_MOUNT_PATH
+                    value: /etc/config/
+                  - name: DEFAULT_PATH_FOR_NON_LISTED_NODES
+                    value: /var/mnt/local-path-provisioner

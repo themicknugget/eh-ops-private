@@ -10,3 +10,6 @@ data:
   DOMAIN3: holidayhacker.app
   DOMAIN4: codecrucible.app
   ACME_EMAIL: admin@whydontyou.work
+  # NFS storage server (available on local network)
+  NFS_SERVER: "192.168.1.2"
+  NFS_PATH: "/media/k8s-storage"

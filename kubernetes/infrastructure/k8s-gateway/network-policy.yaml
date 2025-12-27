@@ -1,0 +1,42 @@
+---
+# Allow DNS queries to k8s-gateway from any pod in the cluster
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-k8s-gateway
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: k8s-gateway
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow DNS queries from anywhere in cluster
+    - ports:
+        - protocol: UDP
+          port: 1053
+        - protocol: TCP
+          port: 1053
+    # Allow metrics scraping
+    - ports:
+        - protocol: TCP
+          port: 9153
+  egress:
+    # Allow access to Kubernetes API
+    - to:
+        - ipBlock:
+            cidr: 10.96.0.1/32
+      ports:
+        - protocol: TCP
+          port: 443
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53

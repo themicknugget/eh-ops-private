@@ -4,6 +4,8 @@ kind: ConfigMap
 metadata:
   name: grafana-dashboard-cilium-agent
   namespace: observability
+  annotations:
+    grafana_folder: Infrastructure
   labels:
     grafana_dashboard: "1"
 data:
@@ -8494,6 +8496,8 @@ kind: ConfigMap
 metadata:
   name: grafana-dashboard-cilium-operator
   namespace: observability
+  annotations:
+    grafana_folder: Infrastructure
   labels:
     grafana_dashboard: "1"
 data:
@@ -9533,6 +9537,8 @@ kind: ConfigMap
 metadata:
   name: grafana-dashboard-hubble
   namespace: observability
+  annotations:
+    grafana_folder: Infrastructure
   labels:
     grafana_dashboard: "1"
 data:

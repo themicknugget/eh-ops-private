@@ -4,6 +4,8 @@ kind: ConfigMap
 metadata:
   name: flux-cluster-dashboard
   namespace: observability
+  annotations:
+    grafana_folder: Infrastructure
   labels:
     grafana_dashboard: "1"
 data:

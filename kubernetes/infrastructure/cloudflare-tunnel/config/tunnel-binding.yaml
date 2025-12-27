@@ -11,8 +11,9 @@ subjects:
       # Wildcard domain for all subdomains
       fqdn: "*.${DOMAIN1}"
       protocol: http
-      # Route to Cilium Gateway service (HTTP since gateway only has HTTP listener)
-      target: http://cilium-gateway-external-gateway.kube-system.svc.cluster.local
+      # Route to Cilium Gateway via LoadBalancer IP
+      # Using ClusterIP fails with "operation not permitted" due to Cilium Gateway eBPF handling
+      target: http://192.168.1.65
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

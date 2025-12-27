@@ -15,12 +15,15 @@ spec:
         name: prometheus-community
         namespace: flux-system
       interval: 12h
+  timeout: 10m
   install:
     crds: CreateReplace
+    timeout: 10m
     remediation:
       retries: 3
   upgrade:
     crds: CreateReplace
+    timeout: 10m
     cleanupOnFail: true
     remediation:
       retries: 3

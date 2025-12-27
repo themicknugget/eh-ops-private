@@ -1,13 +1,14 @@
 ---
-# ClusterTunnel creates a Cloudflare Tunnel that routes traffic to the cluster
+# ClusterTunnel uses an existing Cloudflare Tunnel to route traffic to the cluster
 apiVersion: networking.cfargotunnel.com/v1alpha2
 kind: ClusterTunnel
 metadata:
   name: eh-ops-cluster
   namespace: cloudflare-operator-system
 spec:
-  # Create a new tunnel with this name
-  newTunnel:
+  # Use existing tunnel by ID
+  existingTunnel:
+    id: fa1f019f-5456-48c2-8e18-dfe9f3564aa6
     name: eh-ops-cluster
   # Cloudflare configuration
   cloudflare:

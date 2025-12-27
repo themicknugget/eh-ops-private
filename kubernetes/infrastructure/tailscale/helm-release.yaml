@@ -33,17 +33,14 @@ spec:
       defaultTags:
         - "tag:k8s-operator"
       logging: "info"
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 256Mi
 
     # Proxy configuration for Connectors
     proxyConfig:
-      defaultTags:
-        - "tag:k8s"
-
-    # Resource limits
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 256Mi
+      defaultTags: "tag:k8s"

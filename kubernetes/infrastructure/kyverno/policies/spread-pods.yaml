@@ -1,0 +1,39 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: spread-pods-across-nodes
+  annotations:
+    policies.kyverno.io/title: Spread Pods Across Nodes
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/description: >-
+      Automatically adds topologySpreadConstraints to Deployments and StatefulSets
+      to spread pods across nodes for better availability and resource distribution.
+spec:
+  background: false
+  rules:
+    - name: add-topology-spread-constraints
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - kyverno
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                +(topologySpreadConstraints):
+                  - maxSkew: 1
+                    topologyKey: kubernetes.io/hostname
+                    whenUnsatisfiable: ScheduleAnyway
+                    labelSelector:
+                      matchLabels:
+                        app.kubernetes.io/instance: "{{request.object.metadata.name}}"

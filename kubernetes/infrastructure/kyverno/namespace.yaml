@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kyverno
+  labels:
+    toolkit.fluxcd.io/tenant: infrastructure
+    # Exempt kyverno from its own policies
+    pod-security.kubernetes.io/enforce: privileged

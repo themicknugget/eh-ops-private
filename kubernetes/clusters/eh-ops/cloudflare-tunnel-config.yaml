@@ -1,0 +1,19 @@
+---
+# Phase 2: Deploy ClusterTunnel and TunnelBinding CRDs
+# Must wait for cloudflare-operator to be ready (CRDs must exist)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudflare-tunnel-config
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: cloudflare-operator
+  interval: 10m
+  path: ./kubernetes/infrastructure/cloudflare-tunnel/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  timeout: 5m

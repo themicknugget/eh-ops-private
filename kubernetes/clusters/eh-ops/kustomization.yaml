@@ -5,3 +5,4 @@ resources:
   - cluster-secrets.sops.yaml
   - infrastructure.yaml
   - tailscale-connector.yaml
+  - cloudflare-tunnel-config.yaml

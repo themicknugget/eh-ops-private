@@ -1,9 +1,10 @@
 ---
+# Phase 1: Deploy operator prerequisites and the operator itself
+# The tunnel CRDs are deployed in a separate Flux Kustomization
+# (cloudflare-tunnel-config.yaml) that depends on the operator being ready
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
-  - operator.yaml
   - cloudflare-secrets.sops.yaml
-  - cluster-tunnel.yaml
-  - tunnel-binding.yaml
+  - operator.yaml

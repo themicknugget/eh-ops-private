@@ -250,11 +250,13 @@ spec:
       port: 53
     - protocol: TCP
       port: 53
-  # Allow communication with Cilium agents
+  # Allow communication with Cilium agents (hubble-peer service)
   - to:
     - podSelector:
         matchLabels:
           k8s-app: cilium
     ports:
+    - protocol: TCP
+      port: 443
     - protocol: TCP
       port: 4244

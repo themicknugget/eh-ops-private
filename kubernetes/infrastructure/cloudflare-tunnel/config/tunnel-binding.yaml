@@ -10,11 +10,9 @@ subjects:
     spec:
       # Wildcard domain for all subdomains
       fqdn: "*.whydontyou.work"
-      protocol: https
-      # Route to Cilium Gateway service
-      target: https://cilium-gateway-external-gateway.kube-system.svc.cluster.local
-      # Skip TLS verification for internal service
-      noTlsVerify: true
+      protocol: http
+      # Route to Cilium Gateway service (HTTP since gateway only has HTTP listener)
+      target: http://cilium-gateway-external-gateway.kube-system.svc.cluster.local
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

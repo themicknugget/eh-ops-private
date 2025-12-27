@@ -27,7 +27,6 @@ spec:
         - "${DOMAIN1}"
         - "${DOMAIN2}"
         - "${DOMAIN3}"
-        - "${DOMAIN4}"
 
 ---
 # Let's Encrypt Production ClusterIssuer
@@ -58,4 +57,3 @@ spec:
         - "${DOMAIN1}"
         - "${DOMAIN2}"
         - "${DOMAIN3}"
-        - "${DOMAIN4}"

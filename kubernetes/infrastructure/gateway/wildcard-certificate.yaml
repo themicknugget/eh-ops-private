@@ -43,18 +43,3 @@ spec:
   dnsNames:
     - "*.${DOMAIN3}"
     - "${DOMAIN3}"
----
-# Wildcard certificate for DOMAIN4
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: wildcard-domain4
-  namespace: kube-system
-spec:
-  secretName: wildcard-domain4-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  dnsNames:
-    - "*.${DOMAIN4}"
-    - "${DOMAIN4}"

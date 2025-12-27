@@ -10,5 +10,6 @@ resources:
   - tailscale
   - cloudflare-tunnel
   - prometheus
+  - grafana
   - metrics-server
   - kyverno

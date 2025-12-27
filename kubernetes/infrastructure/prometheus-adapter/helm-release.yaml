@@ -1,0 +1,120 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-adapter
+  namespace: observability
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: prometheus-adapter
+      version: "4.11.0"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      interval: 12h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Prometheus connection
+    prometheus:
+      url: http://kube-prometheus-stack-prometheus.observability.svc
+      port: 9090
+
+    # Replica count (can scale later for HA)
+    replicas: 1
+
+    # Resource limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    # Rules configuration for metrics API
+    rules:
+      # Resource metrics for kubectl top and HPA (CPU)
+      resource:
+        cpu:
+          containerQuery: |
+            sum by (<<.GroupBy>>) (
+              irate(container_cpu_usage_seconds_total{<<.LabelMatchers>>,container!="",pod!=""}[5m])
+            )
+          nodeQuery: |
+            sum by (<<.GroupBy>>) (
+              irate(node_cpu_seconds_total{mode!="idle",mode!="iowait",mode!="steal",<<.LabelMatchers>>}[5m])
+            )
+          resources:
+            overrides:
+              node:
+                resource: node
+              namespace:
+                resource: namespace
+              pod:
+                resource: pod
+          containerLabel: container
+        memory:
+          containerQuery: |
+            sum by (<<.GroupBy>>) (
+              container_memory_working_set_bytes{<<.LabelMatchers>>,container!="",pod!=""}
+            )
+          nodeQuery: |
+            sum by (<<.GroupBy>>) (
+              node_memory_MemTotal_bytes{<<.LabelMatchers>>}
+              - node_memory_MemAvailable_bytes{<<.LabelMatchers>>}
+            )
+          resources:
+            overrides:
+              node:
+                resource: node
+              namespace:
+                resource: namespace
+              pod:
+                resource: pod
+          containerLabel: container
+        window: 5m
+
+      # Default rules for custom metrics (example for future HPA use cases)
+      default: false
+
+      # Custom metrics rules - example configuration for HPA
+      custom:
+        # Example: HTTP requests per second for HPA scaling
+        - seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+          seriesFilters: []
+          resources:
+            overrides:
+              namespace:
+                resource: namespace
+              pod:
+                resource: pod
+          name:
+            matches: ^container_(.*)_seconds_total$
+            as: "${1}_per_second"
+          metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)
+
+        # Example: Memory usage percentage for HPA
+        - seriesQuery: '{__name__=~"container_memory_working_set_bytes",container!="",namespace!="",pod!=""}'
+          seriesFilters: []
+          resources:
+            overrides:
+              namespace:
+                resource: namespace
+              pod:
+                resource: pod
+          name:
+            matches: "^(.*)$"
+            as: "memory_working_set_bytes"
+          metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+
+      # External metrics (for external data sources like queue lengths)
+      external: []

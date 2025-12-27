@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: observability
 resources:
   - namespace.yaml
+  - telegram-secret.sops.yaml
   - helm-release.yaml
   - coredns-servicemonitor.yaml
   - cilium-envoy-podmonitor.yaml

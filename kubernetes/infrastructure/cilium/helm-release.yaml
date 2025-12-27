@@ -128,6 +128,10 @@ data:
       enabled: true
       bbr: true
 
+    # Enable PMTU discovery for mixed MTU environments (1500/9000)
+    pmtuDiscovery:
+      enabled: true
+
     # Tolerations for control plane nodes and agent-not-ready deadlock prevention
     tolerations:
     - key: node-role.kubernetes.io/control-plane

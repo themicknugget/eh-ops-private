@@ -5,9 +5,7 @@ metadata:
   name: subnet-router
   namespace: tailscale
 spec:
-  # High availability with 2 replicas
-  replicas: 2
-  hostnamePrefix: eh-ops-subnet
+  hostname: eh-ops-subnet
   subnetRouter:
     advertiseRoutes:
       # Service CIDR - access to all ClusterIP services

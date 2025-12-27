@@ -41,9 +41,9 @@ spec:
       registry:
         hostPort: 5001
 
-    # Grafana dashboard
+    # Grafana dashboard - disabled, using custom fixed dashboard
     grafanaDashboard:
-      enabled: true
+      enabled: false
 
     # Prometheus ServiceMonitor
     serviceMonitor:

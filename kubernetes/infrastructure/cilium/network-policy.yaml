@@ -28,6 +28,16 @@ spec:
   - Ingress
   - Egress
   ingress:
+  # Allow Gateway API traffic from Cloudflare Tunnel
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: cloudflare-operator-system
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
   # Allow health checks
   - from:
     - podSelector:

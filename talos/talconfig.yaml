@@ -159,6 +159,8 @@ nodes:
           # Reserve 8GB for system pods (Cilium, etc.) during GPU workloads
           kubelet:
             extraConfig:
+              featureGates:
+                MemoryQoS: true
               systemReserved:
                 cpu: "500m"
                 memory: "8Gi"

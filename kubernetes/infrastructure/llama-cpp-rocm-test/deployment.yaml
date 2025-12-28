@@ -1,0 +1,125 @@
+---
+# ROCm Test Deployment for gfx1151 Investigation
+# Strategy 1: HSA_ENABLE_SDMA=0 with base rocm-7.1.1 (non-rocwmma)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-rocm-test
+  namespace: llama-cpp-rocm-test
+  labels:
+    app: llama-rocm-test
+  annotations:
+    # Track which strategy we're testing
+    investigation/strategy: "4"
+    investigation/image: "rocm-7alpha"
+    investigation/notes: "TheRock nightly build + HSA_ENABLE_SDMA=0"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: llama-rocm-test
+  template:
+    metadata:
+      labels:
+        app: llama-rocm-test
+    spec:
+      nodeSelector:
+        workload-type: gpu
+      tolerations:
+        - key: workload-type
+          operator: Equal
+          value: heavy
+          effect: NoSchedule
+
+      containers:
+        - name: llama-server
+          # Strategy 4: TheRock nightly (bleeding-edge ROCm)
+          image: docker.io/kyuz0/amd-strix-halo-toolboxes:rocm-7alpha
+
+          command:
+            - llama-server
+          args:
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8080"
+            # Direct model path for simple testing
+            - "-m"
+            - "/models/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+            # Required flags per research
+            - "--no-mmap"
+            - "-fa"
+            - "on"
+            # GPU layers
+            - "-ngl"
+            - "999"
+            # Verbose for debugging
+            - "-v"
+
+          env:
+            # === STRATEGY 4 ENVIRONMENT ===
+            # Disable SDMA engine - helps with APU memory issues
+            - name: HSA_ENABLE_SDMA
+              value: "0"
+            # Use hipBLASLt for better performance
+            - name: ROCBLAS_USE_HIPBLASLT
+              value: "1"
+            # Ensure single GPU targeting
+            - name: HIP_VISIBLE_DEVICES
+              value: "0"
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          volumeMounts:
+            - name: models
+              mountPath: /models
+            - name: dev-kfd
+              mountPath: /dev/kfd
+            - name: dev-dri
+              mountPath: /dev/dri
+
+          resources:
+            requests:
+              memory: "8Gi"
+              cpu: "4"
+            limits:
+              memory: "32Gi"
+              cpu: "12"
+
+          securityContext:
+            privileged: true
+
+          # Extended timeouts for ROCm initialization
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30  # 5 minutes total
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: rocm-test-models
+        - name: dev-kfd
+          hostPath:
+            path: /dev/kfd
+        - name: dev-dri
+          hostPath:
+            path: /dev/dri

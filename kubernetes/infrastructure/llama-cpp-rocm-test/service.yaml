@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-rocm-test
+  namespace: llama-cpp-rocm-test
+  labels:
+    app: llama-rocm-test
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: llama-rocm-test

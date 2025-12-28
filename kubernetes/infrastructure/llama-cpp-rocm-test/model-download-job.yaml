@@ -1,0 +1,49 @@
+---
+# Download Llama 3.2 3B for ROCm testing (small 2GB model)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: download-llama-3-2
+  namespace: llama-cpp-rocm-test
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      nodeSelector:
+        workload-type: gpu
+      tolerations:
+        - key: workload-type
+          operator: Equal
+          value: heavy
+          effect: NoSchedule
+      restartPolicy: Never
+      containers:
+        - name: downloader
+          image: docker.io/curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cd /models
+              echo "Downloading Llama-3.2-3B-Instruct-Q4_K_M.gguf (~2GB)..."
+
+              curl -L -C - -o Llama-3.2-3B-Instruct-Q4_K_M.gguf \
+                "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+
+              # Create presets.ini for router mode
+              cat > presets.ini << 'EOF'
+              [Llama-3.2-3B-Instruct-Q4_K_M]
+              # Llama 3.2 3B - fast testing model
+              n_gpu_layers = 999
+              flash_attn = true
+              EOF
+
+              echo "Download complete!"
+              ls -lh /models/
+          volumeMounts:
+            - name: models
+              mountPath: /models
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: rocm-test-models

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: llama-cpp-rocm-test
+  labels:
+    app.kubernetes.io/name: llama-cpp-rocm-test
+    purpose: rocm-investigation
+    # Allow privileged pods for GPU access
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

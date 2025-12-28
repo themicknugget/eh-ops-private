@@ -7,6 +7,7 @@ namespace: llama-cpp
 resources:
   - namespace.yaml
   - pvc.yaml
+  - priorityclass.yaml
   - presets-configmap.yaml
   - deployment.yaml
   - service.yaml

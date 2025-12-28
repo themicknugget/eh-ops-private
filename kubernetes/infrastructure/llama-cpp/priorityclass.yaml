@@ -1,0 +1,9 @@
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: gpu-workload-low
+value: -100
+globalDefault: false
+preemptionPolicy: Never
+description: "Low priority for GPU workloads - will be evicted before system pods"

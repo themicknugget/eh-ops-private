@@ -31,6 +31,9 @@ spec:
           value: heavy
           effect: NoSchedule
 
+      # Low priority so system pods survive OOM pressure
+      priorityClassName: gpu-workload-low
+
       containers:
         - name: llama-server
           image: docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv

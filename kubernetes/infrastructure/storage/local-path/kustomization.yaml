@@ -47,6 +47,10 @@ patches:
               - key: node.kubernetes.io/disk-pressure
                 operator: Exists
                 effect: NoSchedule
+              - key: workload-type
+                operator: Equal
+                value: heavy
+                effect: NoSchedule
             affinity:
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:

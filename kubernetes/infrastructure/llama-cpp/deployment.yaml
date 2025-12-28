@@ -45,8 +45,7 @@ spec:
             # Single model mode - load specific model at startup
             - "--model"
             - "/models/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
-            # Critical performance flags for ROCm/Strix Halo
-            - "--no-mmap"          # Required for ROCm - prevents catastrophic slowdown
+            # Performance flags for Vulkan backend
             - "-ngl"
             - "999"                # Offload all layers to GPU
             - "-fa"
@@ -57,9 +56,6 @@ spec:
             - "8192"               # Default context size
             - "--parallel"
             - "4"                  # Parallel request slots
-            - "-fit"
-            - "off"                # Disable auto-fit - hangs on Strix Halo gfx1151
-            - "--verbose"          # Enable verbose logging for diagnostics
 
           env:
             # Vulkan environment for RADV driver
@@ -67,6 +63,9 @@ spec:
               value: "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
             - name: RADV_PERFTEST
               value: "gpl"
+            # Force large Vulkan allocations
+            - name: GGML_VK_FORCE_MAX_ALLOCATION_SIZE
+              value: "4294967296"
 
           ports:
             - name: http

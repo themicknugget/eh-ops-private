@@ -150,6 +150,26 @@ nodes:
             workload-type: gpu
           nodeTaints:
             workload-type: heavy:NoSchedule
+          # Reserve 8GB for system pods (Cilium, etc.) during GPU workloads
+          kubelet:
+            extraConfig:
+              systemReserved:
+                cpu: "500m"
+                memory: "8Gi"
+                ephemeral-storage: "2Gi"
+              kubeReserved:
+                cpu: "500m"
+                memory: "1Gi"
+                ephemeral-storage: "1Gi"
+              evictionHard:
+                memory.available: "500Mi"
+                nodefs.available: "10%"
+              evictionSoft:
+                memory.available: "1Gi"
+                nodefs.available: "15%"
+              evictionSoftGracePeriod:
+                memory.available: "30s"
+                nodefs.available: "1m"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

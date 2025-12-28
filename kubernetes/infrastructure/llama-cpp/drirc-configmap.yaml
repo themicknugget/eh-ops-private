@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: radv-drirc
+  namespace: llama-cpp
+data:
+  drirc: |
+    <driconf>
+      <device>
+        <application name="Default">
+          <option name="radv_enable_unified_heap_on_apu" value="true" />
+        </application>
+      </device>
+    </driconf>

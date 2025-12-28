@@ -11,7 +11,7 @@ data:
     cont-batching = 1
     flash-attn = 1
     n-gpu-layers = 999
-    parallel = 2
+    parallel = 1
     metrics = 1
     cache-type-k = q8_0
     cache-type-v = q8_0

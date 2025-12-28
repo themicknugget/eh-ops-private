@@ -182,3 +182,7 @@ data:
       operator: Equal
       value: heavy
       effect: NoSchedule
+    - key: gpu
+      operator: Equal
+      value: amd
+      effect: NoSchedule

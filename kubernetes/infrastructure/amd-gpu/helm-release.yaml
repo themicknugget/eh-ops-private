@@ -72,6 +72,9 @@ spec:
         operator: Equal
         value: amd
         effect: NoSchedule
+      - key: node.cilium.io/agent-not-ready
+        operator: Exists
+        effect: NoSchedule
 
     # Only deploy on nodes with AMD GPU
     node_selector_enabled: true

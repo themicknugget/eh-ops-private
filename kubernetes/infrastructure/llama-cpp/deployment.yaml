@@ -54,6 +54,8 @@ spec:
             # Maximum concurrent models loaded (LRU eviction)
             - "--models-max"
             - "1"
+            # Lock model in memory to prevent paging during load
+            - "--mlock"
 
           env:
             # Vulkan environment for RADV driver

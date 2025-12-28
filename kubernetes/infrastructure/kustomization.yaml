@@ -14,3 +14,4 @@ resources:
   - grafana
   - metrics-server
   - kyverno
+  - amd-gpu

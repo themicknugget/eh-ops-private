@@ -1,0 +1,81 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: amd-gpu
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://rocm.github.io/k8s-device-plugin
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: amd-gpu-device-plugin
+  namespace: amd-gpu-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: amd-gpu
+      version: "0.21.0"
+      sourceRef:
+        kind: HelmRepository
+        name: amd-gpu
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Enable node labeller for GPU properties
+    labeller:
+      enabled: true
+
+    # Device plugin configuration
+    dp:
+      image:
+        repository: docker.io/rocm/k8s-device-plugin
+        tag: "1.31.0.9"
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 100m
+        requests:
+          memory: 128Mi
+          cpu: 50m
+
+    # Node labeller configuration
+    lbl:
+      image:
+        repository: docker.io/rocm/k8s-device-plugin
+        tag: "labeller-1.31.0.9"
+      securityContext:
+        privileged: true
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - CAP_SYS_ADMIN
+
+    # Tolerations for shadow node taints
+    tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - key: workload-type
+        operator: Equal
+        value: heavy
+        effect: NoSchedule
+      - key: gpu
+        operator: Equal
+        value: amd
+        effect: NoSchedule
+
+    # Only deploy on nodes with AMD GPU
+    node_selector_enabled: true
+    node_selector:
+      kubernetes.io/arch: amd64
+      # Will match shadow node which has the amdgpu extension
+      extensions.talos.dev/amdgpu: "20251125-v1.12.0"

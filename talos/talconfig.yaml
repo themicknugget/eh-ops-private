@@ -108,20 +108,42 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
 
-  # shadow - Worker node (large node for heavy workloads)
+  # shadow - Worker node (AMD Strix Halo - Ryzen AI MAX+ 395, 128GB UMA)
+  # GPU: Radeon 8060S (gfx1151) with ROCm support
   - hostname: shadow
     ipAddress: 192.168.1.56
     controlPlane: false
     installDisk: /dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b4ab34307
-    talosImageURL: factory.talos.dev/metal-installer-secureboot/8d96872f9c21e99dc493b266fd586a5638f2af30a1aecf439aeaa6e9f8d9036b
+    # Factory image with amdgpu extension + extraKernelArgs (amd_iommu=off, ttm.pages_limit)
+    talosImageURL: factory.talos.dev/metal-installer-secureboot/852b61f1efe476c1917a0723f5185463cbec42b6f70ca51889b59c3f1b9631cf
 
     patches:
       - |-
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
+          # AMD Strix Halo GPU kernel module configuration
+          # ttm.pages_limit: 120GB (31457280 * 4KB pages) - leaves 8GB for system
+          # See: https://github.com/deseven/strixhalo-homelab
+          kernel:
+            modules:
+              - name: amdgpu
+              - name: ttm
+                parameters:
+                  - pages_limit=31457280
+          # NOTE: amd_iommu=off requires rebuilding factory image for UKI/secure boot
+          # Current image uses grubUseUKICmdline which doesn't support extraKernelArgs
+          nodeLabels:
+            # GPU identification labels
+            gpu.amd.com/device-present: "true"
+            gpu.amd.com/gpu-family: gfx1151
+            gpu.amd.com/gpu-model: radeon-8060s
+            node.kubernetes.io/instance-type: strix-halo
+            # Workload classification
+            workload-type: gpu
           nodeTaints:
             workload-type: heavy:NoSchedule
+            gpu: amd:NoSchedule
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

@@ -1,0 +1,68 @@
+---
+# Kyverno policy to prevent non-GPU workloads from scheduling on GPU nodes
+# GPU nodes are labeled with workload-type=gpu
+# Pods requesting amd.com/gpu resources are allowed
+# System namespaces are excluded
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: avoid-gpu-nodes
+  annotations:
+    policies.kyverno.io/title: Avoid GPU Nodes
+    policies.kyverno.io/category: Scheduling
+    policies.kyverno.io/description: >-
+      Prevents non-GPU workloads from scheduling on GPU nodes (workload-type=gpu).
+      Pods that request amd.com/gpu resources are allowed. System namespaces and
+      DaemonSets are excluded.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: add-gpu-node-anti-affinity
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      exclude:
+        any:
+          # Exclude system namespaces
+          - resources:
+              namespaces:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - flux-system
+                - amd-gpu-system
+                - cert-manager
+                - monitoring
+                - cilium-system
+          # Exclude DaemonSet pods (they need to run everywhere)
+          - resources:
+              kinds:
+                - Pod
+              selector:
+                matchExpressions:
+                  - key: controller-revision-hash
+                    operator: Exists
+      preconditions:
+        all:
+          # Only apply to pods that don't request GPU resources
+          - key: "{{ request.object.spec.containers[].resources.limits.\"amd.com/gpu\" || '' }}"
+            operator: Equals
+            value: ""
+          - key: "{{ request.object.spec.containers[].resources.requests.\"amd.com/gpu\" || '' }}"
+            operator: Equals
+            value: ""
+      mutate:
+        patchStrategicMerge:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: workload-type
+                          operator: NotIn
+                          values:
+                            - gpu

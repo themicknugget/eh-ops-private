@@ -143,7 +143,6 @@ nodes:
             workload-type: gpu
           nodeTaints:
             workload-type: heavy:NoSchedule
-            gpu: amd:NoSchedule
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

@@ -68,10 +68,6 @@ spec:
         operator: Equal
         value: heavy
         effect: NoSchedule
-      - key: gpu
-        operator: Equal
-        value: amd
-        effect: NoSchedule
       - key: node.cilium.io/agent-not-ready
         operator: Exists
         effect: NoSchedule

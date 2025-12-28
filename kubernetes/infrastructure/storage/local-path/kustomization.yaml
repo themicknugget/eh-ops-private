@@ -59,7 +59,7 @@ patches:
                 image: busybox:stable
                 imagePullPolicy: IfNotPresent
 
-  # Make local-path the default StorageClass
+  # Make local-path the default StorageClass and enable expansion
   - target:
       kind: StorageClass
       name: local-path
@@ -70,6 +70,7 @@ patches:
         name: local-path
         annotations:
           storageclass.kubernetes.io/is-default-class: "true"
+      allowVolumeExpansion: true
 
   # Update Deployment environment variable for Talos path
   - target:

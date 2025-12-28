@@ -1,0 +1,125 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-server
+  namespace: llama-cpp
+  labels:
+    app: llama-server
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # Required for RWO PVC
+  selector:
+    matchLabels:
+      app: llama-server
+  template:
+    metadata:
+      labels:
+        app: llama-server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Schedule on shadow node (AMD Strix Halo GPU)
+      nodeSelector:
+        workload-type: gpu
+      tolerations:
+        - key: workload-type
+          operator: Equal
+          value: heavy
+          effect: NoSchedule
+
+      containers:
+        - name: llama-server
+          image: docker.io/kyuz0/amd-strix-halo-toolboxes:rocm-7.1.1-rocwmma
+
+          command:
+            - llama-server
+          args:
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8080"
+            # Router mode - auto-discover models in /models directory
+            - "--models-dir"
+            - "/models"
+            # Maximum concurrent models loaded (LRU eviction)
+            - "--models-max"
+            - "3"
+            # Critical performance flags for ROCm/Strix Halo
+            - "--no-mmap"          # Required for ROCm - prevents catastrophic slowdown
+            - "-ngl"
+            - "999"                # Offload all layers to GPU
+            - "-fa"
+            - "1"                  # Enable Flash Attention
+            - "--cont-batching"    # Enable continuous batching
+            - "--metrics"          # Enable Prometheus metrics endpoint
+            - "-c"
+            - "8192"               # Default context size
+            - "--parallel"
+            - "4"                  # Parallel request slots
+
+          env:
+            # hipBLASlt for better performance
+            - name: ROCBLAS_USE_HIPBLASLT
+              value: "1"
+            # ROCm environment
+            - name: ROCM_PATH
+              value: "/opt/rocm"
+            - name: HIP_PLATFORM
+              value: "amd"
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          volumeMounts:
+            - name: models
+              mountPath: /models
+            - name: dev-kfd
+              mountPath: /dev/kfd
+            - name: dev-dri
+              mountPath: /dev/dri
+
+          resources:
+            requests:
+              memory: "32Gi"
+              cpu: "8"
+              amd.com/gpu: "1"
+            limits:
+              memory: "120Gi"
+              cpu: "24"
+              amd.com/gpu: "1"
+
+          securityContext:
+            privileged: true  # Required for full GPU access
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: llama-models
+        - name: dev-kfd
+          hostPath:
+            path: /dev/kfd
+        - name: dev-dri
+          hostPath:
+            path: /dev/dri

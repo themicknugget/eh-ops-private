@@ -1,0 +1,18 @@
+---
+# ServiceMonitor for Prometheus to scrape llama.cpp metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: llama-server
+  namespace: llama-cpp
+  labels:
+    app: llama-server
+spec:
+  selector:
+    matchLabels:
+      app: llama-server
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s

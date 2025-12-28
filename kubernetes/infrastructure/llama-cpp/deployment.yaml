@@ -60,6 +60,9 @@ spec:
             - "8192"               # Default context size
             - "--parallel"
             - "4"                  # Parallel request slots
+            - "-fit"
+            - "off"                # Disable auto-fit - hangs on Strix Halo gfx1151
+            - "--verbose"          # Enable verbose logging for diagnostics
 
           env:
             # hipBLASlt for better performance

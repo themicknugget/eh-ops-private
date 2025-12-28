@@ -118,6 +118,13 @@ nodes:
     talosImageURL: factory.talos.dev/metal-installer-secureboot/852b61f1efe476c1917a0723f5185463cbec42b6f70ca51889b59c3f1b9631cf
 
     patches:
+      # User volume for local-path-provisioner storage
+      # Uses directory type on EPHEMERAL partition (no separate disk needed)
+      - |-
+        apiVersion: v1alpha1
+        kind: UserVolumeConfig
+        name: local-path-provisioner
+        volumeType: directory
       - |-
         machine:
           sysctls:

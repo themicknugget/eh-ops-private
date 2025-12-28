@@ -42,12 +42,9 @@ spec:
             - "0.0.0.0"
             - "--port"
             - "8080"
-            # Router mode - auto-discover models in /models directory
-            - "--models-dir"
-            - "/models"
-            # Maximum concurrent models loaded (LRU eviction)
-            - "--models-max"
-            - "3"
+            # Single model mode - load specific model at startup
+            - "--model"
+            - "/models/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
             # Critical performance flags for ROCm/Strix Halo
             - "--no-mmap"          # Required for ROCm - prevents catastrophic slowdown
             - "-ngl"

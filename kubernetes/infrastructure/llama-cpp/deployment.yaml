@@ -33,7 +33,7 @@ spec:
 
       containers:
         - name: llama-server
-          image: docker.io/kyuz0/amd-strix-halo-toolboxes:rocm-7.1.1
+          image: docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv
 
           command:
             - llama-server
@@ -62,14 +62,11 @@ spec:
             - "--verbose"          # Enable verbose logging for diagnostics
 
           env:
-            # hipBLASlt for better performance
-            - name: ROCBLAS_USE_HIPBLASLT
-              value: "1"
-            # ROCm environment
-            - name: ROCM_PATH
-              value: "/opt/rocm"
-            - name: HIP_PLATFORM
-              value: "amd"
+            # Vulkan environment for RADV driver
+            - name: VK_ICD_FILENAMES
+              value: "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+            - name: RADV_PERFTEST
+              value: "gpl"
 
           ports:
             - name: http
@@ -88,11 +85,9 @@ spec:
             requests:
               memory: "32Gi"
               cpu: "8"
-              amd.com/gpu: "1"
             limits:
               memory: "120Gi"
               cpu: "24"
-              amd.com/gpu: "1"
 
           securityContext:
             privileged: true  # Required for full GPU access

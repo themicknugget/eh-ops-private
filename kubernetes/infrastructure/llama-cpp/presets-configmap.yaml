@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llama-presets
+  namespace: llama-cpp
+data:
+  presets.ini: |
+    [MiniMaxAI_MiniMax-M2.1-Q3_K_XL]
+    ctx-size = 65536
+    cont-batching = 1
+    flash-attn = 1
+    n-gpu-layers = 999
+    parallel = 2
+    metrics = 1
+
+    [Llama-3.2-3B-Instruct-Q4_K_M]
+    ctx-size = 32768
+    cont-batching = 1
+    flash-attn = 1
+    n-gpu-layers = 999
+    parallel = 4
+    metrics = 1

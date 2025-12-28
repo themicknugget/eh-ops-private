@@ -45,20 +45,12 @@ spec:
             # Router mode - auto-discover models in /models directory
             - "--models-dir"
             - "/models"
+            # Use presets file for model-specific settings
+            - "--models-preset"
+            - "/models/presets.ini"
             # Maximum concurrent models loaded (LRU eviction)
             - "--models-max"
             - "1"
-            # Performance flags for Vulkan backend
-            - "-ngl"
-            - "999"                # Offload all layers to GPU
-            - "-fa"
-            - "1"                  # Enable Flash Attention
-            - "--cont-batching"    # Enable continuous batching
-            - "--metrics"          # Enable Prometheus metrics endpoint
-            - "-c"
-            - "8192"               # Default context size
-            - "--parallel"
-            - "4"                  # Parallel request slots
 
           env:
             # Vulkan environment for RADV driver
@@ -78,6 +70,9 @@ spec:
           volumeMounts:
             - name: models
               mountPath: /models
+            - name: presets
+              mountPath: /models/presets.ini
+              subPath: presets.ini
             - name: dev-kfd
               mountPath: /dev/kfd
             - name: dev-dri
@@ -115,6 +110,9 @@ spec:
         - name: models
           persistentVolumeClaim:
             claimName: llama-models
+        - name: presets
+          configMap:
+            name: llama-presets
         - name: dev-kfd
           hostPath:
             path: /dev/kfd

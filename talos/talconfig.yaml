@@ -130,7 +130,7 @@ nodes:
           sysctls:
             user.max_user_namespaces: "11255"
             # Memory tuning for GPU workloads - prevent OOM during model loading
-            vm.min_free_kbytes: "3145728"         # 3GB emergency reserve
+            vm.min_free_kbytes: "2097152"         # 2GB emergency reserve
             vm.watermark_scale_factor: "200"       # Wake kswapd earlier (2% between watermarks)
             vm.swappiness: "10"                    # Prefer RAM over swap
             vm.dirty_ratio: "40"                   # Buffer for write spikes

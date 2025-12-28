@@ -80,9 +80,6 @@ spec:
             - name: presets
               mountPath: /models/presets.ini
               subPath: presets.ini
-            - name: drirc
-              mountPath: /etc/drirc
-              subPath: drirc
             - name: dev-kfd
               mountPath: /dev/kfd
             - name: dev-dri
@@ -123,9 +120,6 @@ spec:
         - name: presets
           configMap:
             name: llama-presets
-        - name: drirc
-          configMap:
-            name: radv-drirc
         - name: dev-kfd
           hostPath:
             path: /dev/kfd

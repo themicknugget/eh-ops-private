@@ -1,5 +1,6 @@
 ---
 # ServiceMonitor for Prometheus to scrape llama.cpp metrics
+# Scrapes the metrics-exporter sidecar which consolidates child server metrics
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -7,12 +8,13 @@ metadata:
   namespace: llama-cpp
   labels:
     app: llama-server
+    release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
       app: llama-server
   endpoints:
-    - port: http
+    - port: metrics
       path: /metrics
       interval: 30s
       scrapeTimeout: 10s

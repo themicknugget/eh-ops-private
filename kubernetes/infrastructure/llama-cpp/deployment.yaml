@@ -19,7 +19,7 @@ spec:
         app: llama-server
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
+        prometheus.io/port: "9090"
         prometheus.io/path: "/metrics"
     spec:
       # Schedule on shadow node (AMD Strix Halo GPU)
@@ -113,6 +113,39 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
 
+        # Metrics exporter sidecar - scrapes child servers and adds model labels
+        - name: metrics-exporter
+          image: python:3.12-alpine
+          command:
+            - python
+            - /scripts/exporter.py
+          ports:
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          volumeMounts:
+            - name: metrics-exporter-script
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
       volumes:
         - name: models
           persistentVolumeClaim:
@@ -126,3 +159,7 @@ spec:
         - name: dev-dri
           hostPath:
             path: /dev/dri
+        - name: metrics-exporter-script
+          configMap:
+            name: metrics-exporter
+            defaultMode: 0755

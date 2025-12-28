@@ -9,6 +9,7 @@ resources:
   - pvc.yaml
   - priorityclass.yaml
   - presets-configmap.yaml
+  - metrics-exporter-configmap.yaml
   - deployment.yaml
   - service.yaml
   - http-route.yaml

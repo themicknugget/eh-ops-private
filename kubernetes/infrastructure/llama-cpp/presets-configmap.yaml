@@ -7,7 +7,7 @@ metadata:
 data:
   presets.ini: |
     [MiniMaxAI_MiniMax-M2.1-Q3_K_XL]
-    ctx-size = 98304
+    ctx-size = 131072
     cont-batching = 1
     flash-attn = 1
     n-gpu-layers = 999

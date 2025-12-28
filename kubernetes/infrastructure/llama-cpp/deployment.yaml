@@ -59,8 +59,12 @@ spec:
             # Vulkan environment for RADV driver
             - name: VK_ICD_FILENAMES
               value: "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"
+            # RADV performance tweaks for UMA/APU memory management
+            # gpl: Graphics pipeline library (faster shader compilation)
+            # nosam: Disable Smart Access Memory (reduces memory mapping overhead on APUs)
+            # nogttspill: Disable GTT spilling (prevents memory overflow to system RAM)
             - name: RADV_PERFTEST
-              value: "gpl"
+              value: "gpl,nosam,nogttspill"
             # Force large Vulkan allocations
             - name: GGML_VK_FORCE_MAX_ALLOCATION_SIZE
               value: "4294967296"

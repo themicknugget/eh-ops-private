@@ -13,6 +13,8 @@ data:
     n-gpu-layers = 999
     parallel = 2
     metrics = 1
+    cache-type-k = q8_0
+    cache-type-v = q8_0
 
     [Llama-3.2-3B-Instruct-Q4_K_M]
     ctx-size = 32768
@@ -21,3 +23,5 @@ data:
     n-gpu-layers = 999
     parallel = 4
     metrics = 1
+    cache-type-k = q8_0
+    cache-type-v = q8_0

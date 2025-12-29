@@ -10,6 +10,10 @@ spec:
   parentRefs:
     - name: external-gateway
       namespace: kube-system
+      sectionName: https-domain1
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: http-domain1
   hostnames:
     - "llm.${DOMAIN1}"
   rules:

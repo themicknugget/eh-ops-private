@@ -45,18 +45,23 @@ spec:
             - "0.0.0.0"
             - "--port"
             - "8080"
-            # Router mode - auto-discover models in /models directory
-            - "--models-dir"
-            - "/models"
-            # Use presets file for model-specific settings
-            - "--models-preset"
-            - "/models/presets.ini"
-            # Maximum concurrent models loaded (LRU eviction)
-            - "--models-max"
+            # MiniMax M2.1 - 96GB Q3_K_XL, 228B params MoE
+            - "--hf-repo"
+            - "unsloth/MiniMax-M2.1-GGUF:UD-Q3_K_XL"
+            - "--ctx-size"
+            - "131072"
+            - "--n-gpu-layers"
+            - "999"
+            - "--flash-attn"
+            - "--cont-batching"
+            - "--cache-type-k"
+            - "q8_0"
+            - "--cache-type-v"
+            - "q8_0"
+            - "--parallel"
             - "1"
-            # Lock model in memory to prevent paging during load
             - "--mlock"
-            # Verbose logging for debugging
+            - "--metrics"
             - "--verbose"
 
           env:

@@ -15,9 +15,9 @@ data:
     cache-type-k = q8_0
     cache-type-v = q8_0
 
-    # MiniMax M2.1 - 101GB Q3_K_XL, 1M context MoE
-    [MiniMaxAI/MiniMax-M2.1-GGUF:Q3_K_XL]
-    hf-repo = MiniMaxAI/MiniMax-M2.1-GGUF:Q3_K_XL
+    # MiniMax M2.1 - 101GB Q3_K_XL (3 parts), 1M native context MoE
+    [unsloth/MiniMax-M2.1-GGUF:UD-Q3_K_XL]
+    hf-repo = unsloth/MiniMax-M2.1-GGUF:UD-Q3_K_XL
     ctx-size = 131072
     parallel = 1
 

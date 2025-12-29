@@ -48,9 +48,9 @@ spec:
             - "0.0.0.0"
             - "--port"
             - "8080"
-            # MiniMax M2.1 - 96GB Q3_K_XL, 228B params MoE
-            - "--hf-repo"
-            - "unsloth/MiniMax-M2.1-GGUF:UD-Q3_K_XL"
+            # Router mode - dynamically load models via API
+            - "--model"
+            - "none"
             - "--ctx-size"
             - "131072"
             - "--n-gpu-layers"

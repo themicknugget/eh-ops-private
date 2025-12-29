@@ -10,6 +10,8 @@ spec:
     advertiseRoutes:
       # Service CIDR - access to all ClusterIP services
       - "10.96.0.0/12"
+      # K8S API Server
+      - "192.168.1.50/32"
       # LoadBalancer pool - access to exposed services
       - "192.168.1.64/28"
   tags:

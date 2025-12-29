@@ -10,33 +10,77 @@ data:
   exporter.py: |
     #!/usr/bin/env python3
     """
-    Metrics exporter sidecar for llama-cpp router mode.
+    Metrics exporter sidecar for llama-cpp.
 
-    Scrapes metrics from dynamically-spawned child servers and exposes
-    consolidated metrics with model name labels on port 9090.
+    Supports both:
+    - Single model mode: scrapes metrics from port 8080 directly
+    - Router mode: scrapes metrics from child servers
+
+    Exposes consolidated metrics with model labels on port 9090.
     """
 
     import http.server
     import json
+    import os
     import re
     import socket
     import urllib.request
     import urllib.error
     from typing import Optional
 
-    ROUTER_URL = "http://localhost:8080/v1/models"
+    LLAMA_URL = "http://localhost:8080"
     LISTEN_PORT = 9090
     REQUEST_TIMEOUT = 5
 
+    # Cached mode detection
+    _is_router_mode: Optional[bool] = None
 
-    def get_loaded_models() -> list[tuple[str, int]]:
+
+    def detect_router_mode() -> bool:
+        """Detect if llama-server is running in router mode."""
+        global _is_router_mode
+        if _is_router_mode is not None:
+            return _is_router_mode
+
+        try:
+            with urllib.request.urlopen(f"{LLAMA_URL}/v1/models", timeout=REQUEST_TIMEOUT) as resp:
+                data = json.loads(resp.read().decode())
+                # Router mode returns models with status.args containing child server info
+                for model in data.get("data", []):
+                    status = model.get("status", {})
+                    if "args" in status:
+                        _is_router_mode = True
+                        print("Detected router mode")
+                        return True
+        except Exception:
+            pass
+
+        _is_router_mode = False
+        print("Detected single model mode")
+        return False
+
+
+    def get_model_name_single_mode() -> str:
+        """Get model name in single model mode from /v1/models."""
+        try:
+            with urllib.request.urlopen(f"{LLAMA_URL}/v1/models", timeout=REQUEST_TIMEOUT) as resp:
+                data = json.loads(resp.read().decode())
+                models = data.get("data", [])
+                if models:
+                    return models[0].get("id", "unknown")
+        except Exception as e:
+            print(f"Error getting model name: {e}")
+        return os.environ.get("MODEL_NAME", "unknown")
+
+
+    def get_loaded_models_router() -> list[tuple[str, int]]:
         """
         Query router for loaded models and their ports.
         Returns list of (model_id, port) tuples.
         """
         models = []
         try:
-            with urllib.request.urlopen(ROUTER_URL, timeout=REQUEST_TIMEOUT) as resp:
+            with urllib.request.urlopen(f"{LLAMA_URL}/v1/models", timeout=REQUEST_TIMEOUT) as resp:
                 data = json.loads(resp.read().decode())
         except (urllib.error.URLError, socket.timeout, json.JSONDecodeError) as e:
             print(f"Error fetching models: {e}")
@@ -49,7 +93,6 @@ data:
             if status.get("value") != "loaded":
                 continue
 
-            # Extract port from args: [..., "--port", "42863", ...]
             args = status.get("args", [])
             port = None
             for i, arg in enumerate(args):
@@ -66,8 +109,8 @@ data:
         return models
 
 
-    def scrape_child_metrics(port: int) -> Optional[str]:
-        """Scrape metrics from a child server."""
+    def scrape_metrics(port: int) -> Optional[str]:
+        """Scrape metrics from a server."""
         url = f"http://localhost:{port}/metrics"
         try:
             with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT) as resp:
@@ -78,79 +121,65 @@ data:
 
 
     def add_model_label(metrics: str, model_id: str) -> str:
-        """
-        Add model label to each metric line.
-
-        Prometheus format:
-          metric_name{existing="labels"} value
-          metric_name value
-
-        Becomes:
-          metric_name{model="model_id",existing="labels"} value
-          metric_name{model="model_id"} value
-        """
+        """Add model label to each metric line."""
         lines = []
-        # Escape special chars in model_id for label value
         safe_model_id = model_id.replace("\\", "\\\\").replace('"', '\\"')
 
         for line in metrics.splitlines():
-            # Skip comments and empty lines
             if not line or line.startswith("#"):
                 lines.append(line)
                 continue
 
-            # Match metric with existing labels: name{labels} value
             match = re.match(r'^([a-zA-Z_:][a-zA-Z0-9_:]*)\{(.+)\}\s+(.+)$', line)
             if match:
                 name, labels, value = match.groups()
                 lines.append(f'{name}{{model="{safe_model_id}",{labels}}} {value}')
                 continue
 
-            # Match metric without labels: name value
             match = re.match(r'^([a-zA-Z_:][a-zA-Z0-9_:]*)\s+(.+)$', line)
             if match:
                 name, value = match.groups()
                 lines.append(f'{name}{{model="{safe_model_id}"}} {value}')
                 continue
 
-            # Pass through anything else unchanged
             lines.append(line)
 
         return "\n".join(lines)
 
 
     def collect_metrics() -> str:
-        """Collect and consolidate metrics from all loaded models."""
-        output_parts = [
-            "# Consolidated llama-cpp metrics with model labels",
-            "# Scraped from dynamically-spawned child servers",
-            "",
-        ]
+        """Collect metrics based on mode."""
+        output_parts = ["# llama-cpp metrics with model labels", ""]
 
-        models = get_loaded_models()
+        if detect_router_mode():
+            # Router mode: scrape child servers
+            models = get_loaded_models_router()
+            if not models:
+                output_parts.append("# No loaded models found")
+                return "\n".join(output_parts)
 
-        if not models:
-            output_parts.append("# No loaded models found")
-            return "\n".join(output_parts)
-
-        for model_id, port in models:
-            output_parts.append(f"# Model: {model_id} (port {port})")
-
-            metrics = scrape_child_metrics(port)
+            for model_id, port in models:
+                output_parts.append(f"# Model: {model_id} (port {port})")
+                metrics = scrape_metrics(port)
+                if metrics:
+                    output_parts.append(add_model_label(metrics, model_id))
+                else:
+                    output_parts.append(f"# Failed to scrape metrics for {model_id}")
+                output_parts.append("")
+        else:
+            # Single model mode: scrape main server directly
+            model_id = get_model_name_single_mode()
+            output_parts.append(f"# Model: {model_id}")
+            metrics = scrape_metrics(8080)
             if metrics:
-                labeled_metrics = add_model_label(metrics, model_id)
-                output_parts.append(labeled_metrics)
+                output_parts.append(add_model_label(metrics, model_id))
             else:
-                output_parts.append(f"# Failed to scrape metrics for {model_id}")
-
-            output_parts.append("")
+                output_parts.append("# Failed to scrape metrics")
 
         return "\n".join(output_parts)
 
 
     class MetricsHandler(http.server.BaseHTTPRequestHandler):
-        """HTTP handler for /metrics endpoint."""
-
         def do_GET(self):
             if self.path == "/metrics":
                 metrics = collect_metrics()
@@ -168,7 +197,6 @@ data:
                 self.end_headers()
 
         def log_message(self, format, *args):
-            # Suppress default logging to reduce noise
             pass
 
 

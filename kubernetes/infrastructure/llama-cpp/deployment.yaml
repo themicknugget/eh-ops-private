@@ -30,6 +30,9 @@ spec:
           operator: Equal
           value: heavy
           effect: NoSchedule
+        - key: node.cilium.io/agent-not-ready
+          operator: Exists
+          effect: NoSchedule
 
       # Low priority so system pods survive OOM pressure
       priorityClassName: gpu-workload-low

@@ -1,0 +1,7 @@
+# Disable Talos userspace OOM controller on shadow node
+# This allows the kernel to use swap before killing pods
+# Apply with: talosctl patch machineconfig -n 192.168.1.56 --patch @shadow-oom-disable.yaml
+---
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"

@@ -893,10 +893,10 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [],
-              "max": 1,
+              "max": 4,
               "min": 0,
               "thresholds": {
-                "mode": "percentage",
+                "mode": "absolute",
                 "steps": [
                   {
                     "color": "green",
@@ -904,15 +904,15 @@ data:
                   },
                   {
                     "color": "yellow",
-                    "value": 70
+                    "value": 2
                   },
                   {
                     "color": "red",
-                    "value": 90
+                    "value": 4
                   }
                 ]
               },
-              "unit": "percentunit"
+              "unit": "short"
             },
             "overrides": []
           },
@@ -939,12 +939,12 @@ data:
           "pluginVersion": "10.0.0",
           "targets": [
             {
-              "expr": "avg(llamacpp:n_busy_slots_per_decode{model=~\"$model\"})",
-              "legendFormat": "Slot Utilization",
+              "expr": "sum(llamacpp:requests_processing{model=~\"$model\"})",
+              "legendFormat": "Active",
               "refId": "A"
             }
           ],
-          "title": "Slot Utilization",
+          "title": "Active Requests",
           "type": "gauge"
         },
         {

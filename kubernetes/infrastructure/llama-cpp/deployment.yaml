@@ -65,7 +65,7 @@ spec:
             - "512"
             - "--ubatch-size"
             - "256"
-            - "--mlock"
+            - "--no-mmap"
             - "--metrics"
             - "--verbose"
 

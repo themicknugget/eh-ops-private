@@ -68,7 +68,6 @@ spec:
             - "512"
             - "--ubatch-size"
             - "256"
-            - "--no-mmap"
             - "--metrics"
             - "--verbose"
 

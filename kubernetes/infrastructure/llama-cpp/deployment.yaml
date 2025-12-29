@@ -49,8 +49,7 @@ spec:
             - "--port"
             - "8080"
             # Router mode - dynamically load models via API
-            - "--model"
-            - "none"
+            # No --model flag = router mode with auto-discovery from LLAMA_CACHE
             - "--ctx-size"
             - "131072"
             - "--n-gpu-layers"

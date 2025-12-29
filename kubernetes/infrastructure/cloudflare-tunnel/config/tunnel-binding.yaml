@@ -14,7 +14,7 @@ subjects:
       # Route to Cilium Gateway HTTPS listener (HTTP listener has empty routes in Cilium)
       target: https://cilium-gateway-external-gateway.kube-system.svc.cluster.local:443
       # Skip TLS verification since gateway uses internal wildcard cert
-      noTLSVerify: true
+      noTlsVerify: true
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

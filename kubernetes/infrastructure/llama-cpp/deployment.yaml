@@ -56,6 +56,8 @@ spec:
             - "1"
             # Lock model in memory to prevent paging during load
             - "--mlock"
+            # Verbose logging for debugging
+            - "--verbose"
 
           env:
             # llama.cpp cache for HF downloads - store in PVC

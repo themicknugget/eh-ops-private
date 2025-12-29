@@ -55,6 +55,8 @@ spec:
             - "131072"
             - "--n-gpu-layers"
             - "999"
+            - "--flash-attn"
+            - "on"
             - "--cont-batching"
             - "--cache-type-k"
             - "q8_0"

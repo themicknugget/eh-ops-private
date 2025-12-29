@@ -58,6 +58,9 @@ spec:
             - "--mlock"
 
           env:
+            # llama.cpp cache for HF downloads - store in PVC
+            - name: LLAMA_CACHE
+              value: "/models"
             # Vulkan environment for RADV driver
             - name: VK_ICD_FILENAMES
               value: "/usr/share/vulkan/icd.d/radeon_icd.x86_64.json"

@@ -118,8 +118,26 @@ nodes:
     talosImageURL: factory.talos.dev/metal-installer-secureboot/852b61f1efe476c1917a0723f5185463cbec42b6f70ca51889b59c3f1b9631cf
 
     patches:
-      # User volume for local-path-provisioner storage
-      # Uses directory type on EPHEMERAL partition (no separate disk needed)
+      # Limit EPHEMERAL to leave 40GB for swap (4TB disk ≈ 3.64TiB)
+      - |-
+        apiVersion: v1alpha1
+        kind: VolumeConfig
+        name: EPHEMERAL
+        provisioning:
+          diskSelector:
+            match: system_disk
+          maxSize: 3.6TiB
+          grow: true
+      # 32GB swap partition
+      - |-
+        apiVersion: v1alpha1
+        kind: SwapVolumeConfig
+        name: shadow-swap
+        provisioning:
+          diskSelector:
+            match: system_disk
+          minSize: 32GiB
+          maxSize: 32GiB
       - |-
         apiVersion: v1alpha1
         kind: UserVolumeConfig
@@ -129,36 +147,29 @@ nodes:
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
-            # Memory tuning for GPU workloads - prevent OOM during model loading
-            vm.min_free_kbytes: "2097152"         # 2GB emergency reserve
-            vm.watermark_scale_factor: "200"       # Wake kswapd earlier (2% between watermarks)
-            vm.swappiness: "10"                    # Prefer RAM over swap
-            vm.dirty_ratio: "40"                   # Buffer for write spikes
-            vm.dirty_background_ratio: "10"        # Start flushing at 10%
-          # AMD Strix Halo GPU kernel module configuration
-          # ttm.pages_limit: 120GB (31457280 * 4KB pages) - leaves 8GB for system
-          # See: https://github.com/deseven/strixhalo-homelab
+            vm.min_free_kbytes: "2097152"
+            vm.watermark_scale_factor: "200"
+            vm.swappiness: "60"
+            vm.dirty_ratio: "40"
+            vm.dirty_background_ratio: "10"
           kernel:
             modules:
               - name: amdgpu
               - name: ttm
                 parameters:
                   - pages_limit=31457280
-          # NOTE: amd_iommu=off requires rebuilding factory image for UKI/secure boot
-          # Current image uses grubUseUKICmdline which doesn't support extraKernelArgs
           nodeLabels:
-            # GPU identification labels
             gpu.amd.com/device-present: "true"
             gpu.amd.com/gpu-family: gfx1151
             gpu.amd.com/gpu-model: radeon-8060s
             node.kubernetes.io/instance-type: strix-halo
-            # Workload classification
             workload-type: gpu
           nodeTaints:
             workload-type: heavy:NoSchedule
-          # Reserve 8GB for system pods (Cilium, etc.) during GPU workloads
           kubelet:
             extraConfig:
+              memorySwap:
+                swapBehavior: LimitedSwap
               systemReserved:
                 cpu: "500m"
                 memory: "8Gi"

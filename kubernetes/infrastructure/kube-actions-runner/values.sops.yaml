@@ -1,0 +1,65 @@
+# kube-actions-runner values for eh-ops-private
+# Replaces gha-webhook-scaler deployment
+### Config
+config:
+    # Runner mode: dind-rootless provides Docker support with user namespace isolation
+    runnerMode: dind-rootless
+    # Match all self-hosted jobs
+    labelMatchers: self-hosted
+    # TTL in seconds for completed runner Jobs (5 minutes)
+    ttlSeconds: 300
+    # Runner container image
+    runnerImage: ghcr.io/actions/actions-runner:2.321.0
+    # Docker-in-Docker sidecar image
+    dindImage: docker:27-dind
+    # Node availability check - keep jobs queued if arch unavailable
+    skipNodeCheck: false
+### Webhook Auto-Registration
+webhookAutoRegister:
+    enabled: true
+    webhookURL: https://github-runner.${DOMAIN1}/webhook
+    syncInterval: 1h
+### Secrets
+secrets:
+    #ENC[AES256_GCM,data:ChitCIvWFkyF3csbGeJRiDjAYSc0INtycZCbKn6ICbtgNZzLesOc459dcvg=,iv:NBBv6OfA08VUIkLbmaZTRBUDXbA/1sJ7VymroqAKv7I=,tag:6FKcWzNsJEQjOBaUjQ0wxw==,type:comment]
+    githubTokens:
+        - owner: ENC[AES256_GCM,data:lldHdQWLq6f3sP/npQ==,iv:uEbeM5btgTZmM3T+Tsl4yN+w9Jz0KPsgX+iXTDNVgcM=,tag:lpL+ZA5/iMTKWs6jJ3efew==,type:str]
+          token: ENC[AES256_GCM,data:j4LMVvMreq3tuPc7sH12S8CKK3ecrsh6+U8vvbRiRF00y12kRGkTow==,iv:hn67frNLBD+1XK1WOEflIE4oiY9btsoZHSJipTBVDJo=,tag:1ZsHhRwwBdunolJu/dHyvQ==,type:str]
+        - owner: ENC[AES256_GCM,data:x8QD1N3aTaxJn2usAbjq,iv:cBu8honLjcQF8u3dZwpZyKZV1zUqcEwDOQBf2LIdgmY=,tag:30uCrQL/EAQh7gzCq+q00A==,type:str]
+          token: ENC[AES256_GCM,data:nRrUrpvS3q+OrnKfRah8rZO0GTv0LK+dqGVME11kBoHoSgCP8jYqNQ==,iv:yDCikMp0CeX0Byt4tP5cOUSV0sXLn1cwaiY/6py9HS8=,tag:5H1ch3e35ASuoMV0uL5IMg==,type:str]
+### Resources
+resources:
+    limits:
+        cpu: 500m
+        memory: 512Mi
+    requests:
+        cpu: 100m
+        memory: 128Mi
+### Metrics
+metrics:
+    serviceMonitor:
+        enabled: true
+        interval: 30s
+### Ingress handled externally via existing nginx ingress
+# The webhook URL https://github-runner.${DOMAIN1}/webhook
+# should route to the kube-actions-runner service
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzZFRBeEhSeHc2WGJsNkdT
+            NWJPUnh3OXAvQWl2Y21ya0VTT1c5NTlWcGp3Ci91b3Jxdi90MXFxSGYvWHlYalJ1
+            M2xxRXFLRCtESk42VkVFTmtzcHhseXcKLS0tIHMvZm4zaTJ6eXBuYUhmb0V5VFMv
+            VnNhWE5vSXRURDlnZnc2YXVGVXVLVWMKdprnUglMruyxikJjJUUz0z2NOENtODMe
+            wnQzddNWyL8m9mmUaUcuVad5bFXJU0OwOUXt5RnNi6jQryW2Wa6/UQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-12-30T13:23:10Z"
+    mac: ENC[AES256_GCM,data:u139VJgMUmnN+7Pcnslr213R+VDnALiULWYaliDolYLotcxThnp4c1jjY0j2D8bU/g7DqClwsWksMsh2tpqSfxkx9+yZnh4IsT9Mv9bNIuorl6PU5R2EBa7L9ccXIQZQw4FRa6efCYsVy2HcMX0dweq3cwhjgO/rdDDikp+FAhE=,iv:oNxQrIrXEpb/lK2QNPOQrEDhpCPLPo37Wh3RiNfuW1U=,tag:wjCTcOkOhlBVcoKj3kNqaQ==,type:str]
+    pgp: []
+    encrypted_regex: ^(secrets|token|githubTokens?)$
+    version: 3.8.0

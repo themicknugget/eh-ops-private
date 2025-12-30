@@ -5,3 +5,7 @@ metadata:
   name: github-runners
   labels:
     name: github-runners
+    # Allow privileged pods for dind/dind-rootless runner modes
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

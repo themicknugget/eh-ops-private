@@ -6,3 +6,4 @@ resources:
   - namespace.yaml
   - values-secret.sops.yaml
   - helm-release.yaml
+  - httproute.yaml

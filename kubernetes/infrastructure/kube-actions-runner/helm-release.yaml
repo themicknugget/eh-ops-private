@@ -1,0 +1,31 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-actions-runner
+  namespace: github-runners
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: helm/kube-actions-runner
+      sourceRef:
+        kind: GitRepository
+        name: kube-actions-runner
+        namespace: flux-system
+      interval: 12h
+  timeout: 10m
+  install:
+    createNamespace: true
+    timeout: 10m
+    remediation:
+      retries: 3
+  upgrade:
+    timeout: 10m
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: kube-actions-runner-values
+      valuesKey: values.yaml

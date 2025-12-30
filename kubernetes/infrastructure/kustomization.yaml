@@ -16,3 +16,4 @@ resources:
   - kyverno
   - amd-gpu
   - llama-cpp
+  - kube-actions-runner

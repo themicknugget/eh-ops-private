@@ -10,3 +10,14 @@ spec:
   url: https://github.com/adyanth/cloudflare-operator.git
   ref:
     tag: v0.13.1
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kube-actions-runner
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/themicknugget/kube-actions-runner.git
+  ref:
+    branch: main

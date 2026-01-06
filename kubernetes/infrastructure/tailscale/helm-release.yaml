@@ -41,6 +41,10 @@ spec:
           cpu: 500m
           memory: 256Mi
 
+    # Disable IngressClass creation (using Gateway API + subnet-router instead)
+    ingressClass:
+      enabled: false
+
     # Proxy configuration for Connectors
     proxyConfig:
       defaultTags: "tag:k8s"

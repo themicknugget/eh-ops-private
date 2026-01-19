@@ -15,5 +15,5 @@ resources:
   - metrics-server
   - kyverno
   - amd-gpu
-  - llama-cpp
+  - localai
   - kube-actions-runner

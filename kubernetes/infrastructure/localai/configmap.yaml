@@ -5,14 +5,12 @@ metadata:
   name: localai-config
   namespace: localai
 data:
-  # LocalAI configuration
   DEBUG: "false"
   THREADS: "4"
   CONTEXT_SIZE: "4096"
-  # Vulkan GPU acceleration
   USE_VULKAN: "true"
-  # Disable telemetry
   LOCALAI_DISABLE_TELEMETRY: "true"
-  # API configuration
   CORS: "true"
   CORS_ALLOW_ORIGINS: "*"
+  # Install llama-cpp backend on startup
+  LOCALAI_PRELOAD_BACKEND: "llama-cpp"

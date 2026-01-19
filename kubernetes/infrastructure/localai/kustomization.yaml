@@ -6,6 +6,7 @@ namespace: localai
 
 resources:
   - namespace.yaml
+  - priorityclass.yaml
   - pvc.yaml
   - configmap.yaml
   - deployment.yaml

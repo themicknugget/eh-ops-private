@@ -30,8 +30,25 @@ spec:
           operator: Exists
           effect: NoSchedule
 
-      # Low priority to prevent OOM issues with system pods
       priorityClassName: gpu-workload-low
+
+      initContainers:
+        - name: install-backends
+          image: localai/localai:latest-gpu-vulkan
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -d /backends/vulkan-llama-cpp ]; then
+                echo "Installing llama-cpp backend..."
+                /local-ai backends install llama-cpp
+              else
+                echo "Backend already installed"
+              fi
+          volumeMounts:
+            - name: backends
+              mountPath: /backends
+              subPath: backends
 
       containers:
         - name: localai
@@ -53,7 +70,10 @@ spec:
               cpu: "8"
           volumeMounts:
             - name: models
-              mountPath: /build/models
+              mountPath: /models
+            - name: backends
+              mountPath: /backends
+              subPath: backends
             - name: dev-kfd
               mountPath: /dev/kfd
             - name: dev-dri
@@ -79,6 +99,9 @@ spec:
 
       volumes:
         - name: models
+          persistentVolumeClaim:
+            claimName: localai-models
+        - name: backends
           persistentVolumeClaim:
             claimName: localai-models
         - name: dev-kfd

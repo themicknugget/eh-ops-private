@@ -9,9 +9,11 @@ config:
     # TTL in seconds for completed runner Jobs (5 minutes)
     ttlSeconds: 300
     # Runner container image
-    runnerImage: ghcr.io/actions/actions-runner:2.321.0
+    runnerImage: ghcr.io/actions/actions-runner:2.330.0
     # Docker-in-Docker sidecar image
     dindImage: docker:27-dind
+    # PersistentVolumeClaim for GitHub Actions cache
+    cachePvc: github-runner-cache
     # Node availability check - keep jobs queued if arch unavailable
     skipNodeCheck: false
 ### Webhook Auto-Registration

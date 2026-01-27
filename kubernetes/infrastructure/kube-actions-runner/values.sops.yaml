@@ -14,6 +14,8 @@ config:
     dindImage: docker:27-dind
     # PersistentVolumeClaim for GitHub Actions cache
     cachePvc: github-runner-cache
+    # Registry mirror for faster image pulls via Spegel
+    registryMirror: http://spegel.spegel.svc.cluster.local:5000
     # Node availability check - keep jobs queued if arch unavailable
     skipNodeCheck: false
 ### Webhook Auto-Registration

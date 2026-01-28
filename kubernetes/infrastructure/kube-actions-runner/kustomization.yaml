@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: github-runners
 resources:
   - namespace.yaml
-  - pvc.yaml
   - values-secret.sops.yaml
   - helm-release.yaml
   - httproute.yaml

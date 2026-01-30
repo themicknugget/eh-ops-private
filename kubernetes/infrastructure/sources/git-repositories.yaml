@@ -21,3 +21,14 @@ spec:
   url: https://github.com/themicknugget/kube-actions-runner.git
   ref:
     branch: main
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kubeedge
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/kubeedge/kubeedge.git
+  ref:
+    tag: v1.21.0

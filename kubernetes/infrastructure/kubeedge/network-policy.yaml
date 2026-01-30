@@ -1,0 +1,55 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cloudcore
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cloudcore
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow edge node connections via Tailscale (from anywhere)
+    - ports:
+        - port: 10350
+          protocol: TCP
+        - port: 10001
+          protocol: UDP
+        - port: 10000
+          protocol: TCP
+    # Allow metrics scraping
+    - ports:
+        - port: 10250
+          protocol: TCP
+      from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Allow API server access
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 7445
+          protocol: TCP
+    # Allow internet access for Tailscale
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 41641
+          protocol: UDP

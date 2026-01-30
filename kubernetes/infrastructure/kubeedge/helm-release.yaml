@@ -72,3 +72,8 @@ spec:
 
     featureGates:
         NodeLazyConnectivity: true
+
+    # Disable iptables-manager - incompatible with Cilium eBPF mode
+    # Cilium doesn't provide traditional iptables nat table when using eBPF
+    iptablesManager:
+      enable: false

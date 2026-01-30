@@ -23,7 +23,7 @@ spec:
   values:
     image:
       repository: kubeedge/cloudcore
-      tag: "v1.21.0"
+      tag: "v1.22.1"
       pullPolicy: IfNotPresent
 
     replicas: 2

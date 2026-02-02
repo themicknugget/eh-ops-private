@@ -48,6 +48,11 @@ spec:
                         - kubeedge
                 topologyKey: kubernetes.io/hostname
 
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
       resources:
         requests:
           cpu: 100m

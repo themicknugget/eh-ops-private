@@ -8,6 +8,7 @@ resources:
   - gateway
   - storage
   - tailscale
+  - tailscale-connector
   - k8s-gateway
   - cloudflare-tunnel
   - prometheus

@@ -26,59 +26,61 @@ spec:
       tag: "v1.22.1"
       pullPolicy: IfNotPresent
 
-    replicas: 2
+    cloudCore:
+      replicaCount: 2
 
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: node-role.kubernetes.io/control-plane
-                  operator: Exists
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: k8s-app
-                    operator: In
-                    values:
-                      - kubeedge
-              topologyKey: kubernetes.io/hostname
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: k8s-app
+                      operator: In
+                      values:
+                        - kubeedge
+                topologyKey: kubernetes.io/hostname
 
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
 
-    cloudHub:
-      advertiseAddress:
-        # LoadBalancer IP for edge node connections
-        - 192.168.1.66
-        # Accessible via Tailscale subnet router (192.168.1.64/28)
-        # Edge nodes connect through existing Tailscale infrastructure
-        - 0.0.0.0
-      dnsNames:
-        - 192.168.1.66
-      port: 10350
-      websocket:
-        enable: true
-        port: 10000
-      quic:
-        enable: true
-        port: 10001
-      https:
-        enable: true
+      modules:
+        cloudHub:
+          advertiseAddress:
+            # LoadBalancer IP for edge node connections
+            - 192.168.1.66
+            # Accessible via Tailscale subnet router (192.168.1.64/28)
+            # Edge nodes connect through existing Tailscale infrastructure
+            - 0.0.0.0
+          dnsNames:
+            - 192.168.1.66
+          port: 10350
+          websocket:
+            enable: true
+            port: 10000
+          quic:
+            enable: true
+            port: 10001
+          https:
+            enable: true
 
-    cloudStream:
-      enable: false
+        cloudStream:
+          enable: false
 
-    dynamicController:
-      enable: true
+        dynamicController:
+          enable: true
 
     featureGates:
         NodeLazyConnectivity: true

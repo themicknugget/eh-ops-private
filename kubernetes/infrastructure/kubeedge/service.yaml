@@ -12,8 +12,8 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 192.168.1.66
   selector:
-    app.kubernetes.io/name: cloudcore
-    app.kubernetes.io/instance: cloudcore
+    k8s-app: kubeedge
+    kubeedge: cloudcore
   ports:
     - name: cloudhub
       port: 10350
@@ -27,3 +27,7 @@ spec:
       port: 10000
       protocol: TCP
       targetPort: 10000
+    - name: cloudhub-https
+      port: 10002
+      protocol: TCP
+      targetPort: 10002

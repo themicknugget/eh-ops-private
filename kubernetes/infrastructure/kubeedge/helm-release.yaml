@@ -51,9 +51,13 @@ spec:
 
     cloudHub:
       advertiseAddress:
+        # LoadBalancer IP for edge node connections
+        - 192.168.1.66
         # Accessible via Tailscale subnet router (192.168.1.64/28)
         # Edge nodes connect through existing Tailscale infrastructure
         - 0.0.0.0
+      dnsNames:
+        - 192.168.1.66
       port: 10350
       websocket:
         enable: true

@@ -41,10 +41,10 @@ spec:
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                  - key: app.kubernetes.io/name
+                  - key: k8s-app
                     operator: In
                     values:
-                      - cloudcore
+                      - kubeedge
               topologyKey: kubernetes.io/hostname
 
     resources:

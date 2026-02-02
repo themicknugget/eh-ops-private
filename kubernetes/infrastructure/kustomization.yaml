@@ -15,7 +15,6 @@ resources:
   - metrics-server
   - kyverno
   - amd-gpu
-  - talos-api
   - kubeedge
   - localai
   - kube-actions-runner

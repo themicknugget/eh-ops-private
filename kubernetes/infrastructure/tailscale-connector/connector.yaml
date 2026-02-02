@@ -12,6 +12,10 @@ spec:
       - "10.96.0.0/12"
       # K8S API Server
       - "192.168.1.50/32"
+      # Control plane nodes - Talos API access
+      - "192.168.1.51/32"
+      - "192.168.1.52/32"
+      - "192.168.1.53/32"
       # LoadBalancer pool - access to exposed services
       - "192.168.1.64/28"
   tags:

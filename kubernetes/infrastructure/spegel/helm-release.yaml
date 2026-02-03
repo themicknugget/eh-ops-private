@@ -50,3 +50,12 @@ spec:
       enabled: true
       labels:
         release: kube-prometheus-stack
+
+    # Exclude edge nodes (they operate autonomously without cluster CNI)
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-role.kubernetes.io/edge
+                  operator: DoesNotExist

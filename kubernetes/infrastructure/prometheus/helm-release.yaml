@@ -149,6 +149,13 @@ spec:
           memory: 64Mi
         limits:
           memory: 128Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/edge
+                    operator: DoesNotExist
 
     # Kube State Metrics
     kubeStateMetrics:

@@ -7,3 +7,4 @@ resources:
   - service.yaml
   - network-policy.yaml
   - servicemonitor.yaml
+  - cloudstream-iptables.yaml

@@ -27,7 +27,7 @@ spec:
       pullPolicy: IfNotPresent
 
     cloudCore:
-      replicaCount: 2
+      replicaCount: 1
 
       affinity:
         nodeAffinity:

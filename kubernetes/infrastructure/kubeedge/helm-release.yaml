@@ -82,7 +82,9 @@ spec:
             enable: true
 
         cloudStream:
-          enable: false
+          enable: true
+          streamPort: 10003
+          tunnelPort: 10004
 
         dynamicController:
           enable: true

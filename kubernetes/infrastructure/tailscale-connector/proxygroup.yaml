@@ -1,0 +1,11 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: cluster-egress
+  namespace: tailscale
+spec:
+  replicas: 2
+  type: egress
+  tags:
+    - "tag:k8s"

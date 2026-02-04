@@ -34,11 +34,19 @@ spec:
               echo "$(date): Cleaning up old iptables rules"
               iptables -t nat -D OUTPUT -d 100.70.241.51 -j DNAT --to-destination 10.244.5.9 2>/dev/null || true
               iptables -t nat -D OUTPUT -d 100.70.241.51 -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null || true
+              for port in 10357 10358 10359 10360; do
+                iptables -t nat -D OUTPUT -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null || true
+                iptables -t nat -D PREROUTING -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null || true
+              done
 
               while true; do
                 # Redirect cloudbox1 edge node traffic to CloudCore CloudStream
-                # cloudbox1 IP: 100.70.241.51, kubelet port: 10357
+                # cloudbox1 Tailscale IP: 100.70.241.51
+                # Edge kubelet ports: 10357-10360 (varies by node)
                 # CloudCore CloudStream: 192.168.1.66:10003
+
+                # Port-based DNAT rules work better with Cilium eBPF than IP-based rules
+                # Use INSERT (-I) to ensure processing before Cilium eBPF chains
 
                 # Add route for cloudbox1 IP so packets can be sent (will be DNATed)
                 if ! ip route show | grep -q "100.70.241.51"; then
@@ -46,9 +54,25 @@ spec:
                   ip route add 100.70.241.51 via 192.168.1.1 2>/dev/null || true
                 fi
 
-                # DNAT cloudbox1 traffic to CloudCore CloudStream
+                # Port-based DNAT rules (OUTPUT chain for local traffic)
+                for port in 10357 10358 10359 10360; do
+                  if ! iptables -t nat -C OUTPUT -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null; then
+                    echo "$(date): Adding CloudStream OUTPUT DNAT rule for port $port"
+                    iptables -t nat -I OUTPUT -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003
+                  fi
+                done
+
+                # Port-based DNAT rules (PREROUTING chain for forwarded traffic)
+                for port in 10357 10358 10359 10360; do
+                  if ! iptables -t nat -C PREROUTING -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null; then
+                    echo "$(date): Adding CloudStream PREROUTING DNAT rule for port $port"
+                    iptables -t nat -I PREROUTING -p tcp --dport $port -j DNAT --to-destination 192.168.1.66:10003
+                  fi
+                done
+
+                # IP-based DNAT rule as fallback (appended, lower priority)
                 if ! iptables -t nat -C OUTPUT -d 100.70.241.51 -p tcp -j DNAT --to-destination 192.168.1.66:10003 2>/dev/null; then
-                  echo "$(date): Adding CloudStream DNAT rule for cloudbox1"
+                  echo "$(date): Adding CloudStream IP-based DNAT rule for cloudbox1"
                   iptables -t nat -A OUTPUT -d 100.70.241.51 -p tcp -j DNAT --to-destination 192.168.1.66:10003
                 fi
 

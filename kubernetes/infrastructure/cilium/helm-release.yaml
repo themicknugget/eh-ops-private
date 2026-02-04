@@ -70,7 +70,7 @@ data:
     # Bypass socket-level LB for pod traffic
     # Required for Cilium Gateway API services which have no traditional backends
     socketLB:
-      hostNamespaceOnly: true
+      enabled: false
 
     bpf:
       enableTCX: false

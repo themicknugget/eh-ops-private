@@ -166,7 +166,7 @@ data:
     # Bandwidth manager for QoS
     bandwidthManager:
       enabled: true
-      bbr: true
+      bbr: false
 
     # Tolerations for control plane nodes and agent-not-ready deadlock prevention
     tolerations:

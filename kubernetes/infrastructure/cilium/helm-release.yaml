@@ -74,6 +74,7 @@ data:
 
     bpf:
       enableTCX: false
+      hostLegacyRouting: true
 
     # Talos-specific cgroup configuration
     cgroup:

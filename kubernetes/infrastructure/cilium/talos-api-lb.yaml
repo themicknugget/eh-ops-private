@@ -7,8 +7,8 @@ metadata:
   name: talos-api-lb
   namespace: kube-system
   annotations:
-    # Share the same IP as api-server-lb
-    io.cilium/lb-ipam-ips: "192.168.1.50"
+    # Use dedicated IP for Talos API (192.168.1.50 is taken by api-server-lb)
+    io.cilium/lb-ipam-ips: "192.168.1.67"
 spec:
   type: LoadBalancer
   ports:

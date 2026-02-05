@@ -65,7 +65,7 @@ data:
       enabled: true
 
     loadBalancer:
-      acceleration: disabled
+      acceleration: best-effort
 
     # Bypass socket-level LB for pod traffic
     # Required for Cilium Gateway API services which have no traditional backends

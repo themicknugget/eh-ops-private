@@ -16,7 +16,7 @@ spec:
     port: 50000
     protocol: TCP
     targetPort: 50000
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   sessionAffinity: None
 ---
 # Manual endpoints pointing to Talos API on control plane nodes

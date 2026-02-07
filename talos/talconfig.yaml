@@ -304,7 +304,7 @@ nodes:
     ipAddress: 10.0.0.214
     controlPlane: false
     installDisk: /dev/sda
-    talosImageURL: factory.talos.dev/oracle-installer/7d4c31cbd96db9f90c874990697c523482b2bae27fb4631d5583dcd9c281b1ff
+    talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
     machineSpec:
       mode: cloud
       secureboot: false
@@ -339,10 +339,6 @@ nodes:
             nodeIP:
               validSubnets:
                 - 10.0.0.0/24
-          logging:
-            destinations:
-              - endpoint: tcp://127.0.0.1:8383
-                format: json_lines
         cluster:
           controlPlane:
             endpoint: https://192.168.1.50:6443

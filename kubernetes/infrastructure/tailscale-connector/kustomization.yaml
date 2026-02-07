@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - connector.yaml
   - proxygroup.yaml
+  - kyverno-policy-hostnetwork.yaml

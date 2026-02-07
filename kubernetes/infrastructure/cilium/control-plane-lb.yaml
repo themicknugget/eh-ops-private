@@ -1,17 +1,20 @@
 ---
-# LoadBalancer Service for Talos API (port 50000)
-# Shares the same IP as api-server-lb (192.168.1.50) but on different port
+# Unified Control Plane LoadBalancer
+# Exposes both Kubernetes API (6443) and Talos API (50000, 50001)
 apiVersion: v1
 kind: Service
 metadata:
-  name: talos-api-lb
+  name: api-server-lb
   namespace: kube-system
   annotations:
-    # Use dedicated IP for Talos API (192.168.1.50 is taken by api-server-lb)
-    io.cilium/lb-ipam-ips: "192.168.1.67"
+    io.cilium/lb-ipam-ips: "192.168.1.50"
 spec:
   type: LoadBalancer
   ports:
+  - name: api-server
+    port: 6443
+    protocol: TCP
+    targetPort: 6443
   - name: talos-api
     port: 50000
     protocol: TCP
@@ -23,11 +26,11 @@ spec:
   externalTrafficPolicy: Cluster
   sessionAffinity: None
 ---
-# Manual endpoints pointing to Talos API on control plane nodes
+# Manual endpoints for all control plane services
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: talos-api-lb
+  name: api-server-lb
   namespace: kube-system
 subsets:
 - addresses:
@@ -35,6 +38,9 @@ subsets:
   - ip: 192.168.1.52
   - ip: 192.168.1.53
   ports:
+  - name: api-server
+    port: 6443
+    protocol: TCP
   - name: talos-api
     port: 50000
     protocol: TCP

@@ -1,6 +1,6 @@
 ---
 clusterName: eh-ops
-talosVersion: v1.12.0
+talosVersion: v1.12.2
 kubernetesVersion: v1.35.0
 endpoint: https://127.0.0.1:7445
 domain: cluster.local
@@ -223,8 +223,8 @@ nodes:
           xmitHashPolicy: encap3+4
           miimon: 100
           deviceSelectors:
-            - hardwareAddr: 78:55:36:01:1d:1d
-            - hardwareAddr: 78:55:36:01:1d:1e
+            - permanentAddr: 78:55:36:01:1d:1d
+            - permanentAddr: 78:55:36:01:1d:1e
         addresses:
           - 192.168.1.57/24
         routes:
@@ -257,8 +257,8 @@ nodes:
           xmitHashPolicy: encap3+4
           miimon: 100
           deviceSelectors:
-            - hardwareAddr: 78:55:36:01:1a:a7
-            - hardwareAddr: 78:55:36:01:1a:a8
+            - permanentAddr: 78:55:36:01:1a:a7
+            - permanentAddr: 78:55:36:01:1a:a8
         addresses:
           - 192.168.1.58/24
         routes:
@@ -291,16 +291,80 @@ nodes:
           xmitHashPolicy: encap3+4
           miimon: 100
           deviceSelectors:
-            - hardwareAddr: 78:55:36:01:1b:65
-            - hardwareAddr: 78:55:36:01:1b:66
+            - permanentAddr: 78:55:36:01:1b:65
+            - permanentAddr: 78:55:36:01:1b:66
         addresses:
           - 192.168.1.59/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
 
+  # cloudbox2 - Worker node (Oracle Cloud ARM64 with Tailscale)
+  - hostname: cloudbox2
+    ipAddress: 10.0.0.214
+    controlPlane: false
+    installDisk: /dev/sda
+    talosImageURL: factory.talos.dev/oracle-installer/7d4c31cbd96db9f90c874990697c523482b2bae27fb4631d5583dcd9c281b1ff
+    machineSpec:
+      mode: cloud
+      secureboot: false
+    certSANs:
+      - 150.136.211.213
+      - 10.0.0.214
+    extensionServices:
+      - name: tailscale
+        environment:
+          - TS_AUTHKEY=${tailscaleAuthKey}
+          - TS_EXTRA_ARGS=--accept-routes
+    patches:
+      - |-
+        apiVersion: v1alpha1
+        kind: ResolverConfig
+        nameservers:
+          - address: 169.254.169.254
+      - |-
+        machine:
+          sysctls:
+            user.max_user_namespaces: "11255"
+            net.core.rmem_max: "134217728"
+            net.core.wmem_max: "134217728"
+            net.ipv4.tcp_rmem: "4096 87380 134217728"
+            net.ipv4.tcp_wmem: "4096 65536 134217728"
+            net.ipv4.tcp_congestion_control: "bbr"
+            net.core.default_qdisc: "fq"
+          network:
+            kubespan:
+              enabled: false
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 10.0.0.0/24
+          logging:
+            destinations:
+              - endpoint: tcp://127.0.0.1:8383
+                format: json_lines
+        cluster:
+          controlPlane:
+            endpoint: https://192.168.1.50:6443
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: 02:00:17:27:16:32
+        dhcp: false
+        addresses:
+          - 10.0.0.214/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.0.0.1
+          - network: 169.254.0.0/16
+
 
 patches:
+  - |-
+    apiVersion: v1alpha1
+    kind: ResolverConfig
+    nameservers:
+      - address: 1.1.1.1
+      - address: 1.0.0.1
   - |-
     machine:
       kubelet:
@@ -363,6 +427,10 @@ patches:
 
 controlPlane:
   patches:
+    - |-
+      machine:
+        certSANs:
+          - 192.168.1.67
     - |-
       cluster:
         extraManifests:

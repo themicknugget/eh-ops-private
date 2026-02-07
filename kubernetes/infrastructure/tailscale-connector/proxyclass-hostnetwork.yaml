@@ -1,0 +1,14 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: hostnetwork-connector
+spec:
+  statefulSet:
+    labels:
+      tailscale-routing: "enabled"
+    pod:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet

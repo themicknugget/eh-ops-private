@@ -16,6 +16,10 @@ spec:
     port: 50000
     protocol: TCP
     targetPort: 50000
+  - name: trustd
+    port: 50001
+    protocol: TCP
+    targetPort: 50001
   externalTrafficPolicy: Cluster
   sessionAffinity: None
 ---
@@ -33,4 +37,7 @@ subsets:
   ports:
   - name: talos-api
     port: 50000
+    protocol: TCP
+  - name: trustd
+    port: 50001
     protocol: TCP

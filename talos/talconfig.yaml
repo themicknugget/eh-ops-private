@@ -33,11 +33,17 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.55
     patches:
       - |-
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 192.168.1.0/24
 
   # mini2 - Control plane node
   - hostname: mini2
@@ -54,11 +60,17 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.55
     patches:
       - |-
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 192.168.1.0/24
 
   # mini3 - Control plane node
   - hostname: mini3
@@ -71,6 +83,14 @@ nodes:
         machine:
           sysctls:
             user.max_user_namespaces: "11255"
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 192.168.1.0/24
+        cluster:
+          etcd:
+            advertisedSubnets:
+              - 192.168.1.0/24
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 50:eb:f6:ef:49:84
@@ -80,8 +100,10 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.55
 
-  # miniryzen - Worker node
+  # miniryzen - Worker node (Tailscale subnet router host)
   - hostname: miniryzen
     ipAddress: 192.168.1.55
     controlPlane: false
@@ -98,6 +120,8 @@ nodes:
             net.ipv4.tcp_wmem: "4096 65536 134217728"
             net.ipv4.tcp_congestion_control: "bbr"
             net.core.default_qdisc: "fq"
+            net.ipv4.ip_forward: "1"
+            net.ipv4.conf.all.forwarding: "1"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
@@ -301,7 +325,7 @@ nodes:
 
   # cloudbox2 - Worker node (Oracle Cloud ARM64 with Tailscale)
   - hostname: cloudbox2
-    ipAddress: 10.0.0.214
+    ipAddress: 10.0.0.173
     controlPlane: false
     installDisk: /dev/sda
     talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
@@ -309,8 +333,8 @@ nodes:
       mode: cloud
       secureboot: false
     certSANs:
-      - 150.136.211.213
-      - 10.0.0.214
+      - 150.136.113.236
+      - 10.0.0.173
     extensionServices:
       - name: tailscale
         environment:
@@ -338,16 +362,16 @@ nodes:
           kubelet:
             nodeIP:
               validSubnets:
-                - 10.0.0.0/24
+                - 100.64.0.0/10
         cluster:
           controlPlane:
             endpoint: https://192.168.1.50:6443
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: 02:00:17:27:16:32
+          hardwareAddr: 02:00:17:0e:03:e8
         dhcp: false
         addresses:
-          - 10.0.0.214/24
+          - 10.0.0.173/24
         routes:
           - network: 0.0.0.0/0
             gateway: 10.0.0.1

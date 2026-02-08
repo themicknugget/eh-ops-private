@@ -362,6 +362,20 @@ nodes:
             nodeIP:
               validSubnets:
                 - 100.64.0.0/10
+          registries:
+            mirrors:
+              docker.io:
+                endpoints:
+                  - https://registry-1.docker.io
+              ghcr.io:
+                endpoints:
+                  - https://ghcr.io
+              registry.k8s.io:
+                endpoints:
+                  - https://registry.k8s.io
+              quay.io:
+                endpoints:
+                  - https://quay.io
         cluster:
           controlPlane:
             endpoint: https://192.168.1.50:6443
@@ -416,6 +430,20 @@ nodes:
             nodeIP:
               validSubnets:
                 - 100.64.0.0/10
+          registries:
+            mirrors:
+              docker.io:
+                endpoints:
+                  - https://registry-1.docker.io
+              ghcr.io:
+                endpoints:
+                  - https://ghcr.io
+              registry.k8s.io:
+                endpoints:
+                  - https://registry.k8s.io
+              quay.io:
+                endpoints:
+                  - https://quay.io
         cluster:
           controlPlane:
             endpoint: https://192.168.1.50:6443

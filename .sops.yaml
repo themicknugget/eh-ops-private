@@ -3,9 +3,9 @@
 # https://github.com/getsops/sops
 
 creation_rules:
-  # Any .sops.yaml file - encrypt secrets, tokens, and K8s data fields
+  # Any .sops.yaml file - encrypt secrets, tokens, keys, and K8s data fields
   - path_regex: .+\.sops\.ya?ml$
-    encrypted_regex: ^(data|stringData|secrets|token|githubTokens?)$
+    encrypted_regex: ^(data|stringData|secrets|token|githubTokens?|.*Key|.*Auth.*)$
     age: age1va7h9cnqt2gfhvy0pj947wmmewlahvj9j4zyzfznkpp9erf8xawscgft7c
 
   # Other secrets-related files

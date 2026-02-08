@@ -322,6 +322,60 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
 
+  # cloudbox1 - Worker node (Oracle Cloud ARM64 with Tailscale)
+  - hostname: cloudbox1
+    ipAddress: 10.0.0.140
+    controlPlane: false
+    installDisk: /dev/sda
+    talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
+    machineSpec:
+      mode: cloud
+      secureboot: false
+    certSANs:
+      - 150.136.172.175
+      - 10.0.0.140
+    extensionServices:
+      - name: tailscale
+        environment:
+          - TS_AUTHKEY=${tailscaleAuthKey}
+          - TS_EXTRA_ARGS=--accept-routes
+    patches:
+      - |-
+        apiVersion: v1alpha1
+        kind: ResolverConfig
+        nameservers:
+          - address: 169.254.169.254
+      - |-
+        machine:
+          sysctls:
+            user.max_user_namespaces: "11255"
+            net.core.rmem_max: "134217728"
+            net.core.wmem_max: "134217728"
+            net.ipv4.tcp_rmem: "4096 87380 134217728"
+            net.ipv4.tcp_wmem: "4096 65536 134217728"
+            net.ipv4.tcp_congestion_control: "bbr"
+            net.core.default_qdisc: "fq"
+          network:
+            kubespan:
+              enabled: false
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 100.64.0.0/10
+        cluster:
+          controlPlane:
+            endpoint: https://192.168.1.50:6443
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: 02:00:17:05:51:46
+        dhcp: false
+        addresses:
+          - 10.0.0.140/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.0.0.1
+          - network: 169.254.0.0/16
+
   # cloudbox2 - Worker node (Oracle Cloud ARM64 with Tailscale)
   - hostname: cloudbox2
     ipAddress: 10.0.0.173
@@ -449,7 +503,7 @@ controlPlane:
     - |-
       machine:
         certSANs:
-          - 192.168.1.67
+          - 192.168.1.50
     - |-
       cluster:
         extraManifests:

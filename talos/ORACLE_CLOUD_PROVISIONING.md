@@ -16,6 +16,7 @@ Oracle Cloud ARM64 instances (Ampere A1) require a specific provisioning workflo
 - Oracle Cloud instance created with sufficient disk space
 - Factory Talos image with required extensions (tailscale)
 - SOPS age key for decrypting secrets
+- **Tailscale auth key tagged with `tag:k8s`** (critical for ACL permissions)
 
 ## Provisioning Steps
 
@@ -50,8 +51,8 @@ curl -L "${IMAGE_URL}" | xzcat | dd of=/dev/sda bs=4M status=progress conv=fsync
 Add the node configuration with proper settings for Oracle Cloud:
 
 ```yaml
-- hostname: cloudbox2
-  ipAddress: 10.0.0.214  # Oracle Cloud internal IP
+- hostname: <HOSTNAME>  # Example: cloudbox2
+  ipAddress: <INTERNAL_IP>  # Oracle Cloud internal IP (e.g., 10.0.0.173)
   controlPlane: false
   installDisk: /dev/sda
   talosImageURL: factory.talos.dev/oracle-installer/${SCHEMATIC_ID}
@@ -59,13 +60,13 @@ Add the node configuration with proper settings for Oracle Cloud:
     mode: cloud
     secureboot: false
   certSANs:
-    - 150.136.211.213  # Public IP
-    - 10.0.0.214       # Internal IP
+    - <PUBLIC_IP>    # Oracle Cloud public IP (for provisioning access)
+    - <INTERNAL_IP>  # Oracle Cloud internal IP
   extensionServices:
     - name: tailscale
       environment:
-        - TS_AUTHKEY=${tailscaleAuthKey}
-        - TS_EXTRA_ARGS=--accept-routes  # Accept subnet routes
+        - TS_AUTHKEY=${tailscaleAuthKey}  # Must be tagged with tag:k8s
+        - TS_EXTRA_ARGS=--accept-routes   # Accept subnet routes
   patches:
     - |-
       apiVersion: v1alpha1
@@ -80,21 +81,26 @@ Add the node configuration with proper settings for Oracle Cloud:
         kubelet:
           nodeIP:
             validSubnets:
-              - 10.0.0.0/24  # Ensure correct IP selection
+              - 100.64.0.0/10  # Use Tailscale IP as node IP
       cluster:
         controlPlane:
           endpoint: https://192.168.1.50:6443  # Unified control plane LB
   networkInterfaces:
     - deviceSelector:
-        hardwareAddr: 02:00:17:27:16:32  # Get from Oracle Cloud console
+        hardwareAddr: <MAC_ADDRESS>  # Get from Oracle Cloud console
       dhcp: false
       addresses:
-        - 10.0.0.214/24
+        - <INTERNAL_IP>/24
       routes:
         - network: 0.0.0.0/0
           gateway: 10.0.0.1
         - network: 169.254.0.0/16  # Required for Oracle Cloud metadata
 ```
+
+**Important Notes:**
+- **TS_AUTHKEY must be tagged** with `tag:k8s` in Tailscale admin console for proper ACL permissions
+- **validSubnets: 100.64.0.0/10** ensures kubelet uses Tailscale IP, enabling API server connectivity via Tailscale tunnel
+- **certSANs** are primarily for talosctl access during the provisioning phase
 
 ### 4. Create Temporary Bootstrap Configuration
 
@@ -105,7 +111,7 @@ cd /tmp
 talosctl gen config temp-cluster https://127.0.0.1:6443 \
   --install-disk /dev/sda \
   --install-image factory.talos.dev/installer/${SCHEMATIC_ID}:${TALOS_VERSION} \
-  --additional-sans cloudbox2-temp \
+  --additional-sans <HOSTNAME>-temp \
   --additional-sans <PUBLIC_IP>
 ```
 
@@ -125,7 +131,7 @@ talosctl -n <PUBLIC_IP> apply-config --file /tmp/controlplane.yaml --insecure
 sleep 30
 
 # Bootstrap the temporary single-node cluster
-talosctl --talosconfig /tmp/talosconfig -e <PUBLIC_IP> -n cloudbox2-temp bootstrap
+talosctl --talosconfig /tmp/talosconfig -e <PUBLIC_IP> -n <HOSTNAME>-temp bootstrap
 ```
 
 **Why this works:**
@@ -139,7 +145,7 @@ Run the upgrade to activate system extensions:
 
 ```bash
 talosctl --talosconfig /tmp/talosconfig \
-  -e <PUBLIC_IP> -n cloudbox2-temp \
+  -e <PUBLIC_IP> -n <HOSTNAME>-temp \
   upgrade --image factory.talos.dev/installer/${SCHEMATIC_ID}:${TALOS_VERSION} \
   --preserve --wait=false
 ```
@@ -154,7 +160,7 @@ sleep 60
 
 # Verify extensions are active
 talosctl --talosconfig /tmp/talosconfig \
-  -e <PUBLIC_IP> -n cloudbox2-temp \
+  -e <PUBLIC_IP> -n <HOSTNAME>-temp \
   get extensions
 ```
 
@@ -179,8 +185,8 @@ Apply the real worker config to join the actual cluster:
 
 ```bash
 talosctl --talosconfig /tmp/talosconfig \
-  -e <PUBLIC_IP> -n cloudbox2-temp \
-  apply-config --file clusterconfig/eh-ops-cloudbox2.yaml
+  -e <PUBLIC_IP> -n <HOSTNAME>-temp \
+  apply-config --file clusterconfig/eh-ops-<HOSTNAME>.yaml
 ```
 
 The node will reboot and:
@@ -208,8 +214,8 @@ kubectl get nodes
 
 Expected output:
 ```
-NAME        STATUS   ROLES    AGE   VERSION
-cloudbox2   Ready    <none>   5m    v1.35.0
+NAME         STATUS   ROLES    AGE   VERSION
+<HOSTNAME>   Ready    <none>   5m    v1.35.0
 ```
 
 ## Troubleshooting
@@ -223,7 +229,7 @@ talosctl -n <PUBLIC_IP> service ext-tailscale
 
 Common issues:
 - Auth key expired - generate new key in Tailscale admin console
-- Tag permissions - remove `--advertise-tags` if not configured in ACLs
+- Auth key not tagged - ensure key is pre-tagged with `tag:k8s` for ACL permissions
 
 ### apid Not Starting
 
@@ -240,7 +246,7 @@ Common issues:
 
 Check Cilium status:
 ```bash
-kubectl describe node cloudbox2 | grep -A 10 "Conditions:"
+kubectl describe node <HOSTNAME> | grep -A 10 "Conditions:"
 ```
 
 Wait for Cilium to configure networking (usually 30-60 seconds).
@@ -252,20 +258,21 @@ Wait for Cilium to configure networking (usually 30-60 seconds).
 │ Oracle Cloud (10.0.0.0/24)                                  │
 │                                                              │
 │  ┌─────────────────────────────────────────┐               │
-│  │ cloudbox2                                │               │
-│  │ - Internal IP: 10.0.0.214                │               │
-│  │ - Public IP: 150.136.211.213             │               │
-│  │ - Tailscale IP: 100.122.85.120           │               │
+│  │ <HOSTNAME>                               │               │
+│  │ - Internal IP: <INTERNAL_IP>             │               │
+│  │ - Public IP: <PUBLIC_IP>                 │               │
+│  │ - Tailscale IP: <TAILSCALE_IP>           │               │
 │  │                                           │               │
 │  │ ┌─────────────────────────────────────┐ │               │
-│  │ │ Tailscale                           │ │               │
+│  │ │ Tailscale Extension                 │ │               │
 │  │ │ - Accept routes: 192.168.1.51-53    │ │               │
 │  │ │ - Accept routes: 192.168.1.50       │ │               │
+│  │ │ - Tagged with tag:k8s               │ │               │
 │  │ └─────────────────────────────────────┘ │               │
 │  └─────────────────────────────────────────┘               │
 └─────────────────────────────────────────────────────────────┘
                          │
-                         │ Tailscale VPN
+                         │ Tailscale VPN (WireGuard tunnel)
                          │
 ┌─────────────────────────────────────────────────────────────┐
 │ Home Network (192.168.1.0/24)                               │
@@ -283,9 +290,11 @@ Wait for Cilium to configure networking (usually 30-60 seconds).
 │  └─────────────────────────────────────────────┘           │
 │                                                              │
 │  ┌─────────────────────────────────────────────┐           │
-│  │ eh-ops-subnet (Tailscale Router)            │           │
+│  │ Tailscale Connector (3 replicas)            │           │
 │  │ - Advertises: 192.168.1.50/32               │           │
 │  │ - Advertises: 192.168.1.51-53/32            │           │
+│  │ - Advertises: 10.244.0.0/16 (Pod CIDR)      │           │
+│  │ - Advertises: 10.96.0.0/12 (Service CIDR)   │           │
 │  └─────────────────────────────────────────────┘           │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -323,10 +332,25 @@ Oracle Cloud requires:
 3. **Temporary config is necessary** - Direct worker config won't work without activated extensions
 4. **Bootstrap is required** - The temporary cluster must be bootstrapped to access the upgrade API
 5. **Public IP in certSANs** - Required for talosctl access during provisioning
+6. **Tagged auth keys are critical** - Auth key MUST be pre-tagged with `tag:k8s` in Tailscale admin console for proper ACL permissions. Without this tag, Tailscale ACLs will block return traffic from Connector pods to the edge node, causing asymmetric routing failures.
+7. **Use Tailscale IP as node IP** - Setting `validSubnets: [100.64.0.0/10]` ensures kubelet binds to the Tailscale IP, allowing the API server to reach it via the Tailscale tunnel. Do NOT use the Oracle Cloud internal IP (10.0.0.0/24) as the node IP.
+
+## Placeholder Examples
+
+When following this guide, replace placeholders with actual values from your Oracle Cloud instance:
+
+| Placeholder | Example Value | Where to Find |
+|-------------|---------------|---------------|
+| `<HOSTNAME>` | `cloudbox2` | Choose a descriptive name |
+| `<INTERNAL_IP>` | `10.0.0.173` | Oracle Cloud console → Instance → Primary VNIC |
+| `<PUBLIC_IP>` | `150.136.113.236` | Oracle Cloud console → Instance → Public IP |
+| `<TAILSCALE_IP>` | `100.121.18.12` | Tailscale admin console after node connects |
+| `<MAC_ADDRESS>` | `02:00:17:0e:03:e8` | Oracle Cloud console → Instance → Attached VNICs → MAC Address |
 
 ## Related Documentation
 
 - [Talos Oracle Cloud Guide](https://www.talos.dev/v1.12/talos-guides/install/cloud-platforms/oracle/)
 - [Talos System Extensions](https://www.talos.dev/v1.12/talos-guides/configuration/system-extensions/)
 - [Tailscale Subnet Routers](https://tailscale.com/kb/1019/subnets)
+- [Tailscale ACLs and Tags](https://tailscale.com/kb/1068/acl-tags)
 - [Oracle Cloud IMDS](https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/gettingmetadata.htm)

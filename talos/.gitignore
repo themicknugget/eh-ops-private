@@ -3,6 +3,7 @@
 *.yaml
 !talconfig.yaml
 !talsecret.sops.yaml
+!talenv.sops.yaml
 
 # Ignore cluster-specific generated configs
 clusterconfig/*.yaml

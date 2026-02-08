@@ -47,6 +47,7 @@ data:
     directRoutingDevice: eno1
     ipv4NativeRoutingCIDR: 10.244.0.0/16
     autoDirectNodeRoutes: true
+    directRoutingSkipUnreachable: true
 
     # Enable kube-proxy replacement
     kubeProxyReplacement: true
@@ -74,6 +75,7 @@ data:
     bpf:
       enableTCX: false
       hostLegacyRouting: true
+      masquerade: true
 
     # Talos-specific cgroup configuration
     cgroup:

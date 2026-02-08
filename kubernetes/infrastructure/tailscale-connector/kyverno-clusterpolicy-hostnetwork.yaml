@@ -1,0 +1,36 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: tailscale-subnet-router-hostnetwork
+spec:
+  rules:
+    - name: add-hostnetwork
+      match:
+        any:
+          - resources:
+              kinds:
+                - StatefulSet
+              names:
+                - "ts-subnet-router-*"
+              namespaces:
+                - tailscale
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                hostNetwork: true
+                dnsPolicy: Default
+                hostAliases:
+                  - ip: "10.96.0.1"
+                    hostnames:
+                      - "kubernetes.default.svc"
+                      - "kubernetes.default.svc.cluster.local"
+                      - "kubernetes"
+                nodeSelector:
+                  node-role.kubernetes.io/control-plane: ""
+                tolerations:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+                    effect: NoSchedule

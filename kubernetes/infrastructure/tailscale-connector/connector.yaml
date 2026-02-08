@@ -6,7 +6,6 @@ metadata:
   namespace: tailscale
 spec:
   hostname: eh-ops-subnet
-  proxyClass: hostnetwork-connector
   subnetRouter:
     advertiseRoutes:
       # Pod CIDR - required for kubectl logs/exec to edge nodes

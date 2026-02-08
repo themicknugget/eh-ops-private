@@ -184,22 +184,3 @@ data:
       operator: Equal
       value: heavy
       effect: NoSchedule
-
-    # Exclude edge nodes from Cilium (they operate autonomously)
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: node-role.kubernetes.io/edge
-                  operator: DoesNotExist
-
-    # Cilium Envoy - also exclude edge nodes
-    envoy:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/edge
-                    operator: DoesNotExist

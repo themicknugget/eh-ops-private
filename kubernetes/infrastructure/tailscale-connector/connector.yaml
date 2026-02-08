@@ -5,7 +5,8 @@ metadata:
   name: subnet-router
   namespace: tailscale
 spec:
-  hostname: eh-ops-subnet
+  hostnamePrefix: eh-ops-subnet
+  replicas: 3
   subnetRouter:
     advertiseRoutes:
       # Pod CIDR - required for kubectl logs/exec to edge nodes

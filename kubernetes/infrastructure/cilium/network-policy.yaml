@@ -14,7 +14,9 @@ spec:
   - Egress
 
 ---
-# Allow Cloudflare Tunnel and Tailscale clients to reach Gateway API (HTTP/HTTPS)
+# Allow Cloudflare Tunnel to reach Gateway API (HTTP/HTTPS)
+# Cilium Gateway handles traffic via eBPF, but we need to allow the
+# initial connection to the gateway service
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -29,8 +31,6 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: cloudflare-operator-system
-    - ipBlock:
-        cidr: 100.64.0.0/10
     ports:
     - protocol: TCP
       port: 80
@@ -52,13 +52,11 @@ spec:
   - Ingress
   - Egress
   ingress:
-  # Allow Gateway API traffic from Cloudflare Tunnel and Tailscale
+  # Allow Gateway API traffic from Cloudflare Tunnel
   - from:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: cloudflare-operator-system
-    - ipBlock:
-        cidr: 100.64.0.0/10
     ports:
     - protocol: TCP
       port: 80

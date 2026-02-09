@@ -41,3 +41,11 @@ spec:
                 spec:
                   hostNetwork: true
                   dnsPolicy: ClusterFirstWithHostNet
+                  # xDS STRICT_DNS needs to resolve the controller service name;
+                  # DNS is broken from hostNetwork on this Cilium cluster so we
+                  # hardcode the controller's node IP (mini1).
+                  hostAliases:
+                    - ip: "192.168.1.51"
+                      hostnames:
+                        - envoy-gateway
+                        - envoy-gateway.envoy-gateway-system.svc.cluster.local

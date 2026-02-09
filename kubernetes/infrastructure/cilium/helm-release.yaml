@@ -61,6 +61,13 @@ data:
       enabled: true
       type: wireguard
 
+    # Only attach BPF to physical interfaces — excludes tailscale0 to avoid
+    # broken double-WireGuard (Cilium WG inside Tailscale WG) and let
+    # Tailscale handle encryption for its own tunnel traffic
+    devices:
+      - "en+"
+      - "bond+"
+
     # L2 announcements for LoadBalancer services
     l2announcements:
       enabled: true

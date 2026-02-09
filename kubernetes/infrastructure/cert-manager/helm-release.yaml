@@ -31,6 +31,12 @@ spec:
     # Webhook configuration for Talos compatibility
     webhook:
       securePort: 10260
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
 
     # Resource limits for production
     resources:
@@ -48,14 +54,6 @@ spec:
         effect: NoSchedule
 
     cainjector:
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-
-    webhook:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       tolerations:

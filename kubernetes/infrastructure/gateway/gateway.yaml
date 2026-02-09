@@ -19,6 +19,10 @@ spec:
     - eno1
     - enp.*
     - bond0
+  nodeSelector:
+    matchExpressions:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
   externalIPs: true
   loadBalancerIPs: true
 ---

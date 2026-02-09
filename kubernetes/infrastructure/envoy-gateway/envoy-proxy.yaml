@@ -10,6 +10,10 @@ metadata:
   name: proxy-config
   namespace: envoy-gateway-system
 spec:
+  # Cilium's Envoy uses base_id=0 with hostNetwork on every node
+  extraArgs:
+    - --base-id
+    - "1"
   provider:
     type: Kubernetes
     kubernetes:

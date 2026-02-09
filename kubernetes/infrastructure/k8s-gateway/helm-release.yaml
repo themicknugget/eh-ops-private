@@ -20,12 +20,64 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  # hostNetwork patches: chart hardcodes port 1053, but hostNetwork needs port 53
+  # so Tailscale split DNS can reach it on node IPs without going through Cilium LB
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: k8s-gateway
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: k8s-gateway
+              spec:
+                template:
+                  spec:
+                    hostNetwork: true
+                    dnsPolicy: ClusterFirstWithHostNet
+                    containers:
+                      - name: k8s-gateway
+                        ports:
+                          - containerPort: 53
+                            name: dns-udp
+                            protocol: UDP
+          - target:
+              kind: ConfigMap
+              name: k8s-gateway
+            patch: |
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: k8s-gateway
+              data:
+                Corefile: |
+                  .:53 {
+                    k8s_gateway . {
+                      apex k8s-gateway.kube-system
+                      ttl 300
+                      resources HTTPRoute
+                    }
+                    log
+                    errors
+                    health {
+                      lameduck 5s
+                    }
+                    ready
+                    prometheus 0.0.0.0:9153
+                    forward . /etc/resolv.conf
+                    loop
+                    reload
+                    loadbalance
+                  }
   values:
     # Catch-all domain - respond to any HTTPRoute hostname
     # Tailscale Split DNS controls which domains are forwarded
     domain: "."
 
-    # LoadBalancer so Tailscale split DNS can reach it (ClusterIPs aren't routable via subnet router)
+    # Keep LB for LAN clients; Tailscale clients use hostNetwork on node IPs
     service:
       type: LoadBalancer
       port: 53
@@ -34,7 +86,6 @@ spec:
     watchedResources:
       - HTTPRoute
 
-    # Resource limits
     resources:
       requests:
         cpu: 50m
@@ -50,5 +101,4 @@ spec:
         operator: Exists
         effect: NoSchedule
 
-    # DNS TTL for created records
     ttl: 300

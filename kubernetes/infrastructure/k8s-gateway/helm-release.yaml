@@ -43,5 +43,12 @@ spec:
         cpu: 100m
         memory: 128Mi
 
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
     # DNS TTL for created records
     ttl: 300

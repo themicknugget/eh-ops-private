@@ -27,6 +27,12 @@ spec:
       limits:
         cpu: 200m
         memory: 256Mi
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
     metrics:
       enabled: true
     serviceMonitor:

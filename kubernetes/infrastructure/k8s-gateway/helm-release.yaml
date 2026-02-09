@@ -24,28 +24,24 @@ spec:
   # so Tailscale split DNS can reach it on node IPs without going through Cilium LB
   postRenderers:
     - kustomize:
-        patchesStrategicMerge:
-          - apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              name: k8s-gateway
-            spec:
-              template:
-                spec:
-                  hostNetwork: true
-                  dnsPolicy: ClusterFirstWithHostNet
-                  containers:
-                    - name: k8s-gateway
-                      ports:
-                        - containerPort: 53
-                          name: dns-udp
-                          protocol: UDP
-        patchesJson6902:
+        patches:
           - target:
-              version: v1
+              kind: Deployment
+              name: k8s-gateway
+            patch: |
+              - op: add
+                path: /spec/template/spec/hostNetwork
+                value: true
+              - op: add
+                path: /spec/template/spec/dnsPolicy
+                value: ClusterFirstWithHostNet
+              - op: replace
+                path: /spec/template/spec/containers/0/ports/0/containerPort
+                value: 53
+          - target:
               kind: ConfigMap
               name: k8s-gateway
-            patch:
+            patch: |
               - op: replace
                 path: /data/Corefile
                 value: |

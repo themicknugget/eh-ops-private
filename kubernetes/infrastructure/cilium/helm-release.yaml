@@ -61,12 +61,13 @@ data:
       enabled: true
       type: wireguard
 
-    # Only attach BPF to physical interfaces — excludes tailscale0 to avoid
-    # broken double-WireGuard (Cilium WG inside Tailscale WG) and let
-    # Tailscale handle encryption for its own tunnel traffic
+    # LAN interfaces + tailscale0 so LB L7 proxy redirect works for Tailscale traffic.
+    # No double-WireGuard risk: Cilium WG only encrypts pod CIDR (10.244/16) between
+    # nodes — LB VIP traffic from tailscale0 just gets proxy-redirected, not encrypted.
     devices:
       - "en+"
       - "bond+"
+      - "tailscale+"
 
     # L2 announcements for LoadBalancer services
     l2announcements:

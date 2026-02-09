@@ -100,91 +100,7 @@ nodes:
             gateway: 192.168.1.53
             metric: 1026
 
-  # shadow - Worker node (AMD Strix Halo - Ryzen AI MAX+ 395, 128GB UMA)
-  # GPU: Radeon 8060S (gfx1151) with ROCm support
-  - hostname: shadow
-    ipAddress: 192.168.1.56
-    controlPlane: false
-    installDisk: /dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b4ab34307
-    # Factory image with amdgpu extension + extraKernelArgs (amd_iommu=off, ttm.pages_limit)
-    talosImageURL: factory.talos.dev/metal-installer-secureboot/852b61f1efe476c1917a0723f5185463cbec42b6f70ca51889b59c3f1b9631cf
-
-    patches:
-      # Limit EPHEMERAL to leave 40GB for swap (4TB disk ≈ 3.64TiB)
-      - |-
-        apiVersion: v1alpha1
-        kind: VolumeConfig
-        name: EPHEMERAL
-        provisioning:
-          diskSelector:
-            match: system_disk
-          maxSize: 3.6TiB
-          grow: true
-      # 32GB swap partition
-      - |-
-        apiVersion: v1alpha1
-        kind: SwapVolumeConfig
-        name: shadow-swap
-        provisioning:
-          diskSelector:
-            match: system_disk
-          minSize: 32GiB
-          maxSize: 32GiB
-      - |-
-        apiVersion: v1alpha1
-        kind: UserVolumeConfig
-        name: local-path-provisioner
-        volumeType: directory
-      - |-
-        machine:
-          sysctls:
-            vm.min_free_kbytes: "2097152"
-            vm.watermark_scale_factor: "200"
-            vm.swappiness: "60"
-            vm.dirty_ratio: "40"
-            vm.dirty_background_ratio: "10"
-          kernel:
-            modules:
-              - name: amdgpu
-              - name: ttm
-                parameters:
-                  - pages_limit=31457280
-          nodeLabels:
-            gpu.amd.com/device-present: "true"
-            gpu.amd.com/gpu-family: gfx1151
-            gpu.amd.com/gpu-model: radeon-8060s
-            node.kubernetes.io/instance-type: strix-halo
-            workload-type: gpu
-          nodeTaints:
-            workload-type: heavy:NoSchedule
-          kubelet:
-            extraConfig:
-              memorySwap:
-                swapBehavior: LimitedSwap
-              systemReserved:
-                cpu: "500m"
-                memory: "2Gi"
-                ephemeral-storage: "2Gi"
-              kubeReserved:
-                cpu: "500m"
-                memory: "512Mi"
-                ephemeral-storage: "1Gi"
-              evictionHard:
-                memory.available: "500Mi"
-                nodefs.available: "10%"
-              evictionSoft:
-                memory.available: "1Gi"
-                nodefs.available: "15%"
-              evictionSoftGracePeriod:
-                memory.available: "30s"
-                nodefs.available: "1m"
-    networkInterfaces:
-      - deviceSelector:
-          hardwareAddr: 9c:bf:0d:00:f2:54
-        dhcp: false
-        addresses:
-          - 192.168.1.56/24
-        routes: *lan_worker_routes
+  # shadow (192.168.1.56) - CachyOS, not Talos. Managed via /etc/sysctl.d/ and NetworkManager.
 
   # mini4 - Worker node
   - hostname: mini4
@@ -288,6 +204,8 @@ nodes:
             nodeIP:
               validSubnets:
                 - 100.64.0.0/10
+            extraArgs:
+              register-with-taints: node-role.kubernetes.io/edge:NoSchedule
           registries:
             mirrors:
               docker.io:

@@ -132,6 +132,12 @@ nodes:
             gateway: 192.168.1.1
           - network: 100.64.0.0/10
             gateway: 192.168.1.51
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.52
+            metric: 1025
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.53
+            metric: 1026
 
   # shadow - Worker node (AMD Strix Halo - Ryzen AI MAX+ 395, 128GB UMA)
   # GPU: Radeon 8060S (gfx1151) with ROCm support
@@ -221,6 +227,14 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.51
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.52
+            metric: 1025
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.53
+            metric: 1026
 
   # mini4 - Worker node
   - hostname: mini4
@@ -255,6 +269,14 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.51
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.52
+            metric: 1025
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.53
+            metric: 1026
 
   # mini5 - Worker node
   - hostname: mini5
@@ -289,6 +311,14 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.51
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.52
+            metric: 1025
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.53
+            metric: 1026
 
   # mini6 - Worker node
   - hostname: mini6
@@ -323,6 +353,14 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.51
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.52
+            metric: 1025
+          - network: 100.64.0.0/10
+            gateway: 192.168.1.53
+            metric: 1026
 
   # cloudbox1 - Worker node (Oracle Cloud ARM64 with Tailscale)
   - hostname: cloudbox1

@@ -6,7 +6,6 @@ resources:
   - cilium
   - cert-manager
   - gateway
-  - envoy-gateway
   - storage
   - tailscale
   - tailscale-connector

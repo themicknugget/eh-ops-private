@@ -33,20 +33,6 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
-    patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.ipv4.ip_forward: "1"
-          kubelet:
-            nodeIP:
-              validSubnets:
-                - 192.168.1.0/24
-        cluster:
-          etcd:
-            advertisedSubnets:
-              - 192.168.1.0/24
 
   # mini2 - Control plane node
   - hostname: mini2
@@ -63,15 +49,6 @@ nodes:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
-    patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-          kubelet:
-            nodeIP:
-              validSubnets:
-                - 192.168.1.0/24
 
   # mini3 - Control plane node
   - hostname: mini3
@@ -79,19 +56,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/disk/by-id/mmc-DF4064_0x97bf371c
     talosImageURL: factory.talos.dev/metal-installer-secureboot/ee827ee541fb06e742e6d183f4e3c1a62a2d63d945cbbd0b1e76da9221af9d27
-    patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-          kubelet:
-            nodeIP:
-              validSubnets:
-                - 192.168.1.0/24
-        cluster:
-          etcd:
-            advertisedSubnets:
-              - 192.168.1.0/24
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 50:eb:f6:ef:49:84
@@ -109,25 +73,22 @@ nodes:
     installDisk: /dev/disk/by-id/nvme-SAMSUNG_MZVL81T0HELB-00BTW_S7HZNX0X457750
     talosImageURL: factory.talos.dev/metal-installer-secureboot/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5
     patches:
-      - |-
+      - &network_tuning_sysctls |-
         machine:
           sysctls:
-            user.max_user_namespaces: "11255"
             net.core.rmem_max: "134217728"
             net.core.wmem_max: "134217728"
             net.ipv4.tcp_rmem: "4096 87380 134217728"
             net.ipv4.tcp_wmem: "4096 65536 134217728"
             net.ipv4.tcp_congestion_control: "bbr"
             net.core.default_qdisc: "fq"
-            net.ipv4.ip_forward: "1"
-            net.ipv4.conf.all.forwarding: "1"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
         dhcp: false
         addresses:
           - 192.168.1.55/24
-        routes:
+        routes: &lan_worker_routes
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
           - network: 100.64.0.0/10
@@ -177,7 +138,6 @@ nodes:
       - |-
         machine:
           sysctls:
-            user.max_user_namespaces: "11255"
             vm.min_free_kbytes: "2097152"
             vm.watermark_scale_factor: "200"
             vm.swappiness: "60"
@@ -224,17 +184,7 @@ nodes:
         dhcp: false
         addresses:
           - 192.168.1.56/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 192.168.1.1
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.51
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.52
-            metric: 1025
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.53
-            metric: 1026
+        routes: *lan_worker_routes
 
   # mini4 - Worker node
   - hostname: mini4
@@ -243,16 +193,7 @@ nodes:
     installDisk: /dev/nvme0n1
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.core.rmem_max: "134217728"
-            net.core.wmem_max: "134217728"
-            net.ipv4.tcp_rmem: "4096 87380 134217728"
-            net.ipv4.tcp_wmem: "4096 65536 134217728"
-            net.ipv4.tcp_congestion_control: "bbr"
-            net.core.default_qdisc: "fq"
+      - *network_tuning_sysctls
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -266,17 +207,7 @@ nodes:
             - permanentAddr: 78:55:36:01:1d:1e
         addresses:
           - 192.168.1.57/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 192.168.1.1
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.51
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.52
-            metric: 1025
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.53
-            metric: 1026
+        routes: *lan_worker_routes
 
   # mini5 - Worker node
   - hostname: mini5
@@ -285,16 +216,7 @@ nodes:
     installDisk: /dev/nvme0n1
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.core.rmem_max: "134217728"
-            net.core.wmem_max: "134217728"
-            net.ipv4.tcp_rmem: "4096 87380 134217728"
-            net.ipv4.tcp_wmem: "4096 65536 134217728"
-            net.ipv4.tcp_congestion_control: "bbr"
-            net.core.default_qdisc: "fq"
+      - *network_tuning_sysctls
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -308,17 +230,7 @@ nodes:
             - permanentAddr: 78:55:36:01:1a:a8
         addresses:
           - 192.168.1.58/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 192.168.1.1
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.51
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.52
-            metric: 1025
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.53
-            metric: 1026
+        routes: *lan_worker_routes
 
   # mini6 - Worker node
   - hostname: mini6
@@ -327,16 +239,7 @@ nodes:
     installDisk: /dev/nvme0n1
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.core.rmem_max: "134217728"
-            net.core.wmem_max: "134217728"
-            net.ipv4.tcp_rmem: "4096 87380 134217728"
-            net.ipv4.tcp_wmem: "4096 65536 134217728"
-            net.ipv4.tcp_congestion_control: "bbr"
-            net.core.default_qdisc: "fq"
+      - *network_tuning_sysctls
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -350,17 +253,7 @@ nodes:
             - permanentAddr: 78:55:36:01:1b:66
         addresses:
           - 192.168.1.59/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 192.168.1.1
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.51
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.52
-            metric: 1025
-          - network: 100.64.0.0/10
-            gateway: 192.168.1.53
-            metric: 1026
+        routes: *lan_worker_routes
 
   # cloudbox1 - Worker node (Oracle Cloud ARM64 with Tailscale)
   - hostname: cloudbox1
@@ -380,21 +273,14 @@ nodes:
           - TS_AUTHKEY=${tailscaleAuthKey}
           - TS_EXTRA_ARGS=--accept-routes
     patches:
-      - |-
+      - &cloudbox_resolver |-
         apiVersion: v1alpha1
         kind: ResolverConfig
         nameservers:
           - address: 169.254.169.254
-      - |-
+      - *network_tuning_sysctls
+      - &cloudbox_config |-
         machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.core.rmem_max: "134217728"
-            net.core.wmem_max: "134217728"
-            net.ipv4.tcp_rmem: "4096 87380 134217728"
-            net.ipv4.tcp_wmem: "4096 65536 134217728"
-            net.ipv4.tcp_congestion_control: "bbr"
-            net.core.default_qdisc: "fq"
           network:
             kubespan:
               enabled: false
@@ -448,45 +334,9 @@ nodes:
           - TS_AUTHKEY=${tailscaleAuthKey}
           - TS_EXTRA_ARGS=--accept-routes
     patches:
-      - |-
-        apiVersion: v1alpha1
-        kind: ResolverConfig
-        nameservers:
-          - address: 169.254.169.254
-      - |-
-        machine:
-          sysctls:
-            user.max_user_namespaces: "11255"
-            net.core.rmem_max: "134217728"
-            net.core.wmem_max: "134217728"
-            net.ipv4.tcp_rmem: "4096 87380 134217728"
-            net.ipv4.tcp_wmem: "4096 65536 134217728"
-            net.ipv4.tcp_congestion_control: "bbr"
-            net.core.default_qdisc: "fq"
-          network:
-            kubespan:
-              enabled: false
-          kubelet:
-            nodeIP:
-              validSubnets:
-                - 100.64.0.0/10
-          registries:
-            mirrors:
-              docker.io:
-                endpoints:
-                  - https://registry-1.docker.io
-              ghcr.io:
-                endpoints:
-                  - https://ghcr.io
-              registry.k8s.io:
-                endpoints:
-                  - https://registry.k8s.io
-              quay.io:
-                endpoints:
-                  - https://quay.io
-        cluster:
-          controlPlane:
-            endpoint: https://192.168.1.50:6443
+      - *cloudbox_resolver
+      - *network_tuning_sysctls
+      - *cloudbox_config
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 02:00:17:0e:03:e8
@@ -565,6 +415,10 @@ patches:
         net.core.bpf_jit_enable: "1"
         net.core.bpf_jit_harden: "0"
         net.core.bpf_jit_limit: "1000000000"
+  - |-
+    machine:
+      sysctls:
+        user.max_user_namespaces: "11255"
 
 controlPlane:
   patches:
@@ -572,6 +426,18 @@ controlPlane:
       machine:
         certSANs:
           - 192.168.1.50
+        kubelet:
+          nodeIP:
+            validSubnets:
+              - 192.168.1.0/24
+        sysctls:
+          net.ipv4.ip_forward: "1"
+          net.ipv4.conf.all.forwarding: "1"
+    - |-
+      cluster:
+        etcd:
+          advertisedSubnets:
+            - 192.168.1.0/24
     - |-
       cluster:
         extraManifests:

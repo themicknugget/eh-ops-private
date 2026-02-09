@@ -25,9 +25,9 @@ spec:
     # Tailscale Split DNS controls which domains are forwarded
     domain: "."
 
-    # Service configuration
+    # LoadBalancer so Tailscale split DNS can reach it (ClusterIPs aren't routable via subnet router)
     service:
-      type: ClusterIP
+      type: LoadBalancer
       port: 53
 
     # Only watch HTTPRoute resources (not GRPCRoute to avoid v1alpha2 errors)

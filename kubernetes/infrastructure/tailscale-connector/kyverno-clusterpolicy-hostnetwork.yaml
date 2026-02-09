@@ -50,8 +50,9 @@ spec:
                           # Cilium eBPF (cil_to_netdev on eno1) runs in TC egress BEFORE
                           # iptables POSTROUTING, so SNAT/MASQUERADE in POSTROUTING never
                           # fires. PREROUTING DNAT runs before routing, redirecting LB VIP
-                          # traffic to 127.0.0.1 where hostNetwork services (k8s-gateway
-                          # on :53, Envoy proxy on :80/:443) handle it. route_localnet=1
+                          # traffic to 127.0.0.1 where hostNetwork services handle it.
+                          # DNS rule remaps port 53→1053 (k8s-gateway's default) to avoid
+                          # conflicting with systemd-resolved on port 53. route_localnet=1
                           # allows routing to 127.0.0.0/8 from tailscale0.
                           command:
                             - sh
@@ -60,6 +61,10 @@ spec:
                               iptables-nft -t nat -C POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE 2>/dev/null ||
                               iptables-nft -t nat -A POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE;
                               sysctl -w net.ipv4.conf.tailscale0.route_localnet=1;
+                              iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:1053 2>/dev/null ||
+                              iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:1053;
+                              iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:1053 2>/dev/null ||
+                              iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:1053;
                               iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64/28 -j DNAT --to-destination 127.0.0.1 2>/dev/null ||
                               iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64/28 -j DNAT --to-destination 127.0.0.1;
                               true

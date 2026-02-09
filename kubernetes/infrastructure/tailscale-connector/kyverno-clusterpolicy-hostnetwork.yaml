@@ -34,3 +34,21 @@ spec:
                   - key: node-role.kubernetes.io/control-plane
                     operator: Exists
                     effect: NoSchedule
+                containers:
+                  - name: tailscale
+                    lifecycle:
+                      postStart:
+                        exec:
+                          # MASQUERADE non-Tailscale traffic going through tailscale0 so
+                          # the source IP becomes this Connector's Tailscale IP. Required
+                          # because WireGuard AllowedIPs only assign subnet CIDRs to ONE
+                          # of the 3 Connector replicas — the other two would have their
+                          # forwarded packets (pod CIDR, LAN IPs) dropped by the receiving
+                          # peer's WireGuard validation.
+                          command:
+                            - sh
+                            - -c
+                            - >-
+                              iptables-nft -t nat -C POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE 2>/dev/null ||
+                              iptables-nft -t nat -A POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE;
+                              true

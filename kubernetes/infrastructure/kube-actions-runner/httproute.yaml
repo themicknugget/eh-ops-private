@@ -18,6 +18,16 @@ spec:
       name: external-gateway
       namespace: kube-system
       sectionName: http-domain1
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: tailscale-gateway
+      namespace: kube-system
+      sectionName: https-domain1
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: tailscale-gateway
+      namespace: kube-system
+      sectionName: http-domain1
   rules:
     - backendRefs:
         - kind: Service

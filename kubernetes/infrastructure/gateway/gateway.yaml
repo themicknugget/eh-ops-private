@@ -14,11 +14,13 @@ kind: CiliumL2AnnouncementPolicy
 metadata:
   name: gateway-lb
 spec:
+  # Regex patterns covering all LAN interfaces: eno1, enp4s0, enp191s0, bond0, etc.
   interfaces:
     - eno1
+    - enp.*
+    - bond0
   externalIPs: true
   loadBalancerIPs: true
-  # Select all nodes (no nodeSelector = all nodes)
 ---
 # External Gateway for incoming HTTP/HTTPS traffic
 apiVersion: gateway.networking.k8s.io/v1

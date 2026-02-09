@@ -12,9 +12,6 @@ directRoutingDevice: eno1
 ipv4NativeRoutingCIDR: 10.244.0.0/16
 autoDirectNodeRoutes: true
 
-# eBPF on LAN interfaces + tailscale0 so LB/L7 proxy works for Tailscale traffic
-devices: "eno+ enp+ bond+ tailscale+"
-
 # Enable kube-proxy replacement
 kubeProxyReplacement: true
 

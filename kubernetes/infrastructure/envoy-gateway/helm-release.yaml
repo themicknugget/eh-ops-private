@@ -22,9 +22,8 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
-  # Controller needs hostNetwork so proxy pods (also hostNetwork) can
-  # reach xDS on port 18000 — ClusterIPs with pod backends are not
-  # reachable from the host network namespace on this Cilium cluster.
+  # Proxy pods (hostNetwork) can't reach pod-backed ClusterIPs on this
+  # Cilium cluster. Controller uses hostPort so its node IP is reachable.
   postRenderers:
     - kustomize:
         patches:
@@ -33,11 +32,8 @@ spec:
               name: envoy-gateway
             patch: |
               - op: add
-                path: /spec/template/spec/hostNetwork
-                value: true
-              - op: replace
-                path: /spec/template/spec/dnsPolicy
-                value: ClusterFirstWithHostNet
+                path: /spec/template/spec/containers/0/ports/0/hostPort
+                value: 18000
   values:
     deployment:
       envoyGateway:
@@ -49,10 +45,8 @@ spec:
             cpu: 500m
             memory: 512Mi
       pod:
-        # Pin to mini1 so proxy hostAliases can resolve xDS address
+        # Pin to mini4 (worker) so proxy hostAliases can resolve xDS address.
+        # Worker node avoids hostPort conflicts with proxy pods on control-plane.
         nodeSelector:
-          kubernetes.io/hostname: mini1
-        tolerations:
-          - key: node-role.kubernetes.io/control-plane
-            operator: Exists
-            effect: NoSchedule
+          kubernetes.io/hostname: mini4
+        tolerations: []

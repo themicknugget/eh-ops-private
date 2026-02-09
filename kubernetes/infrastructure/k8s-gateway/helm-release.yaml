@@ -38,6 +38,13 @@ spec:
               - op: replace
                 path: /spec/template/spec/containers/0/ports/0/containerPort
                 value: 53
+              - op: replace
+                path: /spec/template/spec/containers/0/securityContext
+                value:
+                  runAsUser: 1000
+                  capabilities:
+                    add: ["NET_BIND_SERVICE"]
+                    drop: ["ALL"]
           - target:
               kind: ConfigMap
               name: k8s-gateway

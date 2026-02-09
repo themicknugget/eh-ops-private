@@ -32,6 +32,11 @@ metadata:
   name: eg
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: proxy-config
+    namespace: envoy-gateway-system
 ---
 # External Gateway for incoming HTTP/HTTPS traffic
 apiVersion: gateway.networking.k8s.io/v1

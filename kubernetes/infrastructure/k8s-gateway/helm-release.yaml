@@ -41,7 +41,7 @@ spec:
               - op: replace
                 path: /spec/template/spec/containers/0/securityContext
                 value:
-                  runAsUser: 1000
+                  runAsUser: 0
                   capabilities:
                     add: ["NET_BIND_SERVICE"]
                     drop: ["ALL"]

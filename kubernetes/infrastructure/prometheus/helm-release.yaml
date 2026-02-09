@@ -164,6 +164,15 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
+      admissionWebhooks:
+        patch:
+          # Edge nodes can't reach ClusterIP API server
+          nodeSelector:
+            node-role.kubernetes.io/control-plane: ""
+          tolerations:
+            - key: node-role.kubernetes.io/control-plane
+              operator: Exists
+              effect: NoSchedule
 
     # Service Monitors - Disabled for Talos/Cilium
     kubeControllerManager:

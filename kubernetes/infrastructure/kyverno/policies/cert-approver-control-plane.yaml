@@ -1,0 +1,32 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: cert-approver-control-plane
+spec:
+  rules:
+    - name: schedule-on-control-plane
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+              names:
+                - kubelet-serving-cert-approver
+              namespaces:
+                - kubelet-serving-cert-approver
+      mutate:
+        patchesJson6902: |-
+          - op: replace
+            path: /spec/template/spec/affinity
+            value: {}
+          - op: add
+            path: /spec/template/spec/nodeSelector
+            value:
+              node-role.kubernetes.io/control-plane: ""
+          - op: replace
+            path: /spec/template/spec/tolerations
+            value:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+                effect: NoSchedule

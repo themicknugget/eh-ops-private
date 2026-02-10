@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: envoy-gateway-system
-  labels:
-    # Proxy pods require hostNetwork for PREROUTING DNAT reachability
-    pod-security.kubernetes.io/enforce: privileged

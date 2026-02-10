@@ -39,21 +39,12 @@ spec:
                     lifecycle:
                       postStart:
                         exec:
-                          # Rule 1: MASQUERADE non-Tailscale traffic going through tailscale0
-                          # so the source IP becomes this Connector's Tailscale IP. Required
+                          # MASQUERADE non-Tailscale traffic going through tailscale0 so
+                          # the source IP becomes this Connector's Tailscale IP. Required
                           # because WireGuard AllowedIPs only assign subnet CIDRs to ONE
                           # of the 3 Connector replicas — the other two would have their
                           # forwarded packets (pod CIDR, LAN IPs) dropped by the receiving
                           # peer's WireGuard validation.
-                          #
-                          # Rule 2: PREROUTING DNAT for Tailscale traffic to Cilium LB VIPs.
-                          # Cilium eBPF (cil_to_netdev on eno1) runs in TC egress BEFORE
-                          # iptables POSTROUTING, so SNAT/MASQUERADE in POSTROUTING never
-                          # fires. PREROUTING DNAT runs before routing, redirecting LB VIP
-                          # traffic to 127.0.0.1 where hostNetwork services handle it.
-                          # DNS rule remaps port 53→1053 (k8s-gateway's default) to avoid
-                          # conflicting with systemd-resolved on port 53. route_localnet=1
-                          # allows routing to 127.0.0.0/8 from tailscale0.
                           command:
                             - sh
                             - -c
@@ -65,6 +56,27 @@ spec:
                               iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:1053;
                               iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:1053 2>/dev/null ||
                               iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p tcp --dport 53 -j DNAT --to-destination 127.0.0.1:1053;
-                              iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64/28 -j DNAT --to-destination 127.0.0.1 2>/dev/null ||
-                              iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64/28 -j DNAT --to-destination 127.0.0.1;
+                              iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.65 -p tcp --dport 80 -j DNAT --to-destination 127.0.0.1:30080 2>/dev/null ||
+                              iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.65 -p tcp --dport 80 -j DNAT --to-destination 127.0.0.1:30080;
+                              iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.65 -p tcp --dport 443 -j DNAT --to-destination 127.0.0.1:30443 2>/dev/null ||
+                              iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.65 -p tcp --dport 443 -j DNAT --to-destination 127.0.0.1:30443;
                               true
+                  # socat re-originates connections to LB VIPs so Cilium socket-level LB
+                  # intercepts them — forwarded Tailscale traffic bypasses Cilium's eBPF
+                  - name: socat-proxy
+                    image: alpine/socat:1.8.0.1
+                    command: ["sh", "-c"]
+                    args:
+                      - |
+                        socat UDP4-LISTEN:1053,fork,reuseaddr,bind=127.0.0.1 UDP4:192.168.1.64:53 &
+                        socat TCP4-LISTEN:1053,fork,reuseaddr,bind=127.0.0.1 TCP4:192.168.1.64:53 &
+                        socat TCP4-LISTEN:30080,fork,reuseaddr,bind=127.0.0.1 TCP4:192.168.1.65:80 &
+                        socat TCP4-LISTEN:30443,fork,reuseaddr,bind=127.0.0.1 TCP4:192.168.1.65:443 &
+                        wait
+                    resources:
+                      requests:
+                        cpu: 10m
+                        memory: 16Mi
+                      limits:
+                        cpu: 100m
+                        memory: 32Mi

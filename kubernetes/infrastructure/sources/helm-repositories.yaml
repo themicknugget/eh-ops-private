@@ -79,13 +79,3 @@ metadata:
 spec:
   interval: 1h
   url: https://k8s-gateway.github.io/k8s_gateway/
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: envoy-gateway
-  namespace: flux-system
-spec:
-  type: oci
-  url: oci://docker.io/envoyproxy
-  interval: 1h

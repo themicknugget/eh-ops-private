@@ -20,33 +20,21 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  # hostNetwork so the pod is reachable on 127.0.0.1 after PREROUTING
-  # DNAT on subnet routers. Keep default port 1053 to avoid conflicting
-  # with systemd-resolved on port 53; DNAT remaps 53→1053.
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Deployment
-              name: k8s-gateway
-            patch: |
-              - op: add
-                path: /spec/template/spec/hostNetwork
-                value: true
-              - op: add
-                path: /spec/template/spec/dnsPolicy
-                value: ClusterFirstWithHostNet
   values:
+    # Catch-all domain - respond to any HTTPRoute hostname
+    # Tailscale Split DNS controls which domains are forwarded
     domain: "."
 
-    # Keep LB for LAN clients; Tailscale clients reach port 53 via DNAT to loopback
+    # LoadBalancer so Tailscale split DNS can reach it (ClusterIPs aren't routable via subnet router)
     service:
       type: LoadBalancer
       port: 53
 
+    # Only watch HTTPRoute resources (not GRPCRoute to avoid v1alpha2 errors)
     watchedResources:
       - HTTPRoute
 
+    # Resource limits
     resources:
       requests:
         cpu: 50m
@@ -62,4 +50,5 @@ spec:
         operator: Exists
         effect: NoSchedule
 
+    # DNS TTL for created records
     ttl: 300

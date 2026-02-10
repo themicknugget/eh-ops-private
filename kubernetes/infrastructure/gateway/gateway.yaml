@@ -26,18 +26,6 @@ spec:
   externalIPs: true
   loadBalancerIPs: true
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: eg
-spec:
-  controllerName: gateway.envoyproxy.io/gatewayclass-controller
-  parametersRef:
-    group: gateway.envoyproxy.io
-    kind: EnvoyProxy
-    name: proxy-config
-    namespace: envoy-gateway-system
----
 # External Gateway for incoming HTTP/HTTPS traffic
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -46,93 +34,6 @@ metadata:
   namespace: kube-system
 spec:
   gatewayClassName: cilium
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: http-domain1
-      protocol: HTTP
-      port: 80
-      hostname: "*.${DOMAIN1}"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain1
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN1}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain1-tls
-            namespace: kube-system
-    - name: https-domain2
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN2}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain2-tls
-            namespace: kube-system
-    - name: http-domain3
-      protocol: HTTP
-      port: 80
-      hostname: "*.codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN3}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
-    - name: http-domain3-apex
-      protocol: HTTP
-      port: 80
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3-apex
-      protocol: HTTPS
-      port: 443
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
----
-# Envoy Gateway for Tailscale L7 access via PREROUTING DNAT to loopback.
-# Proxy pods run with hostNetwork so they're reachable on 127.0.0.1
-# after DNAT on the subnet router nodes.
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: tailscale-gateway
-  namespace: kube-system
-spec:
-  gatewayClassName: eg
   listeners:
     - name: http
       protocol: HTTP

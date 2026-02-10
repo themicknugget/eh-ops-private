@@ -28,6 +28,16 @@ spec:
                       - "kubernetes.default.svc"
                       - "kubernetes.default.svc.cluster.local"
                       - "kubernetes"
+                affinity:
+                  podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      - labelSelector:
+                          matchExpressions:
+                            - key: app
+                              operator: In
+                              values:
+                                - ts-subnet-router
+                        topologyKey: kubernetes.io/hostname
                 nodeSelector:
                   node-role.kubernetes.io/control-plane: ""
                 tolerations:

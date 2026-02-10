@@ -68,6 +68,7 @@ spec:
                             - >-
                               iptables-nft -t nat -C POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE 2>/dev/null ||
                               iptables-nft -t nat -A POSTROUTING -o tailscale0 ! -s 100.64.0.0/10 -j MASQUERADE;
+                              while ! test -d /proc/sys/net/ipv4/conf/tailscale0; do sleep 1; done;
                               sysctl -w net.ipv4.conf.tailscale0.route_localnet=1;
                               iptables-nft -t nat -C PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:1053 2>/dev/null ||
                               iptables-nft -t nat -A PREROUTING -i tailscale0 -s 100.64.0.0/10 -d 192.168.1.64 -p udp --dport 53 -j DNAT --to-destination 127.0.0.1:1053;

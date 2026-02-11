@@ -190,3 +190,6 @@ data:
       operator: Equal
       value: heavy
       effect: NoSchedule
+    - key: node-role.kubernetes.io/edge
+      operator: Exists
+      effect: NoSchedule

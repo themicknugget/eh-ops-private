@@ -27,5 +27,8 @@ spec:
       retries: 3
   valuesFrom:
     - kind: Secret
+      name: cluster-secrets
+      namespace: flux-system
+    - kind: Secret
       name: kube-actions-runner-values
       valuesKey: values.yaml

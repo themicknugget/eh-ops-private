@@ -1,9 +1,10 @@
 ---
 # TunnelBinding exposes the Kubernetes API server via Cloudflare Tunnel
+# Named to sort before external-gateway-binding so specific hostname matches first
 apiVersion: networking.cfargotunnel.com/v1alpha1
 kind: TunnelBinding
 metadata:
-  name: k8s-api-binding
+  name: api-k8s-binding
   namespace: cloudflare-operator-system
 subjects:
   - name: k8s-api

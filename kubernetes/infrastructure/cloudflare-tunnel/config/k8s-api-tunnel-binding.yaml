@@ -11,6 +11,7 @@ subjects:
       fqdn: k8s-api.${DOMAIN1}
       protocol: http2
       target: https://192.168.1.50:6443
+      noTLSVerify: true
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

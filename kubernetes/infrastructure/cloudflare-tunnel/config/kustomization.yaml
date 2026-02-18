@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - cluster-tunnel.yaml
   - tunnel-binding.yaml
+  - k8s-api-tunnel-binding.yaml

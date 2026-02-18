@@ -8,6 +8,7 @@ domain: cluster.local
 additionalApiServerCertSans:
   - home-cluster.local
   - 192.168.1.50
+  - k8s-api.whyyoudontyou.work
 
 clusterPodNets:
   - 10.244.0.0/16
@@ -171,7 +172,7 @@ nodes:
           - 192.168.1.59/24
         routes: *lan_worker_routes
 
-  # cloudbox1 - Worker node (Oracle Cloud ARM64 with Tailscale)
+  # cloudbox1 - Worker node (Oracle Cloud ARM64)
   - hostname: cloudbox1
     ipAddress: 10.0.0.140
     controlPlane: false
@@ -183,11 +184,6 @@ nodes:
     certSANs:
       - 150.136.172.175
       - 10.0.0.140
-    extensionServices:
-      - name: tailscale
-        environment:
-          - TS_AUTHKEY=${tailscaleAuthKey}
-          - TS_EXTRA_ARGS=--accept-routes
     patches:
       - &cloudbox_resolver |-
         apiVersion: v1alpha1
@@ -201,9 +197,6 @@ nodes:
             kubespan:
               enabled: false
           kubelet:
-            nodeIP:
-              validSubnets:
-                - 100.64.0.0/10
             extraArgs:
               register-with-taints: node-role.kubernetes.io/edge:NoSchedule
           registries:
@@ -222,7 +215,13 @@ nodes:
                   - https://quay.io
         cluster:
           controlPlane:
-            endpoint: https://192.168.1.50:6443
+            endpoint: https://k8s-api.whyyoudontyou.work:443
+      - |-
+        machine:
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 150.136.172.175/32
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 02:00:17:05:51:46
@@ -234,7 +233,7 @@ nodes:
             gateway: 10.0.0.1
           - network: 169.254.0.0/16
 
-  # cloudbox2 - Worker node (Oracle Cloud ARM64 with Tailscale)
+  # cloudbox2 - Worker node (Oracle Cloud ARM64)
   - hostname: cloudbox2
     ipAddress: 10.0.0.173
     controlPlane: false
@@ -246,15 +245,16 @@ nodes:
     certSANs:
       - 150.136.113.236
       - 10.0.0.173
-    extensionServices:
-      - name: tailscale
-        environment:
-          - TS_AUTHKEY=${tailscaleAuthKey}
-          - TS_EXTRA_ARGS=--accept-routes
     patches:
       - *cloudbox_resolver
       - *network_tuning_sysctls
       - *cloudbox_config
+      - |-
+        machine:
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 150.136.113.236/32
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 02:00:17:0e:03:e8

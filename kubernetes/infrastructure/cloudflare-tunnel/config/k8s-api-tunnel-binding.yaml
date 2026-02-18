@@ -1,0 +1,17 @@
+---
+# TunnelBinding exposes the Kubernetes API server via Cloudflare Tunnel
+apiVersion: networking.cfargotunnel.com/v1alpha1
+kind: TunnelBinding
+metadata:
+  name: k8s-api-binding
+  namespace: cloudflare-operator-system
+subjects:
+  - name: k8s-api
+    spec:
+      fqdn: k8s-api.${DOMAIN1}
+      protocol: tcp
+      target: tcp://192.168.1.50:6443
+tunnelRef:
+  kind: ClusterTunnel
+  name: eh-ops-cluster
+  disableDNSUpdates: false

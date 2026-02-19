@@ -13,8 +13,6 @@ spec:
       labels:
         app: mysql-cloudbox1
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         kubernetes.io/hostname: cloudbox1
       tolerations:
@@ -23,9 +21,9 @@ spec:
       containers:
         - name: proxy
           image: alpine/socat:1.8.0.1
-          command: ["socat", "TCP-LISTEN:13306,fork,reuseaddr,bind=10.0.0.140", "TCP:10.0.2.88:3306"]
+          command: ["socat", "TCP-LISTEN:3306,fork,reuseaddr", "TCP:10.0.2.88:3306"]
           ports:
-            - containerPort: 13306
+            - containerPort: 3306
           resources:
             requests:
               cpu: 10m
@@ -44,4 +42,4 @@ spec:
     app: mysql-cloudbox1
   ports:
     - port: 3306
-      targetPort: 13306
+      targetPort: 3306

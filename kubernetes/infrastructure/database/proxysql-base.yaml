@@ -26,8 +26,11 @@ data:
         connect_timeout_server=3000
         connect_timeout_server_error="1000,2000,3000"
         connect_retries_on_failure=10
+        poll_timeout=5000
         sessions_sort=true
         monitor_enabled=true
+        monitor_username="admin"
+        monitor_password="4ST^%ABte7rn"
         monitor_ping_max_failures=3
         monitor_ping_timeout=1000
         monitor_read_only_max_timeout_count=3

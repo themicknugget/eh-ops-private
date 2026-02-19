@@ -13,9 +13,6 @@ spec:
       labels:
         app: kube-api-proxy
     spec:
-      hostNetwork: true
-      # Use host DNS so k8s.whydontyou.work resolves correctly before cluster DNS is available
-      dnsPolicy: Default
       tolerations:
         - key: node-role.kubernetes.io/edge
           operator: Exists
@@ -38,7 +35,6 @@ spec:
             - "TCP4:k8s.whydontyou.work:6443"
           ports:
             - containerPort: 7446
-              hostPort: 7446
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

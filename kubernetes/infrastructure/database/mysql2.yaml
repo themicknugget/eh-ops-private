@@ -83,7 +83,8 @@ spec:
           image: proxysql/proxysql:3.0
           command:
             - proxysql
-            - --reload
+            - -f
+            - -c
             - /etc/proxysql/proxysql.cnf
           ports:
             - name: mysql

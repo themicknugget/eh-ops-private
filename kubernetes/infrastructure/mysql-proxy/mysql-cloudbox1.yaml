@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-cloudbox1
+  namespace: mysql-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-cloudbox1
+  template:
+    metadata:
+      labels:
+        app: mysql-cloudbox1
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: cloudbox1
+      containers:
+        - name: proxy
+          image: alpine/socat:1.8.0.1
+          command: ["socat", "TCP-LISTEN:3306,fork,reuseaddr", "TCP:10.0.2.88:3306"]
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-cloudbox1
+  namespace: mysql-proxy
+spec:
+  selector:
+    app: mysql-cloudbox1
+  ports:
+    - port: 3306
+      targetPort: 3306

@@ -25,7 +25,11 @@ spec:
     # Tailscale Split DNS controls which domains are forwarded
     domain: "."
 
-    # LoadBalancer so Tailscale split DNS can reach it (ClusterIPs aren't routable via subnet router)
+    # Disable hostNetwork - LoadBalancer service handles external access,
+    # and this avoids port 1053 conflict with Tailscale socat proxy
+    hostNetwork: false
+
+    # LoadBalancer so Tailscale split DNS can reach it
     service:
       type: LoadBalancer
       port: 53

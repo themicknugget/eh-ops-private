@@ -6,3 +6,4 @@ resources:
   - mysql1.yaml
   - mysql2.yaml
   - mysql3.yaml
+  - proxysql-user-sync.yaml

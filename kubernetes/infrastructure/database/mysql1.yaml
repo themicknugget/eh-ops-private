@@ -81,6 +81,9 @@ spec:
       containers:
         - name: proxysql
           image: proxysql/proxysql:3.0
+          args:
+            - --reload
+            - /etc/proxysql/proxysql.cnf
           ports:
             - name: mysql
               containerPort: 3306
@@ -103,12 +106,12 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 3306
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 3306
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 5
       volumes:
         - name: config-base

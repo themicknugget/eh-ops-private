@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-cloudbox3
-  namespace: mysql-proxy
+  name: mysql2
+  namespace: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-cloudbox3
+      app: mysql2
   template:
     metadata:
       labels:
-        app: mysql-cloudbox3
+        app: mysql2
     spec:
       nodeSelector:
-        kubernetes.io/hostname: cloudbox3
+        kubernetes.io/hostname: cloudbox2
       tolerations:
         - key: node-role.kubernetes.io/edge
           effect: NoSchedule
       containers:
         - name: proxy
           image: alpine/socat:1.8.0.1
-          command: ["socat", "TCP-LISTEN:3306,fork,reuseaddr", "TCP:10.0.2.198:3306"]
+          command: ["socat", "TCP-LISTEN:3306,fork,reuseaddr", "TCP:10.0.2.162:3306"]
           ports:
             - containerPort: 3306
           resources:
@@ -35,11 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-cloudbox3
-  namespace: mysql-proxy
+  name: mysql2
+  namespace: database
 spec:
   selector:
-    app: mysql-cloudbox3
+    app: mysql2
   ports:
     - port: 3306
       targetPort: 3306

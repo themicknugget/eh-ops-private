@@ -2,6 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
-  - mysql-cloudbox1.yaml
-  - mysql-cloudbox2.yaml
-  - mysql-cloudbox3.yaml
+  - mysql1.yaml
+  - mysql2.yaml
+  - mysql3.yaml

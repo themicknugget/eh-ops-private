@@ -81,7 +81,8 @@ spec:
       containers:
         - name: proxysql
           image: proxysql/proxysql:3.0
-          args:
+          command:
+            - proxysql
             - --reload
             - /etc/proxysql/proxysql.cnf
           ports:

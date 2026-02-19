@@ -235,7 +235,7 @@ nodes:
           kubelet:
             extraArgs:
               register-with-taints: node-role.kubernetes.io/edge:NoSchedule
-              node-labels: node-role.kubernetes.io/edge=
+              node-labels: eh-ops.io/edge=true
           registries:
             mirrors:
               docker.io:

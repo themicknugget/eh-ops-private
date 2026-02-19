@@ -57,5 +57,5 @@ spec:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
-                - key: node-role.kubernetes.io/edge
+                - key: eh-ops.io/edge
                   operator: DoesNotExist

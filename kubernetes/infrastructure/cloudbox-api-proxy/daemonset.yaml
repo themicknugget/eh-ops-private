@@ -17,7 +17,7 @@ spec:
       # Use host DNS so k8s.whydontyou.work resolves correctly before cluster DNS is available
       dnsPolicy: Default
       tolerations:
-        - key: eh-ops.io/edge
+        - key: node-role.kubernetes.io/edge
           operator: Exists
           effect: NoSchedule
       affinity:

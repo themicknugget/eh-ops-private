@@ -18,4 +18,3 @@ resources:
   - amd-gpu
   - localai
   - kube-actions-runner
-  - cloudbox-api-proxy

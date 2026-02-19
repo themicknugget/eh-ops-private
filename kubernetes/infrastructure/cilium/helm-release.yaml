@@ -50,17 +50,10 @@ data:
 
     # Enable kube-proxy replacement
     kubeProxyReplacement: true
-    # Enables CiliumLocalRedirectPolicy for edge-node kubernetes API redirect
-    localRedirectPolicy: true
 
     # Gateway API support
     gatewayAPI:
       enabled: true
-
-    # WireGuard encryption
-    encryption:
-      enabled: true
-      type: wireguard
 
     # Physical interfaces only — tailscale0 excluded because Cilium's bpf_fib_lookup()
     # can't resolve Tailscale routes (table 52, not main table), causing return packet drops.

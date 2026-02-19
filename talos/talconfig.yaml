@@ -229,9 +229,6 @@ nodes:
       - *network_tuning_sysctls
       - &cloudbox_config |-
         machine:
-          network:
-            kubespan:
-              enabled: false
           kubelet:
             extraArgs:
               register-with-taints: node-role.kubernetes.io/edge:NoSchedule
@@ -253,8 +250,6 @@ nodes:
         cluster:
           controlPlane:
             endpoint: https://k8s.whydontyou.work:6443
-          discovery:
-            enabled: false
       - |-
         machine:
           network:
@@ -335,6 +330,11 @@ nodes:
 
 
 patches:
+  - |-
+    machine:
+      network:
+        kubespan:
+          enabled: true
   - |-
     apiVersion: v1alpha1
     kind: ResolverConfig

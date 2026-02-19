@@ -44,7 +44,6 @@ data:
 
     # Native routing mode for direct node-to-node communication
     routingMode: native
-    directRoutingDevice: eno1
     ipv4NativeRoutingCIDR: 10.244.0.0/16
     autoDirectNodeRoutes: true
     directRoutingSkipUnreachable: true
@@ -62,9 +61,11 @@ data:
       type: wireguard
 
     # Physical interfaces only — tailscale0 excluded because Cilium's bpf_fib_lookup()
-    # can't resolve Tailscale routes (table 52, not main table), causing return packet drops
+    # can't resolve Tailscale routes (table 52, not main table), causing return packet drops.
+    # eth+ covers Oracle Cloud VMs where the NIC is named eth0 instead of enp*/ens*.
     devices:
       - "en+"
+      - "eth+"
       - "bond+"
 
     # L2 announcements for LoadBalancer services

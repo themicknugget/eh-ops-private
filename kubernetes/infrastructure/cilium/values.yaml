@@ -22,10 +22,9 @@ kubeProxyReplacement: true
 gatewayAPI:
   enabled: true
 
-# WireGuard encryption
+# WireGuard encryption disabled - KubeSpan handles node-to-node encryption
 encryption:
-  enabled: true
-  type: wireguard
+  enabled: false
 
 # L2 announcements for LoadBalancer services
 l2announcements:

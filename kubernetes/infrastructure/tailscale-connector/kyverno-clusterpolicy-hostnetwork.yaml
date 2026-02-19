@@ -46,6 +46,9 @@ spec:
                     effect: NoSchedule
                 containers:
                   - name: tailscale
+                    env:
+                      - name: TS_DEBUG_FIREWALL_MODE
+                        value: iptables
                     resources:
                       requests:
                         cpu: 10m

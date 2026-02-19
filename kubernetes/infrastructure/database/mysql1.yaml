@@ -1,8 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxysql-init-mysql1
+  namespace: database
+data:
+  init.sql: |
+    -- Backend server configuration
+    REPLACE INTO mysql_servers (hostgroup_id, hostname, port, weight, max_connections, max_replication_lag) VALUES
+    (10, '10.0.2.88', 3306, 1, 100, 30),
+    (20, '10.0.2.88', 3306, 1, 100, 30);
+
+    -- MySQL user for ProxySQL
+    REPLACE INTO mysql_users (username, password, default_hostgroup, max_connections, transaction_persistent) VALUES
+    ('admin', 'MySecurePass123!', 10, 100, 1);
+
+    -- Monitor user (same as admin for simplicity)
+    SET mysql-monitor_username='admin';
+    SET mysql-monitor_password='MySecurePass123!';
+
+    LOAD MYSQL SERVERS TO RUNTIME;
+    LOAD MYSQL USERS TO RUNTIME;
+    LOAD MYSQL VARIABLES TO RUNTIME;
+    SAVE MYSQL SERVERS TO DISK;
+    SAVE MYSQL USERS TO DISK;
+    SAVE MYSQL VARIABLES TO DISK;
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql1
   namespace: database
+  labels:
+    app: mysql1
+    proxy-type: proxysql
 spec:
   replicas: 1
   selector:
@@ -12,25 +42,82 @@ spec:
     metadata:
       labels:
         app: mysql1
+        proxy-type: proxysql
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6080"
+        prometheus.io/path: "/metrics"
     spec:
       nodeSelector:
         kubernetes.io/hostname: cloudbox1
       tolerations:
         - key: node-role.kubernetes.io/edge
           effect: NoSchedule
+      initContainers:
+        - name: init-config
+          image: proxysql/proxysql:3.0
+          command:
+            - sh
+            - -c
+            - |
+              cp /etc/proxysql/proxysql-base.cnf /etc/proxysql/proxysql.cnf
+              cat >> /etc/proxysql/proxysql.cnf << 'EOF'
+              mysql_servers =
+              (
+                  { address="10.0.2.88", port=3306, hostgroup_id=10, max_connections=100, weight=1 },
+                  { address="10.0.2.88", port=3306, hostgroup_id=20, max_connections=100, weight=1 }
+              )
+              mysql_users:
+              (
+                  { username = "admin", password = "MySecurePass123!", default_hostgroup = 10, transaction_persistent = 1 }
+              )
+              EOF
+          volumeMounts:
+            - name: config-base
+              mountPath: /etc/proxysql/proxysql-base.cnf
+              subPath: proxysql-base.cnf
+            - name: config
+              mountPath: /etc/proxysql
       containers:
-        - name: proxy
-          image: alpine/socat:1.8.0.1
-          command: ["socat", "TCP-LISTEN:3306,fork,reuseaddr", "TCP:10.0.2.88:3306"]
+        - name: proxysql
+          image: proxysql/proxysql:3.0
           ports:
-            - containerPort: 3306
+            - name: mysql
+              containerPort: 3306
+            - name: admin
+              containerPort: 6032
+            - name: metrics
+              containerPort: 6080
           resources:
             requests:
-              cpu: 10m
-              memory: 16Mi
-            limits:
-              cpu: 100m
+              cpu: 50m
               memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/proxysql
+            - name: data
+              mountPath: /var/lib/proxysql
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: config-base
+          configMap:
+            name: proxysql-base-config
+        - name: config
+          emptyDir: {}
+        - name: data
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -41,5 +128,22 @@ spec:
   selector:
     app: mysql1
   ports:
-    - port: 3306
+    - name: mysql
+      port: 3306
       targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql1-admin
+  namespace: database
+spec:
+  selector:
+    app: mysql1
+  ports:
+    - name: admin
+      port: 6032
+      targetPort: 6032
+    - name: metrics
+      port: 6080
+      targetPort: 6080

@@ -33,10 +33,10 @@ spec:
                     requiredDuringSchedulingIgnoredDuringExecution:
                       - labelSelector:
                           matchExpressions:
-                            - key: app
+                            - key: tailscale.com/parent-resource
                               operator: In
                               values:
-                                - ts-subnet-router
+                                - subnet-router
                         topologyKey: kubernetes.io/hostname
                 nodeSelector:
                   node-role.kubernetes.io/control-plane: ""

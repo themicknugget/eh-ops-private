@@ -55,6 +55,10 @@ data:
     gatewayAPI:
       enabled: true
 
+    # WireGuard encryption disabled - KubeSpan handles node-to-node encryption
+    encryption:
+      enabled: false
+
     # Physical interfaces only — tailscale0 excluded because Cilium's bpf_fib_lookup()
     # can't resolve Tailscale routes (table 52, not main table), causing return packet drops.
     # eth+ covers Oracle Cloud VMs where the NIC is named eth0 instead of enp*/ens*.

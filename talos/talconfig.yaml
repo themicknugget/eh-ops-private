@@ -335,6 +335,7 @@ patches:
       network:
         kubespan:
           enabled: true
+          advertiseKubernetesNetworks: true
   - |-
     apiVersion: v1alpha1
     kind: ResolverConfig
@@ -345,7 +346,7 @@ patches:
     machine:
       kubelet:
         extraArgs:
-          feature-gates: UserNamespacesSupport=true
+          feature-gates: UserNamespacesSupport=true,GracefulNodeShutdown=true
   - |-
     machine:
       files:
@@ -401,11 +402,6 @@ controlPlane:
       cluster:
         extraManifests:
           - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
-    - |-
-      machine:
-        kubelet:
-          extraArgs:
-            feature-gates: GracefulNodeShutdown=true
     - |-
       cluster:
         etcd:

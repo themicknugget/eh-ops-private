@@ -36,7 +36,6 @@ data:
         ping_interval_server_msec=30000
         ping_timeout_server=500
         commands_stats=true
-        sessions_sort=true
         have_ssl=false
         default_charset="utf8mb4"
         max_allowed_packet=67108864

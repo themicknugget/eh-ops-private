@@ -47,8 +47,11 @@ spec:
                 containers:
                   - name: tailscale
                     env:
+                      # Disable Tailscale's netfilter to avoid nftables conflict with Cilium.
+                      # Talos doesn't have iptables modules, and native nft breaks Cilium's
+                      # iptables-nft compatibility layer.
                       - name: TS_DEBUG_FIREWALL_MODE
-                        value: iptables
+                        value: "none"
                     resources:
                       requests:
                         cpu: 10m

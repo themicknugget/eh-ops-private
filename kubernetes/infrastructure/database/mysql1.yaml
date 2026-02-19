@@ -82,10 +82,11 @@ spec:
         - name: proxysql
           image: proxysql/proxysql:3.0
           command:
-            - proxysql
-            - -f
+            - /bin/sh
             - -c
-            - /etc/proxysql/proxysql.cnf
+            - |
+              rm -f /var/lib/proxysql/proxysql.pid
+              exec proxysql -f -c /etc/proxysql/proxysql.cnf
           ports:
             - name: mysql
               containerPort: 3306

@@ -10,9 +10,8 @@ metadata:
   namespace: kube-system
 spec:
   redirectFrontend:
-    serviceMatcher:
-      serviceName: kubernetes
-      namespace: default
+    addressMatcher:
+      ip: "10.96.0.1"
       toPorts:
         - port: "443"
           protocol: TCP

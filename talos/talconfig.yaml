@@ -1,6 +1,6 @@
 ---
 clusterName: eh-ops
-talosVersion: v1.12.2
+talosVersion: v1.12.4
 kubernetesVersion: v1.35.0
 endpoint: https://127.0.0.1:7445
 domain: cluster.local
@@ -8,7 +8,8 @@ domain: cluster.local
 additionalApiServerCertSans:
   - home-cluster.local
   - 192.168.1.50
-  - k8s-api.whyyoudontyou.work
+  - k8s-api.whydontyou.work
+  - k8s.whydontyou.work
 
 clusterPodNets:
   - 10.244.0.0/16
@@ -17,6 +18,37 @@ clusterSvcNets:
 
 cniConfig:
   name: none
+
+# Anchor definitions (must be before nodes section)
+anchors:
+  spegel_registry_mirrors: &spegel_registry_mirrors |-
+    machine:
+      registries:
+        mirrors:
+          docker.io:
+            endpoints:
+              - https://localhost:5001
+              - https://registry-1.docker.io
+            overridePath: true
+          ghcr.io:
+            endpoints:
+              - https://localhost:5001
+              - https://ghcr.io
+            overridePath: true
+          registry.k8s.io:
+            endpoints:
+              - https://localhost:5001
+              - https://registry.k8s.io
+            overridePath: true
+          quay.io:
+            endpoints:
+              - https://localhost:5001
+              - https://quay.io
+            overridePath: true
+        config:
+          localhost:5001:
+            tls:
+              insecureSkipVerify: true
 
 nodes:
   # mini1 - Control plane node (Tailscale Connector hostNetwork gateway)
@@ -83,6 +115,7 @@ nodes:
             net.ipv4.tcp_wmem: "4096 65536 134217728"
             net.ipv4.tcp_congestion_control: "bbr"
             net.core.default_qdisc: "fq"
+      - *spegel_registry_mirrors
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
@@ -111,6 +144,7 @@ nodes:
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
       - *network_tuning_sysctls
+      - *spegel_registry_mirrors
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -134,6 +168,7 @@ nodes:
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
       - *network_tuning_sysctls
+      - *spegel_registry_mirrors
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -157,6 +192,7 @@ nodes:
     talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
     patches:
       - *network_tuning_sysctls
+      - *spegel_registry_mirrors
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -174,7 +210,7 @@ nodes:
 
   # cloudbox1 - Worker node (Oracle Cloud ARM64)
   - hostname: cloudbox1
-    ipAddress: 10.0.0.140
+    ipAddress: 129.80.242.223
     controlPlane: false
     installDisk: /dev/sda
     talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
@@ -182,14 +218,14 @@ nodes:
       mode: cloud
       secureboot: false
     certSANs:
-      - 150.136.172.175
-      - 10.0.0.140
+      - 129.80.242.223
     patches:
       - &cloudbox_resolver |-
         apiVersion: v1alpha1
         kind: ResolverConfig
         nameservers:
-          - address: 169.254.169.254
+          - address: 1.1.1.1
+          - address: 8.8.8.8
       - *network_tuning_sysctls
       - &cloudbox_config |-
         machine:
@@ -199,6 +235,7 @@ nodes:
           kubelet:
             extraArgs:
               register-with-taints: node-role.kubernetes.io/edge:NoSchedule
+              node-labels: node-role.kubernetes.io/edge=
           registries:
             mirrors:
               docker.io:
@@ -215,27 +252,28 @@ nodes:
                   - https://quay.io
         cluster:
           controlPlane:
-            endpoint: https://k8s-api.whyyoudontyou.work:443
+            endpoint: https://k8s.whydontyou.work:6443
+          discovery:
+            enabled: false
       - |-
         machine:
+          network:
+            interfaces:
+              - interface: lo
+                addresses:
+                  - 129.80.242.223/32
           kubelet:
             nodeIP:
               validSubnets:
-                - 150.136.172.175/32
+                - 129.80.242.223/32
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 02:00:17:05:51:46
-        dhcp: false
-        addresses:
-          - 10.0.0.140/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 10.0.0.1
-          - network: 169.254.0.0/16
+        dhcp: true
 
   # cloudbox2 - Worker node (Oracle Cloud ARM64)
   - hostname: cloudbox2
-    ipAddress: 10.0.0.173
+    ipAddress: 129.80.7.123
     controlPlane: false
     installDisk: /dev/sda
     talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
@@ -243,28 +281,57 @@ nodes:
       mode: cloud
       secureboot: false
     certSANs:
-      - 150.136.113.236
-      - 10.0.0.173
+      - 129.80.7.123
     patches:
       - *cloudbox_resolver
       - *network_tuning_sysctls
       - *cloudbox_config
       - |-
         machine:
+          network:
+            interfaces:
+              - interface: lo
+                addresses:
+                  - 129.80.7.123/32
           kubelet:
             nodeIP:
               validSubnets:
-                - 150.136.113.236/32
+                - 129.80.7.123/32
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 02:00:17:0e:03:e8
-        dhcp: false
-        addresses:
-          - 10.0.0.173/24
-        routes:
-          - network: 0.0.0.0/0
-            gateway: 10.0.0.1
-          - network: 169.254.0.0/16
+        dhcp: true
+
+  # cloudbox3 - Worker node (Oracle Cloud ARM64)
+  - hostname: cloudbox3
+    ipAddress: 158.101.43.196
+    controlPlane: false
+    installDisk: /dev/sda
+    talosImageURL: factory.talos.dev/oracle-installer/4a0d65c669d46663f377e7161e50cfd570c401f26fd9e7bda34a0216b6f1922b
+    machineSpec:
+      mode: cloud
+      secureboot: false
+    certSANs:
+      - 158.101.43.196
+    patches:
+      - *cloudbox_resolver
+      - *network_tuning_sysctls
+      - *cloudbox_config
+      - |-
+        machine:
+          network:
+            interfaces:
+              - interface: lo
+                addresses:
+                  - 158.101.43.196/32
+          kubelet:
+            nodeIP:
+              validSubnets:
+                - 158.101.43.196/32
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: 02:00:17:0d:01:4e
+        dhcp: true
 
 
 patches:
@@ -279,34 +346,6 @@ patches:
       kubelet:
         extraArgs:
           feature-gates: UserNamespacesSupport=true
-  - |-
-    machine:
-      registries:
-        mirrors:
-          docker.io:
-            endpoints:
-              - https://localhost:5001
-              - https://registry-1.docker.io
-            overridePath: true
-          ghcr.io:
-            endpoints:
-              - https://localhost:5001
-              - https://ghcr.io
-            overridePath: true
-          registry.k8s.io:
-            endpoints:
-              - https://localhost:5001
-              - https://registry.k8s.io
-            overridePath: true
-          quay.io:
-            endpoints:
-              - https://localhost:5001
-              - https://quay.io
-            overridePath: true
-        config:
-          localhost:5001:
-            tls:
-              insecureSkipVerify: true
   - |-
     machine:
       files:
@@ -340,10 +379,12 @@ patches:
 
 controlPlane:
   patches:
+    - *spegel_registry_mirrors
     - |-
       machine:
         certSANs:
           - 192.168.1.50
+          - k8s.whydontyou.work
         kubelet:
           nodeIP:
             validSubnets:

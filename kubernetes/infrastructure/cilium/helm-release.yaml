@@ -50,6 +50,8 @@ data:
 
     # Enable kube-proxy replacement
     kubeProxyReplacement: true
+    # Enables CiliumLocalRedirectPolicy for edge-node kubernetes API redirect
+    localRedirectPolicy: true
 
     # Gateway API support
     gatewayAPI:

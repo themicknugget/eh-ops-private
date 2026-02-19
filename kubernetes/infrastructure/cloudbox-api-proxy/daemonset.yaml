@@ -13,6 +13,13 @@ spec:
       labels:
         app: kube-api-proxy
     spec:
+      # Cluster DNS is unreachable from Oracle Cloud (CoreDNS pods are on LAN nodes).
+      # Use upstream DNS directly so socat can resolve k8s.whydontyou.work.
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1
+          - 8.8.8.8
       tolerations:
         - key: node-role.kubernetes.io/edge
           operator: Exists

@@ -19,3 +19,4 @@ resources:
   - localai
   - kube-actions-runner
   - database
+  - fstrim

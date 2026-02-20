@@ -1,0 +1,186 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fstrim-runner
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: fstrim
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: fstrim
+  policyTypes:
+    - Egress
+  egress:
+    # Allow all egress traffic (needed for kubectl to API server)
+    - {}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fstrim-nodes
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: fstrim
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "0 3 * * *"  # Daily at 3 AM UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600  # Clean up completed jobs after 1 hour
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: fstrim
+            app.kubernetes.io/component: controller
+        spec:
+          serviceAccountName: fstrim-runner
+          restartPolicy: OnFailure
+          containers:
+          - name: fstrim-controller
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "=== Starting fstrim on all nodes ==="
+              echo "Time: $(date -u)"
+              echo ""
+
+              # Get all nodes with NVMe drives
+              NODES=$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')
+
+              for NODE in $NODES; do
+                echo "--- Trimming $NODE ---"
+
+                # Create a one-time job to run fstrim on this node
+                cat <<EOF | kubectl apply -f -
+              apiVersion: batch/v1
+              kind: Job
+              metadata:
+                name: fstrim-${NODE}-$(date +%s)
+                namespace: kube-system
+                labels:
+                  app.kubernetes.io/name: fstrim
+                  app.kubernetes.io/component: node-trim
+                  node: ${NODE}
+              spec:
+                ttlSecondsAfterFinished: 300
+                template:
+                  spec:
+                    nodeName: ${NODE}
+                    tolerations:
+                      - operator: Exists
+                    containers:
+                    - name: fstrim
+                      image: nicolaka/netshoot:latest
+                      command: ["/bin/sh", "-c", "fstrim -v /host-var 2>&1"]
+                      securityContext:
+                        privileged: true
+                      volumeMounts:
+                      - name: host-var
+                        mountPath: /host-var
+                    volumes:
+                    - name: host-var
+                      hostPath:
+                        path: /var
+                        type: Directory
+                    restartPolicy: Never
+              EOF
+
+                echo "Job created for $NODE"
+              done
+
+              echo ""
+              echo "=== Waiting for all fstrim jobs to complete ==="
+
+              # Wait for all jobs to complete (max 10 minutes)
+              TIMEOUT=600
+              ELAPSED=0
+              while [ $ELAPSED -lt $TIMEOUT ]; do
+                PENDING=$(kubectl get jobs -n kube-system -l app.kubernetes.io/component=node-trim --no-headers 2>/dev/null | grep -v "1/1" | wc -l || echo "0")
+                if [ "$PENDING" -eq 0 ]; then
+                  echo "All fstrim jobs completed!"
+                  break
+                fi
+                echo "Waiting for $PENDING jobs to complete... (${ELAPSED}s/${TIMEOUT}s)"
+                sleep 10
+                ELAPSED=$((ELAPSED + 10))
+              done
+
+              if [ $ELAPSED -ge $TIMEOUT ]; then
+                echo "WARNING: Timeout waiting for some jobs to complete"
+              fi
+
+              echo ""
+              echo "=== fstrim results ==="
+              # Get logs from each job
+              for JOB in $(kubectl get jobs -n kube-system -l app.kubernetes.io/component=node-trim -o jsonpath='{.items[*].metadata.name}'); do
+                NODE=$(kubectl get job $JOB -n kube-system -o jsonpath='{.metadata.labels.node}')
+                echo "--- $NODE ---"
+                kubectl logs job/$JOB -n kube-system 2>/dev/null || echo "No logs"
+              done
+
+              echo ""
+              echo "=== Cleanup ==="
+              kubectl delete jobs -n kube-system -l app.kubernetes.io/component=node-trim 2>/dev/null || true
+
+              echo ""
+              echo "=== fstrim completed at $(date -u) ==="
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+          nodeSelector:
+            kubernetes.io/arch: amd64
+          tolerations:
+            - key: node-role.kubernetes.io/control-plane
+              operator: Exists
+              effect: NoSchedule
+            - key: node-role.kubernetes.io/master
+              operator: Exists
+              effect: NoSchedule
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fstrim-runner
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: fstrim
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fstrim-runner
+  labels:
+    app.kubernetes.io/name: fstrim
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "log"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fstrim-runner
+  labels:
+    app.kubernetes.io/name: fstrim
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fstrim-runner
+subjects:
+- kind: ServiceAccount
+  name: fstrim-runner
+  namespace: kube-system

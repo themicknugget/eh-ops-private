@@ -24,8 +24,8 @@ spec:
         - name: socat
           image: alpine/socat:latest
           args:
-            - TCP-LISTEN:3306,fork,reuseaddr
-            - TCP:10.0.2.88:3306
+            - TCP-LISTEN:3306,fork,reuseaddr,nodelay
+            - TCP:10.0.2.88:3306,nodelay
           ports:
             - name: mysql
               containerPort: 3306

@@ -5,7 +5,6 @@ metadata:
   namespace: database
   labels:
     app: mysql2
-    proxy-type: proxysql
 spec:
   replicas: 1
   selector:
@@ -15,97 +14,38 @@ spec:
     metadata:
       labels:
         app: mysql2
-        proxy-type: proxysql
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "6080"
-        prometheus.io/path: "/metrics"
     spec:
       nodeSelector:
         kubernetes.io/hostname: cloudbox2
       tolerations:
         - key: node-role.kubernetes.io/edge
           effect: NoSchedule
-      initContainers:
-        - name: init-config
-          image: proxysql/proxysql:3.0
-          command:
-            - sh
-            - -c
-            - |
-              cp /etc/proxysql/proxysql-base.cnf /etc/proxysql/proxysql.cnf
-              cat >> /etc/proxysql/proxysql.cnf << 'SERVERS'
-              mysql_servers =
-              (
-                  { address="10.0.2.162", port=3306, hostgroup_id=10, max_connections=100, weight=1 },
-                  { address="10.0.2.162", port=3306, hostgroup_id=20, max_connections=100, weight=1 }
-              )
-              SERVERS
-              # Generate mysql_users from mounted secret (format: username|password|hostgroup|tx_persistent)
-              echo "mysql_users =" >> /etc/proxysql/proxysql.cnf
-              echo "(" >> /etc/proxysql/proxysql.cnf
-              while IFS='|' read -r user pass hg tx; do
-                echo "    { username = \"$user\", password = \"$pass\", default_hostgroup = $hg, transaction_persistent = $tx }," >> /etc/proxysql/proxysql.cnf
-              done < /secrets/users.txt
-              echo ")" >> /etc/proxysql/proxysql.cnf
-          volumeMounts:
-            - name: config-base
-              mountPath: /etc/proxysql/proxysql-base.cnf
-              subPath: proxysql-base.cnf
-            - name: config
-              mountPath: /etc/proxysql
-            - name: proxysql-users
-              mountPath: /secrets
-              readOnly: true
       containers:
-        - name: proxysql
-          image: proxysql/proxysql:3.0
-          command:
-            - /bin/sh
-            - -c
-            - |
-              rm -f /var/lib/proxysql/proxysql.pid
-              exec proxysql -f -c /etc/proxysql/proxysql.cnf
+        - name: socat
+          image: alpine/socat:latest
+          args:
+            - TCP-LISTEN:3306,fork,reuseaddr
+            - TCP:10.0.2.162:3306
           ports:
             - name: mysql
               containerPort: 3306
-            - name: admin
-              containerPort: 6032
-            - name: metrics
-              containerPort: 6080
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 10m
+              memory: 16Mi
             limits:
-              cpu: 500m
-              memory: 256Mi
-          volumeMounts:
-            - name: config
-              mountPath: /etc/proxysql
-            - name: data
-              mountPath: /var/lib/proxysql
+              cpu: 100m
+              memory: 64Mi
           livenessProbe:
             tcpSocket:
               port: 3306
-            initialDelaySeconds: 30
+            initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 3306
-            initialDelaySeconds: 10
+            initialDelaySeconds: 2
             periodSeconds: 5
-      volumes:
-        - name: config-base
-          configMap:
-            name: proxysql-base-config
-        - name: config
-          emptyDir: {}
-        - name: data
-          emptyDir: {}
-        - name: proxysql-users
-          secret:
-            secretName: mysql2-proxysql-users
 ---
 apiVersion: v1
 kind: Service
@@ -119,19 +59,3 @@ spec:
     - name: mysql
       port: 3306
       targetPort: 3306
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql2-admin
-  namespace: database
-spec:
-  selector:
-    app: mysql2
-  ports:
-    - name: admin
-      port: 6032
-      targetPort: 6032
-    - name: metrics
-      port: 6080
-      targetPort: 6080

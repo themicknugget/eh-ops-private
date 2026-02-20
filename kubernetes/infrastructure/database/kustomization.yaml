@@ -2,8 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
-  - proxysql-base.yaml
   - mysql1.yaml
   - mysql2.yaml
   - mysql3.yaml
-  - proxysql-user-sync.yaml

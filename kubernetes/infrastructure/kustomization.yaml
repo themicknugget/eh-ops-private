@@ -16,7 +16,6 @@ resources:
   - metrics-server
   - kyverno
   - amd-gpu
-  - localai
   - kube-actions-runner
   - database
   - fstrim

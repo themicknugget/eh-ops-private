@@ -134,7 +134,23 @@ nodes:
             gateway: 192.168.1.53
             metric: 1026
 
-  # shadow (192.168.1.56) - CachyOS, not Talos. Managed via /etc/sysctl.d/ and NetworkManager.
+  # shadow - Worker node (AMD desktop, 4TB NVMe)
+  - hostname: shadow
+    ipAddress: 192.168.1.56
+    controlPlane: false
+    installDisk: /dev/nvme0n1
+    talosImageURL: factory.talos.dev/metal-installer/146adf619b07e86748eeb90b25af26e92c42b3a16c36fa71a85ff0289d3db675
+    patches:
+      - *network_tuning_sysctls
+      - *spegel_registry_mirrors
+      - "@./patches/shadow-local-storage.yaml"
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: 9c:bf:0d:00:f2:54
+        dhcp: false
+        addresses:
+          - 192.168.1.56/24
+        routes: *lan_worker_routes
 
   # mini4 - Worker node
   - hostname: mini4

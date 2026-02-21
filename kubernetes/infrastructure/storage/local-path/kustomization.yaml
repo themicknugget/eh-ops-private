@@ -32,7 +32,7 @@ patches:
             "nodePathMap": [
               {
                 "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
-                "paths": ["/var/mnt/local-path-provisioner"]
+                "paths": ["/var/mnt/local-storage"]
               }
             ]
           }
@@ -98,4 +98,4 @@ patches:
                   - name: CONFIG_MOUNT_PATH
                     value: /etc/config/
                   - name: DEFAULT_PATH_FOR_NON_LISTED_NODES
-                    value: /var/mnt/local-path-provisioner
+                    value: /var/mnt/local-storage

@@ -15,3 +15,20 @@ resources:
   - qwen3-235b-a22b.yaml
   - qwen3-next-80b.yaml
   - qwen3-coder-next.yaml
+  # PowerInfer backend (sparse inference for ReLU-activated models)
+  - relu-llama-7b.yaml
+  - relu-llama-13b.yaml
+  - relu-llama-70b.yaml
+  - relu-falcon-40b.yaml
+  - bamboo-7b.yaml
+  - smallthinker-4b.yaml
+  - smallthinker-21b.yaml
+  # ReLU-activated models without PowerInfer activation predictors (dense inference)
+  - prosparse-llama-7b.yaml
+  - prosparse-llama-13b.yaml
+  - minicpm-s-1b.yaml
+  # TurboSparse: safetensors-only, converted to GGUF by companion Jobs
+  - turbosparse-mistral-7b-convert.yaml
+  - turbosparse-mistral-7b.yaml
+  - turbosparse-mixtral-47b-convert.yaml
+  - turbosparse-mixtral-47b.yaml

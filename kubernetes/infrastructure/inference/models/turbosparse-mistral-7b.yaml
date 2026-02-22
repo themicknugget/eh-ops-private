@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: turbosparse-mistral-7b
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: turbosparse-mistral-7b
+    # Runs dense — TurboSparse fine-tuning outperforms original Mistral even without sparse inference
+    backend: llamacpp-vulkan
+
+    source:
+      huggingface: PowerInfer/TurboSparse-Mistral-Instruct
+      contextSize: "4096"
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: turbosparse-mistral-7b
+      modelFile: turbosparse-mistral-7b.Q4_K_M.gguf
+
+    download:
+      # GGUF produced by turbosparse-mistral-7b-convert Job — no HF download needed
+      enabled: false
+
+    resources:
+      requests:
+        memory: 8Gi
+        cpu: "4"
+      limits:
+        memory: 16Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

@@ -26,15 +26,15 @@ spec:
             - |
               set -e
               MODEL_DIR=/models/turbosparse-mixtral-47b
-              GGUF_RAW="${MODEL_DIR}/turbosparse-mixtral-47b.f16.gguf"
-              GGUF_OUT="${MODEL_DIR}/turbosparse-mixtral-47b.Q4_K_M.gguf"
+              GGUF_RAW="$${MODEL_DIR}/turbosparse-mixtral-47b.f16.gguf"
+              GGUF_OUT="$${MODEL_DIR}/turbosparse-mixtral-47b.Q4_K_M.gguf"
 
-              if [ -f "${MODEL_DIR}/.ready" ]; then
+              if [ -f "$${MODEL_DIR}/.ready" ]; then
                 echo "Already converted"
                 exit 0
               fi
 
-              mkdir -p "${MODEL_DIR}"
+              mkdir -p "$${MODEL_DIR}"
 
               pip install --quiet "huggingface_hub[cli]" hf-transfer
               export PATH="/root/.local/bin:$PATH"
@@ -42,21 +42,21 @@ spec:
 
               echo "Downloading safetensors..."
               huggingface-cli download PowerInfer/TurboSparse-Mixtral \
-                --local-dir "${MODEL_DIR}/src" \
-                --token "${HF_TOKEN}"
+                --local-dir "$${MODEL_DIR}/src" \
+                --token "$${HF_TOKEN}"
 
               echo "Converting to GGUF..."
               python3 /app/convert_hf_to_gguf.py \
-                "${MODEL_DIR}/src" \
-                --outfile "${GGUF_RAW}"
+                "$${MODEL_DIR}/src" \
+                --outfile "$${GGUF_RAW}"
 
               echo "Quantizing to Q4_K_M..."
-              /app/llama-quantize "${GGUF_RAW}" "${GGUF_OUT}" Q4_K_M
+              /app/llama-quantize "$${GGUF_RAW}" "$${GGUF_OUT}" Q4_K_M
 
-              rm -f "${GGUF_RAW}"
-              rm -rf "${MODEL_DIR}/src"
-              touch "${MODEL_DIR}/.ready"
-              echo "Done: ${GGUF_OUT}"
+              rm -f "$${GGUF_RAW}"
+              rm -rf "$${MODEL_DIR}/src"
+              touch "$${MODEL_DIR}/.ready"
+              echo "Done: $${GGUF_OUT}"
           env:
             - name: HF_HOME
               value: /models

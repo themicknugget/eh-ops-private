@@ -57,27 +57,25 @@ spec:
               heartbeat_pid=$!
 
               # Background: print download progress every 60s with transfer rate
-              last_size=0
+              last_bytes=0
               while [ ! -f "${MODEL_DIR}/.ready" ]; do
-                size=$(du -s "${MODEL_DIR}" 2>/dev/null | cut -f1)
-                if [ -n "$size" ] && [ "$last_size" -gt 0 ]; then
-                  diff=$((size - last_size))
-                  # diff is in 512-byte blocks, multiply by 512 to get bytes
-                  bytes=$((diff * 512))
-                  size_gb=$((size * 512 / 1024 / 1024 / 1024))
+                bytes=$(du -sb "${MODEL_DIR}" 2>/dev/null | cut -f1)
+                if [ -n "$bytes" ] && [ "$last_bytes" -gt 0 ]; then
+                  diff=$((bytes - last_bytes))
+                  size_gb=$((bytes / 1024 / 1024 / 1024))
                   # Calculate rate - show MB/s if >= 1, otherwise KB/s
-                  rate_mb=$((bytes / 60 / 1024 / 1024))
+                  rate_mb=$((diff / 60 / 1024 / 1024))
                   if [ "$rate_mb" -ge 1 ]; then
                     echo "${size_gb}G downloaded (~${rate_mb} MB/s)"
                   else
-                    rate_kb=$((bytes / 60 / 1024))
+                    rate_kb=$((diff / 60 / 1024))
                     echo "${size_gb}G downloaded (~${rate_kb} KB/s)"
                   fi
-                elif [ -n "$size" ]; then
-                  size_gb=$((size * 512 / 1024 / 1024 / 1024))
+                elif [ -n "$bytes" ]; then
+                  size_gb=$((bytes / 1024 / 1024 / 1024))
                   echo "${size_gb}G downloaded"
                 fi
-                last_size=${size:-0}
+                last_bytes=${bytes:-0}
                 sleep 60
               done &
               progress_pid=$!

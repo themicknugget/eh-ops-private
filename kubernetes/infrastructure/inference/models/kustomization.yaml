@@ -7,3 +7,4 @@ kind: Kustomization
 resources:
   - minimax-m25-reap.yaml
   - minimax-m25-reap-139b.yaml
+  - deepseek-r1-distill-70b.yaml

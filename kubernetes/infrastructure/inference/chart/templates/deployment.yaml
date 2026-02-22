@@ -85,8 +85,9 @@ spec:
               echo "Download job not available, downloading model to ${MODEL_DIR}..."
 
               # Install huggingface-cli with CLI extras
-              pip install --user "huggingface_hub[cli]"
+              pip install --user "huggingface_hub[cli]" hf-transfer
               export PATH="/tmp/.local/bin:$PATH"
+              export HF_HUB_ENABLE_HF_TRANSFER=1
 
               mkdir -p "${MODEL_DIR}"
               rm -f "${MODEL_DIR}/.failed"
@@ -124,6 +125,9 @@ spec:
               progress_pid=$!
 
               hf download "{{ .Values.source.huggingface }}" \
+              {{- if .Values.download.include }}
+                --include "{{ .Values.download.include }}" \
+              {{- end }}
                 --local-dir "${MODEL_DIR}"
 
               kill $heartbeat_pid $progress_pid 2>/dev/null || true

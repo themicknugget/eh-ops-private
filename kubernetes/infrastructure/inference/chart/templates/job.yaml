@@ -117,8 +117,9 @@ spec:
                             set -e
 
                             # Install huggingface-cli with CLI extras
-                            pip install --user "huggingface_hub[cli]"
+                            pip install --user "huggingface_hub[cli]" hf-transfer
                             export PATH="/tmp/.local/bin:\$PATH"
+                            export HF_HUB_ENABLE_HF_TRANSFER=1
 
                             MODEL_DIR=/models/{{ $modelDir }}
 
@@ -166,6 +167,9 @@ spec:
 
                             # Download (hf is resumable)
                             hf download "{{ .Values.source.huggingface }}" \\
+                            {{- if .Values.download.include }}
+                              --include "{{ .Values.download.include }}" \\
+                            {{- end }}
                               --local-dir "\${MODEL_DIR}"
 
                             # Mark complete

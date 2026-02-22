@@ -44,6 +44,8 @@ download:
   # HuggingFace token for gated models (optional)
   # tokenSecret: hf-token
   # tokenSecretKey: token
+  # Only download files matching this glob pattern (e.g., "Q8_0/*.gguf" for bartowski split repos)
+  include: ""
 
 # Scaling configuration
 scaling:

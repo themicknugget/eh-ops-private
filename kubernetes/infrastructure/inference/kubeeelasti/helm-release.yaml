@@ -42,6 +42,8 @@ spec:
       replicas: 2
       proxy:
         env:
+          # Use standard HTTP Host header (not Istio's X-Envoy-Decorator-Operation)
+          headerForHost: Host
           # Max time to wait for cold start (seconds)
           reqTimeout: "600"
           # Queue settings

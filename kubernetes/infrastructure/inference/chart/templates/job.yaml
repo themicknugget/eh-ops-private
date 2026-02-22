@@ -56,6 +56,13 @@ spec:
               done &
               heartbeat_pid=$!
 
+              # Background: print download progress every 60s
+              while [ ! -f "${MODEL_DIR}/.ready" ]; do
+                du -sh "${MODEL_DIR}" 2>/dev/null || true
+                sleep 60
+              done &
+              progress_pid=$!
+
               echo "Downloading model to ${MODEL_DIR}..."
 
               # Download (hf is resumable)
@@ -63,7 +70,7 @@ spec:
                 --local-dir "${MODEL_DIR}"
 
               # Mark complete
-              kill $heartbeat_pid 2>/dev/null || true
+              kill $heartbeat_pid $progress_pid 2>/dev/null || true
               rm -f "${MODEL_DIR}/.downloading"
               touch "${MODEL_DIR}/.ready"
 

@@ -72,9 +72,13 @@ spec:
         operator: Exists
         effect: NoSchedule
 
-    # Only deploy on nodes with AMD GPU
+    # Only deploy on nodes with AMD GPU Talos extension
     node_selector_enabled: true
     node_selector:
       kubernetes.io/arch: amd64
-      # Will match shadow node which has the amdgpu extension
-      extensions.talos.dev/amdgpu: "20251125-v1.12.0"
+      extensions.talos.dev/amdgpu: "20260110-v1.12.4"
+
+    # NFD detects AMD GPU PCI devices and sets feature.node.kubernetes.io/pci-0300_1002.present=true,
+    # which the device plugin and labeller DaemonSets require in their nodeSelector
+    nfd:
+      enabled: true

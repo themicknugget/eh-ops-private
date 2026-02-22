@@ -210,6 +210,28 @@ backends:
         hostPath:
           path: /dev/kfd
 
+  llamacpp-cpu:
+    image:
+      repository: ghcr.io/ggml-org/llama.cpp
+      tag: server
+    port: 8080
+    args:
+      - llama-server
+      - -m
+      - $(HF_SOURCE)
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --metrics
+      - -c
+      - "8192"
+    readinessPath: /health
+    env: []
+    securityContext: {}
+    volumeMounts: []
+    volumes: []
+
   vllm:
     image:
       repository: vllm/vllm-openai

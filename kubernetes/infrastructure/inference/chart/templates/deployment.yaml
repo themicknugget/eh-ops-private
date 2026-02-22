@@ -154,6 +154,11 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             {{- $hfSource := printf "/models/%s" $modelDir -}}
+            {{- $backendName := include "inference-model.backendName" . -}}
+            {{- if eq $backendName "llamacpp-cpu" -}}
+            {{- /* For CPU backend, use first GGUF file in directory */ -}}
+            {{- $hfSource = printf "/models/%s/*.gguf" $modelDir -}}
+            {{- end -}}
             {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | nindent 12 }}
           ports:
             - name: http

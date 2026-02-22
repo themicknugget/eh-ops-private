@@ -24,6 +24,9 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- else if eq $backendName "llamacpp-rocm" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-rocm" -}}
+{{- else if eq $backendName "llamacpp-cpu" -}}
+{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
+{{- $tag = "server" -}}
 {{- else if eq $backendName "vllm" -}}
 {{- $repo = "vllm/vllm-openai" -}}
 {{- $tag = "latest" -}}
@@ -96,6 +99,17 @@ Get backend args as YAML list
 - --port
 - "8080"
 - --metrics
+{{- else if eq $backendName "llamacpp-cpu" -}}
+- llama-server
+- -m
+- $(HF_SOURCE)
+- --host
+- 0.0.0.0
+- --port
+- "8080"
+- --metrics
+- -c
+- "8192"
 {{- else if eq $backendName "vllm" -}}
 - --model
 - $(HF_SOURCE)

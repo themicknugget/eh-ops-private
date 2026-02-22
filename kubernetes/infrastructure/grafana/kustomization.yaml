@@ -17,3 +17,4 @@ resources:
   - dashboards/kyverno-dashboard.yaml
   - dashboards/node-exporter-dashboard.yaml
   - dashboards/llama-cpp-dashboard.yaml
+  - dashboards/kasa-dashboard.yaml

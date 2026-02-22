@@ -16,7 +16,7 @@ spec:
           matchExpressions:
             vendor:
               op: In
-              values: ["1002"]
+              value: ["1002"]
             class:
               op: In
-              values: ["0380"]
+              value: ["0380"]

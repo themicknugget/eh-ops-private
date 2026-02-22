@@ -28,12 +28,25 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: launcher
-          image: lachlanevenson/k8s-kubectl:latest
+          image: python:3.11-slim
           command:
             - sh
             - -c
             - |
               set -e
+
+              # Download kubectl using Python
+              python3 -c "
+              import urllib.request
+              import os
+              url = 'https://dl.k8s.io/release/stable.txt'
+              version = urllib.request.urlopen(url).read().decode().strip()
+              kubectl_url = f'https://dl.k8s.io/release/{version}/bin/linux/amd64/kubectl'
+              print(f'Downloading kubectl {version}...')
+              urllib.request.urlretrieve(kubectl_url, '/tmp/kubectl')
+              os.chmod('/tmp/kubectl', 0o755)
+              print('kubectl downloaded')
+              "
 
               MODEL_DIR=/models/{{ $modelDir }}
               JOB_NAME={{ .Values.name }}-download-worker

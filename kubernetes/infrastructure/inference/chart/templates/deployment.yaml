@@ -50,29 +50,41 @@ spec:
 
               # 1. Already downloaded? Fast exit
               if [ -f "${MODEL_DIR}/.ready" ]; then
-                echo "Model already cached, skipping download"
+                echo "Model already cached"
                 exit 0
               fi
 
-              # 2. Download in progress? Wait for it
-              if [ -f "${MODEL_DIR}/.downloading" ]; then
-                age=$(( $(date +%s) - $(stat -c %Y "${MODEL_DIR}/.downloading" 2>/dev/null || echo 0) ))
-                if [ $age -lt 600 ]; then
-                  echo "Download in progress (started ${age}s ago), waiting..."
-                  while [ -f "${MODEL_DIR}/.downloading" ] && [ ! -f "${MODEL_DIR}/.ready" ]; do
-                    sleep 10
-                  done
-                  if [ -f "${MODEL_DIR}/.ready" ]; then
-                    echo "Model ready!"
-                    exit 0
-                  fi
-                  echo "Download appears stuck, taking over..."
+              echo "Waiting for download job to complete..."
+
+              # 2. Wait for Job to complete (with timeout)
+              TIMEOUT=86400  # 24 hours
+              elapsed=0
+              while [ ! -f "${MODEL_DIR}/.ready" ] && [ ! -f "${MODEL_DIR}/.failed" ]; do
+                sleep 10
+                elapsed=$((elapsed + 10))
+
+                # Show progress every 5 minutes
+                if [ $((elapsed % 300)) -eq 0 ]; then
+                  echo "Still waiting... (${elapsed}s elapsed)"
                 fi
+
+                # Timeout - fallback to downloading ourselves
+                if [ $elapsed -ge $TIMEOUT ]; then
+                  echo "Timeout waiting for download job, downloading ourselves..."
+                  break
+                fi
+              done
+
+              # 3. Check if Job succeeded
+              if [ -f "${MODEL_DIR}/.ready" ]; then
+                echo "Model ready!"
+                exit 0
               fi
 
-              # 3. Start download
-              echo "Starting model download to ${MODEL_DIR}..."
+              # 4. Job failed or timeout - download ourselves
+              echo "Download job not available, downloading model to ${MODEL_DIR}..."
               mkdir -p "${MODEL_DIR}"
+              rm -f "${MODEL_DIR}/.failed"
               touch "${MODEL_DIR}/.downloading"
 
               # Background: update lock timestamp every minute
@@ -82,12 +94,10 @@ spec:
               done &
               heartbeat_pid=$!
 
-              # Download (huggingface-cli is resumable)
               huggingface-cli download "{{ .Values.source.huggingface }}" \
                 --local-dir "${MODEL_DIR}" \
                 --local-dir-use-symlinks False
 
-              # 4. Mark complete
               kill $heartbeat_pid 2>/dev/null || true
               rm -f "${MODEL_DIR}/.downloading"
               touch "${MODEL_DIR}/.ready"

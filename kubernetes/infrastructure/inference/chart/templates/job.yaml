@@ -1,0 +1,87 @@
+{{- if and .Values.name .Values.download.enabled -}}
+{{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
+{{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.name }}-download
+  labels:
+    {{- include "inference-model.labels" . | nindent 4 }}
+    app.kubernetes.io/component: model-download
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        {{- include "inference-model.labels" . | nindent 8 }}
+        app.kubernetes.io/component: model-download
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      containers:
+        - name: download
+          image: {{ .Values.download.image | default "ghcr.io/huggingface/hub:latest" }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MODEL_DIR=/models/{{ $modelDir }}
+
+              # Check if already downloaded
+              if [ -f "${MODEL_DIR}/.ready" ]; then
+                echo "Model already downloaded"
+                exit 0
+              fi
+
+              # Create lock file
+              mkdir -p "${MODEL_DIR}"
+              touch "${MODEL_DIR}/.downloading"
+
+              # Background: update lock timestamp every minute
+              while true; do
+                touch "${MODEL_DIR}/.downloading"
+                sleep 60
+              done &
+              heartbeat_pid=$!
+
+              echo "Downloading model to ${MODEL_DIR}..."
+
+              # Download (huggingface-cli is resumable)
+              huggingface-cli download "{{ .Values.source.huggingface }}" \
+                --local-dir "${MODEL_DIR}" \
+                --local-dir-use-symlinks False
+
+              # Mark complete
+              kill $heartbeat_pid 2>/dev/null || true
+              rm -f "${MODEL_DIR}/.downloading"
+              touch "${MODEL_DIR}/.ready"
+
+              echo "Model downloaded successfully!"
+          env:
+            - name: HF_HOME
+              value: /models
+            {{- if .Values.download.tokenSecret }}
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.download.tokenSecret }}
+                  key: {{ .Values.download.tokenSecretKey | default "token" }}
+            {{- end }}
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: {{ $sharedPvc }}
+{{- end -}}

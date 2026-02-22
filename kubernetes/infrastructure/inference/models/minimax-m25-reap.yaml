@@ -17,16 +17,21 @@ spec:
       interval: 5m
   values:
     name: minimax-m25-reap
-    backend: llamacpp-vulkan-moe
+    backend: llamacpp-cpu
+    env:
+      - name: LLAMA_ARG_N_GPU_LAYERS
+        value: "0"
+      - name: LLAMA_ARG_THREADS
+        value: "12"
 
     source:
       huggingface: exdysa/MiniMax-M2.5-REAP-172B-A10B-GGUF-Q4_K_M
-      contextSize: "131072"  # 128k context
+      contextSize: "131072"
 
-    # Uses shared PVC (model-cache) with subdirectory
     storage:
       sharedPvc: model-cache
       modelDir: minimax-m25-reap
+      modelFile: MiniMax-M2.5-REAP-172B-A10B-Q4_K_M.gguf
 
     resources:
       requests:

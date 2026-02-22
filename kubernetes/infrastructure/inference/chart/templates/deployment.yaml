@@ -131,6 +131,8 @@ spec:
           volumeMounts:
             - name: model-cache
               mountPath: /models
+            - name: tmp
+              mountPath: /tmp
       {{- end }}
       containers:
         - name: inference
@@ -197,6 +199,8 @@ spec:
         - name: model-cache
           persistentVolumeClaim:
             claimName: {{ $sharedPvc }}
+        - name: tmp
+          emptyDir: {}
         {{- if .Values.promptTemplate }}
         - name: prompt-template
           configMap:

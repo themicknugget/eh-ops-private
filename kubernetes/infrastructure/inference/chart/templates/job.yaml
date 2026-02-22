@@ -90,8 +90,12 @@ spec:
           volumeMounts:
             - name: model-cache
               mountPath: /models
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: model-cache
           persistentVolumeClaim:
             claimName: {{ $sharedPvc }}
+        - name: tmp
+          emptyDir: {}
 {{- end -}}

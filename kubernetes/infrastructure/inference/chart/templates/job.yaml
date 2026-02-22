@@ -60,8 +60,7 @@ spec:
 
               # Download (hf is resumable)
               hf download "{{ .Values.source.huggingface }}" \
-                --local-dir "${MODEL_DIR}" \
-                --local-dir-use-symlinks False
+                --local-dir "${MODEL_DIR}"
 
               # Mark complete
               kill $heartbeat_pid 2>/dev/null || true

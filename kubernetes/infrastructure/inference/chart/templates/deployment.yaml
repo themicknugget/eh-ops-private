@@ -100,8 +100,7 @@ spec:
               heartbeat_pid=$!
 
               hf download "{{ .Values.source.huggingface }}" \
-                --local-dir "${MODEL_DIR}" \
-                --local-dir-use-symlinks False
+                --local-dir "${MODEL_DIR}"
 
               kill $heartbeat_pid 2>/dev/null || true
               rm -f "${MODEL_DIR}/.downloading"

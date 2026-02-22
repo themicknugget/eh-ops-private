@@ -156,8 +156,12 @@ spec:
             {{- $hfSource := printf "/models/%s" $modelDir -}}
             {{- $backendName := include "inference-model.backendName" . -}}
             {{- if eq $backendName "llamacpp-cpu" -}}
-            {{- /* For CPU backend, use first GGUF file in directory */ -}}
-            {{- $hfSource = printf "/models/%s/*.gguf" $modelDir -}}
+            {{- /* For CPU backend, use specific model file if provided */ -}}
+            {{- if .Values.storage.modelFile -}}
+            {{- $hfSource = printf "/models/%s/%s" $modelDir .Values.storage.modelFile -}}
+            {{- else -}}
+            {{- $hfSource = printf "/models/%s" $modelDir -}}
+            {{- end -}}
             {{- end -}}
             {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | nindent 12 }}
           ports:

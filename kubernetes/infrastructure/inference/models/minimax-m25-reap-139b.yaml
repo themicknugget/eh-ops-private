@@ -31,6 +31,7 @@ spec:
     storage:
       sharedPvc: model-cache
       modelDir: minimax-m25-reap-139b
+      modelFile: MiniMax-M2.5-REAP-MXFP4_MOE-00001-of-00007.gguf
 
     resources:
       requests:

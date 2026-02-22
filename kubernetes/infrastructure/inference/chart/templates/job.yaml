@@ -33,7 +33,10 @@ spec:
             - sh
             - -c
             - |
-              set -e
+              set -ex
+
+              # Force unbuffered Python output
+              export PYTHONUNBUFFERED=1
 
               # Download kubectl using Python
               python3 -c "

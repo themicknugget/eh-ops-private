@@ -1,0 +1,22 @@
+apiVersion: nfd.k8s-sigs.io/v1alpha1
+kind: NodeFeatureRule
+metadata:
+  name: amd-gpu-display-controller
+spec:
+  rules:
+    - name: amd-display-controller-compat
+      # Strix Halo (and other AMD APU iGPUs) enumerate as PCI class 0380
+      # (Display Controller) rather than 0300 (VGA Compatible Controller).
+      # The amd-gpu chart hardcodes pci-0300_1002.present in its nodeSelector,
+      # so we bridge the gap here by having NFD emit that label for AMD 0380 devices.
+      labels:
+        feature.node.kubernetes.io/pci-0300_1002.present: "true"
+      matchFeatures:
+        - feature: pci.device
+          matchExpressions:
+            vendor:
+              op: In
+              values: ["1002"]
+            class:
+              op: In
+              values: ["0380"]

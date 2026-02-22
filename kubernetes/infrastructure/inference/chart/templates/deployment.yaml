@@ -36,11 +36,6 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
       {{- if .Values.download.enabled }}
       initContainers:
         - name: ensure-model
@@ -124,12 +119,6 @@ spec:
                   name: {{ .Values.download.tokenSecret }}
                   key: {{ .Values.download.tokenSecretKey | default "token" }}
             {{- end }}
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           volumeMounts:
             - name: model-cache
               mountPath: /models

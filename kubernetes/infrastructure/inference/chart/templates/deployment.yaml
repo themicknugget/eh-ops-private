@@ -99,7 +99,7 @@ spec:
               done &
               heartbeat_pid=$!
 
-              huggingface-cli download "{{ .Values.source.huggingface }}" \
+              hf download "{{ .Values.source.huggingface }}" \
                 --local-dir "${MODEL_DIR}" \
                 --local-dir-use-symlinks False
 

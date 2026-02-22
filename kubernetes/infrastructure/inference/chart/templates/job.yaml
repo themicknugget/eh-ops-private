@@ -58,8 +58,8 @@ spec:
 
               echo "Downloading model to ${MODEL_DIR}..."
 
-              # Download (huggingface-cli is resumable)
-              huggingface-cli download "{{ .Values.source.huggingface }}" \
+              # Download (hf is resumable)
+              hf download "{{ .Values.source.huggingface }}" \
                 --local-dir "${MODEL_DIR}" \
                 --local-dir-use-symlinks False
 

@@ -7,7 +7,6 @@ metadata:
   name: {{ .Values.name }}-download
   labels:
     {{- include "inference-model.labels" . | nindent 4 }}
-    app.kubernetes.io/component: model-download
 spec:
   backoffLimit: 3
   ttlSecondsAfterFinished: 300
@@ -15,7 +14,6 @@ spec:
     metadata:
       labels:
         {{- include "inference-model.labels" . | nindent 8 }}
-        app.kubernetes.io/component: model-download
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:

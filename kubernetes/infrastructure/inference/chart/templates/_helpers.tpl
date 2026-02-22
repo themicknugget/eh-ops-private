@@ -82,6 +82,22 @@ Get backend env vars
   value: "11.5.1"
 - name: ROCBLAS_USE_HIPBLASLT
   value: "1"
+- name: LLAMA_ARG_N_GPU_LAYERS
+  value: "99"
+- name: LLAMA_ARG_FLASH_ATTN
+  value: "1"
+- name: LLAMA_ARG_CACHE_TYPE_K
+  value: "q4_0"
+- name: LLAMA_ARG_CACHE_TYPE_V
+  value: "q4_0"
+- name: LLAMA_ARG_THREADS
+  value: "12"
+- name: LLAMA_ARG_BATCH_SIZE
+  value: "4096"
+- name: LLAMA_ARG_UBATCH_SIZE
+  value: "1024"
+- name: LLAMA_ARG_ENDPOINT_METRICS
+  value: "1"
 {{- end -}}
 {{- end -}}
 
@@ -91,7 +107,7 @@ Get backend args as YAML list
 {{- define "inference-model.backendArgs" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
-- -hf
+- -m
 - $(HF_SOURCE)
 - --host
 - 0.0.0.0

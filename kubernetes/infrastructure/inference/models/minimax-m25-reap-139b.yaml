@@ -17,16 +17,11 @@ spec:
       interval: 5m
   values:
     name: minimax-m25-reap-139b
-    backend: llamacpp-cpu
-    env:
-      - name: LLAMA_ARG_N_GPU_LAYERS
-        value: "0"
-      - name: LLAMA_ARG_THREADS
-        value: "12"
+    backend: llamacpp-rocm
 
     source:
       huggingface: BennyDaBall/MiniMax-M2.5-REAP-139B-A10B-MXFP4
-      contextSize: "131072"  # 128k context
+      contextSize: "131072"
 
     storage:
       sharedPvc: model-cache

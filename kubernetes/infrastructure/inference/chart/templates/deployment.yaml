@@ -1,0 +1,192 @@
+{{- if .Values.name -}}
+{{- $backend := include "inference-model.backend" . | fromYaml -}}
+{{- $port := include "inference-model.port" . | int -}}
+{{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
+{{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    {{- include "inference-model.labels" . | nindent 4 }}
+spec:
+  replicas: 0  # KubeElasti controls scaling
+  strategy:
+    type: Recreate  # Only one pod per model (limited GPU)
+  selector:
+    matchLabels:
+      {{- include "inference-model.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "inference-model.labels" . | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ $port | quote }}
+        prometheus.io/path: /metrics
+    spec:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.download.enabled }}
+      initContainers:
+        - name: ensure-model
+          image: {{ .Values.download.image }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MODEL_DIR=/models/{{ $modelDir }}
+
+              # 1. Already downloaded? Fast exit
+              if [ -f "${MODEL_DIR}/.ready" ]; then
+                echo "Model already cached, skipping download"
+                exit 0
+              fi
+
+              # 2. Download in progress? Wait for it
+              if [ -f "${MODEL_DIR}/.downloading" ]; then
+                age=$(( $(date +%s) - $(stat -c %Y "${MODEL_DIR}/.downloading" 2>/dev/null || echo 0) ))
+                if [ $age -lt 600 ]; then
+                  echo "Download in progress (started ${age}s ago), waiting..."
+                  while [ -f "${MODEL_DIR}/.downloading" ] && [ ! -f "${MODEL_DIR}/.ready" ]; do
+                    sleep 10
+                  done
+                  if [ -f "${MODEL_DIR}/.ready" ]; then
+                    echo "Model ready!"
+                    exit 0
+                  fi
+                  echo "Download appears stuck, taking over..."
+                fi
+              fi
+
+              # 3. Start download
+              echo "Starting model download to ${MODEL_DIR}..."
+              mkdir -p "${MODEL_DIR}"
+              touch "${MODEL_DIR}/.downloading"
+
+              # Background: update lock timestamp every minute
+              while true; do
+                touch "${MODEL_DIR}/.downloading"
+                sleep 60
+              done &
+              heartbeat_pid=$!
+
+              # Download (huggingface-cli is resumable)
+              huggingface-cli download "{{ .Values.source.huggingface }}" \
+                --local-dir "${MODEL_DIR}" \
+                --local-dir-use-symlinks False
+
+              # 4. Mark complete
+              kill $heartbeat_pid 2>/dev/null || true
+              rm -f "${MODEL_DIR}/.downloading"
+              touch "${MODEL_DIR}/.ready"
+              echo "Model downloaded successfully"
+          env:
+            - name: HF_HOME
+              value: /models
+            {{- if .Values.download.tokenSecret }}
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.download.tokenSecret }}
+                  key: {{ .Values.download.tokenSecretKey | default "token" }}
+            {{- end }}
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+      {{- end }}
+      containers:
+        - name: inference
+          image: {{ include "inference-model.image" . }}
+          imagePullPolicy: IfNotPresent
+          {{- if $backend.args }}
+          args:
+            {{- range $backend.args }}
+            - {{ . | replace "$(HF_SOURCE)" (printf "/models/%s" $modelDir) }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ $port }}
+              protocol: TCP
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: HF_HOME
+              value: /models
+            - name: HF_SOURCE
+              value: {{ .Values.source.huggingface }}
+            - name: MODEL_NAME
+              value: {{ .Values.name }}
+            {{- if .Values.source.contextSize }}
+            - name: LLAMA_ARG_CTX_SIZE
+              value: {{ .Values.source.contextSize | quote }}
+            {{- end }}
+            {{- /* Backend env vars */ -}}
+            {{- range $backend.env }}
+            - {{ toYaml . | nindent 14 | trim }}
+            {{- end }}
+            {{- /* User env vars (can override backend defaults) */ -}}
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with $backend.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+            {{- if .Values.promptTemplate }}
+            - name: prompt-template
+              mountPath: /prompt/templates
+              readOnly: true
+            {{- end }}
+            {{- with $backend.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: {{ $backend.readinessPath | default "/health" }}
+              port: {{ $port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: {{ $backend.readinessPath | default "/health" }}
+              port: {{ $port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: {{ $backend.readinessPath | default "/health" }}
+              port: {{ $port }}
+            failureThreshold: 180  # 30 minutes max for large models
+            periodSeconds: 10
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: {{ $sharedPvc }}
+        {{- if .Values.promptTemplate }}
+        - name: prompt-template
+          configMap:
+            name: {{ .Values.name }}-template
+        {{- end }}
+        {{- with $backend.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+{{- end -}}

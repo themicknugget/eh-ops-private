@@ -1,0 +1,47 @@
+# MiniMax M2.5 REAP 172B (10B active, MoE)
+# Q4_K_M quantization - requires ~110GB memory
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: minimax-m2.5-reap
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: minimax-m2.5-reap
+    backend: llamacpp-vulkan-moe
+
+    source:
+      huggingface: exdysa/MiniMax-M2.5-REAP-172B-A10B-GGUF-Q4_K_M
+      contextSize: "131072"  # 128k context
+
+    # Uses shared PVC (model-cache) with subdirectory
+    storage:
+      sharedPvc: model-cache
+      modelDir: minimax-m2.5-reap
+
+    resources:
+      requests:
+        memory: 100Gi
+        cpu: "4"
+      limits:
+        memory: 120Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

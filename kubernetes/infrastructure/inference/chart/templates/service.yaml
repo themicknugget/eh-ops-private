@@ -1,0 +1,22 @@
+{{- if .Values.name -}}
+{{- $port := include "inference-model.port" . | int -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    {{- include "inference-model.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ $port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "inference-model.labels" . | nindent 4 }}
+{{- end -}}

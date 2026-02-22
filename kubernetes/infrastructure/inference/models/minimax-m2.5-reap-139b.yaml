@@ -1,0 +1,46 @@
+# MiniMax M2.5 REAP 139B (10B active, MoE)
+# MXFP4 quantization - requires ~90GB memory
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: minimax-m2.5-reap-139b
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: minimax-m2.5-reap-139b
+    backend: llamacpp-vulkan-moe
+
+    source:
+      huggingface: BennyDaBall/MiniMax-M2.5-REAP-139B-A10B-MXFP4
+      contextSize: "131072"  # 128k context
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: minimax-m2.5-reap-139b
+
+    resources:
+      requests:
+        memory: 80Gi
+        cpu: "4"
+      limits:
+        memory: 100Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

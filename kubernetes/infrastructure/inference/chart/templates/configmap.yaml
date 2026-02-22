@@ -1,0 +1,11 @@
+{{- if and .Values.name .Values.promptTemplate -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-template
+  labels:
+    {{- include "inference-model.labels" . | nindent 4 }}
+data:
+  template.jinja: |
+    {{- .Values.promptTemplate | nindent 4 }}
+{{- end -}}

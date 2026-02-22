@@ -19,3 +19,4 @@ resources:
   - kube-actions-runner
   - database
   - fstrim
+  - inference

@@ -1,0 +1,18 @@
+{{- if and .Values.name .Values.storage.createPvc -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.storage.sharedPvc | default "model-cache" }}
+  labels:
+    {{- include "inference-model.labels" . | nindent 4 }}
+    app.kubernetes.io/component: model-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.storage.className }}
+  storageClassName: {{ .Values.storage.className }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | default "500Gi" }}
+{{- end -}}

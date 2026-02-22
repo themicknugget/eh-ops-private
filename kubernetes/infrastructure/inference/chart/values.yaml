@@ -1,0 +1,223 @@
+# Model identification
+name: ""
+
+# Backend configuration
+backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, vllm
+
+# Model source
+source:
+  huggingface: ""  # e.g., meta-llama/Llama-3.1-8B-Instruct
+  contextSize: ""  # e.g., "131072" for 128k context
+
+# Resource configuration
+resources:
+  requests:
+    memory: 16Gi
+    cpu: "2"
+  limits:
+    memory: 32Gi
+
+# Shared model cache storage
+# All models share one PVC with subdirectories
+storage:
+  # Name of the shared PVC (created once, separately)
+  sharedPvc: model-cache
+  # Model subdirectory within the shared PVC
+  # Defaults to the model name if not specified
+  modelDir: ""
+  # Create the shared PVC (only one model should set this to true)
+  createPvc: false
+  # PVC size (only used when createPvc is true)
+  size: 500Gi
+  className: ""  # Uses default storage class if empty
+
+# Download configuration
+download:
+  enabled: true
+  image: ghcr.io/huggingface/hub:latest
+  # HuggingFace token for gated models (optional)
+  # tokenSecret: hf-token
+  # tokenSecretKey: token
+
+# Scaling configuration
+scaling:
+  cooldownPeriod: 600  # Seconds idle before scale to 0
+  maxReplicas: 2
+  # Prometheus trigger for KubeElasti
+  triggerQuery: |-
+    sum(rate(envoy_cluster_upstream_rq_total{cluster_name=~".*{{ .Values.name }}.*"}[1m])) or vector(0)
+  triggerThreshold: "0.1"
+
+# Pod placement
+nodeSelector: {}
+  # kubernetes.io/hostname: shadow
+tolerations: []
+  # - key: amd.com/gpu
+  #   operator: Exists
+affinity: {}
+
+# Environment variables (merged with backend defaults)
+env: []
+
+# Prompt template (optional)
+promptTemplate: ""
+
+# Service configuration
+service:
+  port: 8080
+  annotations: {}
+
+# Gateway API / HTTPRoute (optional)
+httpRoute:
+  enabled: false
+  hostname: ""
+  gateway:
+    name: cilium
+    namespace: cilium
+
+# Backend-specific defaults
+backends:
+  llamacpp-vulkan:
+    image:
+      repository: ghcr.io/ggml-org/llama.cpp
+      tag: server-vulkan
+    port: 8080
+    args:
+      - llama-server
+      - -hf
+      - $(HF_SOURCE)
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --metrics
+    readinessPath: /health
+    env:
+      - name: LLAMA_HIP_UMA
+        value: "ON"
+    securityContext:
+      capabilities:
+        add: [SYS_PTRACE]
+      seccompProfile:
+        type: Unconfined
+    volumeMounts:
+      - mountPath: /dev/dri
+        name: dri
+      - mountPath: /dev/kfd
+        name: kfd
+    volumes:
+      - name: dri
+        hostPath:
+          path: /dev/dri
+      - name: kfd
+        hostPath:
+          path: /dev/kfd
+
+  # Optimized for large MoE models on Strix Halo
+  llamacpp-vulkan-moe:
+    image:
+      repository: ghcr.io/ggml-org/llama.cpp
+      tag: server-vulkan
+    port: 8080
+    args:
+      - llama-server
+      - -hf
+      - $(HF_SOURCE)
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --metrics
+    readinessPath: /health
+    env:
+      - name: LLAMA_HIP_UMA
+        value: "ON"
+      - name: LLAMA_ARG_N_GPU_LAYERS
+        value: "99"
+      - name: LLAMA_ARG_FLASH_ATTN
+        value: "1"
+      - name: LLAMA_ARG_CACHE_TYPE_K
+        value: "q4_0"
+      - name: LLAMA_ARG_CACHE_TYPE_V
+        value: "q4_0"
+      - name: LLAMA_ARG_THREADS
+        value: "12"
+      - name: LLAMA_ARG_BATCH_SIZE
+        value: "4096"
+      - name: LLAMA_ARG_UBATCH_SIZE
+        value: "1024"
+      - name: LLAMA_ARG_ENDPOINT_METRICS
+        value: "1"
+    securityContext:
+      capabilities:
+        add: [SYS_PTRACE]
+      seccompProfile:
+        type: Unconfined
+    volumeMounts:
+      - mountPath: /dev/dri
+        name: dri
+      - mountPath: /dev/kfd
+        name: kfd
+    volumes:
+      - name: dri
+        hostPath:
+          path: /dev/dri
+      - name: kfd
+        hostPath:
+          path: /dev/kfd
+
+  llamacpp-rocm:
+    image:
+      repository: ghcr.io/ggml-org/llama.cpp
+      tag: server-rocm
+    port: 8080
+    args:
+      - llama-server
+      - -hf
+      - $(HF_SOURCE)
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --metrics
+    readinessPath: /health
+    env:
+      - name: HSA_OVERRIDE_GFX_VERSION
+        value: "11.5.1"
+      - name: ROCBLAS_USE_HIPBLASLT
+        value: "1"
+    securityContext:
+      capabilities:
+        add: [SYS_PTRACE]
+      seccompProfile:
+        type: Unconfined
+    volumeMounts:
+      - mountPath: /dev/dri
+        name: dri
+      - mountPath: /dev/kfd
+        name: kfd
+    volumes:
+      - name: dri
+        hostPath:
+          path: /dev/dri
+      - name: kfd
+        hostPath:
+          path: /dev/kfd
+
+  vllm:
+    image:
+      repository: vllm/vllm-openai
+      tag: latest
+    port: 8000
+    args:
+      - --model
+      - $(HF_SOURCE)
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    readinessPath: /health
+    env: []
+    securityContext: {}
+    volumeMounts: []
+    volumes: []

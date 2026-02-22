@@ -1,0 +1,15 @@
+# Shared model cache PVC
+# All inference models share this storage with subdirectories
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-cache
+  namespace: inference
+  labels:
+    app.kubernetes.io/component: model-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3840Gi  # 3.75TB

@@ -152,6 +152,10 @@ spec:
         - name: inference
           image: {{ include "inference-model.image" . }}
           imagePullPolicy: IfNotPresent
+          {{- with include "inference-model.backendCommand" . }}
+          command:
+            {{- . | nindent 12 }}
+          {{- end }}
           args:
             {{- $hfSource := printf "/models/%s" $modelDir -}}
             {{- $backendName := include "inference-model.backendName" . -}}

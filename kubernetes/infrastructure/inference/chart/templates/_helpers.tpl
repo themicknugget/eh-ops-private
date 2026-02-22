@@ -22,8 +22,8 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}
 {{- else if eq $backendName "llamacpp-rocm" -}}
-{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
-{{- $tag = "server-rocm" -}}
+{{- $repo = "docker.io/kyuz0/amd-strix-halo-toolboxes" -}}
+{{- $tag = "rocm-7.2" -}}
 {{- else if eq $backendName "llamacpp-cpu" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server" -}}
@@ -36,6 +36,17 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- end -}}
 {{- end -}}
 {{- printf "%s:%s" $repo $tag -}}
+{{- end -}}
+
+{{/*
+Get backend entrypoint command (empty = use image default ENTRYPOINT)
+Required for toolbox-style images that default to /bin/bash
+*/}}
+{{- define "inference-model.backendCommand" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if eq $backendName "llamacpp-rocm" -}}
+- /usr/local/bin/llama-server
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -78,11 +89,11 @@ Get backend env vars
 - name: LLAMA_ARG_ENDPOINT_METRICS
   value: "1"
 {{- else if eq $backendName "llamacpp-rocm" -}}
-- name: HSA_OVERRIDE_GFX_VERSION
-  value: "11.5.1"
 - name: ROCBLAS_USE_HIPBLASLT
   value: "1"
-- name: LLAMA_HIP_UMA
+- name: HSA_ENABLE_SDMA
+  value: "0"
+- name: GPU_MAX_HW_QUEUES
   value: "1"
 - name: LLAMA_ARG_N_GPU_LAYERS
   value: "99"
@@ -116,6 +127,7 @@ Get backend args as YAML list
 - --port
 - "8080"
 - --metrics
+- --no-mmap
 {{- else if eq $backendName "llamacpp-cpu" -}}
 - -m
 - $(HF_SOURCE)

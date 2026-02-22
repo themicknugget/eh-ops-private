@@ -35,7 +35,7 @@ spec:
 
               # Install huggingface-cli with CLI extras
               pip install --user "huggingface_hub[cli]"
-              export PATH="$HOME/.local/bin:$PATH"
+              export PATH="/tmp/.local/bin:$PATH"
 
               MODEL_DIR=/models/{{ $modelDir }}
 

@@ -82,6 +82,8 @@ Get backend env vars
   value: "11.5.1"
 - name: ROCBLAS_USE_HIPBLASLT
   value: "1"
+- name: LLAMA_HIP_UMA
+  value: "1"
 - name: LLAMA_ARG_N_GPU_LAYERS
   value: "99"
 - name: LLAMA_ARG_FLASH_ATTN

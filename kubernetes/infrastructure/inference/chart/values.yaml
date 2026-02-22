@@ -2,7 +2,7 @@
 name: ""
 
 # Backend configuration
-backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, powerinfer, powerinfer-moe, vllm
+backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, powerinfer-moe, vllm
 
 # Image (optional - defaults based on backend)
 image:
@@ -231,53 +231,6 @@ backends:
     securityContext: {}
     volumeMounts: []
     volumes: []
-
-  # Sparse inference for activation-predictor models (ReluLLaMA, Falcon, Bamboo)
-  powerinfer:
-    image:
-      repository: ghcr.io/cecil-the-coder/powerinfer-strix-halo-rocm
-      tag: latest
-    port: 8080
-    args:
-      - /app/server
-      - -m
-      - $(HF_SOURCE)
-      - --host
-      - "0.0.0.0"
-      - --port
-      - "8080"
-      - -n
-      - "999"
-      - --metrics
-    readinessPath: /health
-    env:
-      - name: HSA_OVERRIDE_GFX_VERSION
-        value: "11.5.1"
-      - name: LLAMA_HIP_UMA
-        value: "ON"
-      - name: ROCBLAS_USE_HIPBLASLT
-        value: "1"
-      - name: HSA_ENABLE_SDMA
-        value: "0"
-      - name: GPU_MAX_HW_QUEUES
-        value: "1"
-    securityContext:
-      capabilities:
-        add: [SYS_PTRACE]
-      seccompProfile:
-        type: Unconfined
-    volumeMounts:
-      - mountPath: /dev/dri
-        name: dri
-      - mountPath: /dev/kfd
-        name: kfd
-    volumes:
-      - name: dri
-        hostPath:
-          path: /dev/dri
-      - name: kfd
-        hostPath:
-          path: /dev/kfd
 
   # MoE sparse inference for SmallThinker models (llama-server with MoE router pre-selection)
   powerinfer-moe:

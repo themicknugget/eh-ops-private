@@ -15,8 +15,9 @@ spec:
       interval: 5m
   values:
     name: turbosparse-mixtral-47b
-    # Runs dense — TurboSparse fine-tuning outperforms original Mixtral even without sparse inference
-    backend: llamacpp-vulkan-moe
+    # BambooForCausalLM architecture requires PowerInfer backend — same situation as
+    # turbosparse-mistral-7b. Convert job suspended until conversion tooling is ready.
+    backend: powerinfer
 
     source:
       huggingface: PowerInfer/TurboSparse-Mixtral
@@ -25,10 +26,10 @@ spec:
     storage:
       sharedPvc: model-cache
       modelDir: turbosparse-mixtral-47b
-      modelFile: turbosparse-mixtral-47b.Q4_K_M.gguf
+      modelFile: turbosparse-mixtral-47b.powerinfer.gguf
 
     download:
-      # GGUF produced by turbosparse-mixtral-47b-convert Job — no HF download needed
+      # TODO: conversion from safetensors → .powerinfer.gguf not yet implemented
       enabled: false
 
     resources:

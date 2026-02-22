@@ -15,8 +15,9 @@ spec:
       interval: 5m
   values:
     name: turbosparse-mistral-7b
-    # Runs dense — TurboSparse fine-tuning outperforms original Mistral even without sparse inference
-    backend: llamacpp-vulkan
+    # BambooForCausalLM architecture requires PowerInfer backend — cannot be converted
+    # to standard GGUF via llama.cpp. Needs .powerinfer.gguf + activation_N.pt files.
+    backend: powerinfer
 
     source:
       huggingface: PowerInfer/TurboSparse-Mistral-Instruct
@@ -25,10 +26,12 @@ spec:
     storage:
       sharedPvc: model-cache
       modelDir: turbosparse-mistral-7b
-      modelFile: turbosparse-mistral-7b.Q4_K_M.gguf
+      modelFile: turbosparse-mistral-7b.powerinfer.gguf
 
     download:
-      # GGUF produced by turbosparse-mistral-7b-convert Job — no HF download needed
+      # TODO: conversion from safetensors → .powerinfer.gguf not yet implemented
+      # The convert Job (turbosparse-mistral-7b-convert) is suspended until conversion
+      # tooling is figured out.
       enabled: false
 
     resources:

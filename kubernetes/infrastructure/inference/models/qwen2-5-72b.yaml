@@ -1,0 +1,51 @@
+# Qwen2.5 72B Instruct (dense)
+# Q8_0 quantization - ~77 GiB, 128K context
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qwen2-5-72b
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: qwen2-5-72b
+    backend: llamacpp-vulkan
+
+    source:
+      huggingface: bartowski/Qwen2.5-72B-Instruct-GGUF
+      contextSize: "131072"
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: qwen2-5-72b
+      modelFile: Qwen2.5-72B-Instruct-Q8_0/Qwen2.5-72B-Instruct-Q8_0-00001-of-00002.gguf
+
+    download:
+      include: "Qwen2.5-72B-Instruct-Q8_0/*.gguf"
+      tokenSecret: hf-token
+
+    resources:
+      requests:
+        memory: 75Gi
+        cpu: "4"
+      limits:
+        memory: 95Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

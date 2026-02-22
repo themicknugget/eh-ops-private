@@ -8,3 +8,10 @@ resources:
   - minimax-m25-reap.yaml
   - minimax-m25-reap-139b.yaml
   - deepseek-r1-distill-70b.yaml
+  - llama-4-scout.yaml
+  - llama-3-3-70b.yaml
+  - qwen2-5-72b.yaml
+  - devstral-2-123b.yaml
+  - qwen3-235b-a22b.yaml
+  - qwen3-next-80b.yaml
+  - qwen3-coder-next.yaml

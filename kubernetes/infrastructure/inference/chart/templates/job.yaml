@@ -129,13 +129,40 @@ spec:
                               exit 0
                             fi
 
+                            # Acquire global download lock (only one model downloads at a time).
+                            # mkdir is atomic on POSIX filesystems - safe for concurrent pods.
+                            # The .downloading files under each model dir show which model holds
+                            # the lock; they're heartbeated every minute for staleness detection.
+                            LOCK_DIR=/models/.download-lock
+                            while true; do
+                              if [ -d "\$LOCK_DIR" ]; then
+                                last=\$(cat "\$LOCK_DIR/heartbeat" 2>/dev/null || echo 0)
+                                now=\$(date +%s)
+                                if [ \$((now - last)) -gt 7200 ]; then
+                                  echo "Removing stale download lock (held for \$((now - last))s)"
+                                  rm -rf "\$LOCK_DIR"
+                                fi
+                              fi
+                              if mkdir "\$LOCK_DIR" 2>/dev/null; then
+                                echo "Download lock acquired"
+                                break
+                              fi
+                              # Show which model is currently downloading
+                              active=\$(find /models -maxdepth 2 -name '.downloading' 2>/dev/null \
+                                | sed 's|/models/||;s|/.downloading||' | tr '\n' ' ')
+                              echo "Waiting for download lock (active: \${active:-unknown})..."
+                              sleep 60
+                            done
+                            trap "rm -rf \$LOCK_DIR" EXIT
+
                             # Create lock file
                             mkdir -p "\${MODEL_DIR}"
                             touch "\${MODEL_DIR}/.downloading"
 
-                            # Background: update lock timestamp every minute
+                            # Background: update lock timestamps every minute
                             while true; do
                               touch "\${MODEL_DIR}/.downloading"
+                              echo "\$(date +%s)" > "\$LOCK_DIR/heartbeat"
                               sleep 60
                             done &
                             heartbeat_pid=\$!

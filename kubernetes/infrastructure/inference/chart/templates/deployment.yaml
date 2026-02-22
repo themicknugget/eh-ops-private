@@ -99,9 +99,23 @@ spec:
               done &
               heartbeat_pid=$!
 
-              # Background: print download progress every 60s
+              # Background: print download progress every 60s with transfer rate
+              last_size=0
               while [ ! -f "${MODEL_DIR}/.ready" ]; do
-                du -sh "${MODEL_DIR}" 2>/dev/null || true
+                size=$(du -s "${MODEL_DIR}" 2>/dev/null | cut -f1)
+                if [ -n "$size" ] && [ "$last_size" -gt 0 ]; then
+                  diff=$((size - last_size))
+                  # diff is in 512-byte blocks, multiply by 512 to get bytes
+                  bytes=$((diff * 512))
+                  # Convert to MB/s (over 60 second interval)
+                  rate=$((bytes / 60 / 1024 / 1024))
+                  size_gb=$((size * 512 / 1024 / 1024 / 1024))
+                  echo "${size_gb}G downloaded (~${rate} MB/s)"
+                elif [ -n "$size" ]; then
+                  size_gb=$((size * 512 / 1024 / 1024 / 1024))
+                  echo "${size_gb}G downloaded"
+                fi
+                last_size=${size:-0}
                 sleep 60
               done &
               progress_pid=$!

@@ -144,6 +144,7 @@ nodes:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/shadow-local-storage.yaml"
+      - "@./patches/shadow-cpu-epp.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

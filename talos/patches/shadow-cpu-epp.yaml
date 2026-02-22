@@ -1,0 +1,7 @@
+# Set CPU Energy Performance Preference to "performance" via udev.
+# amd-pstate-epp driver defaults to balance_performance; for sustained inference
+# workloads we want full boost clocks.
+machine:
+  udev:
+    rules:
+      - ACTION=="add", SUBSYSTEM=="cpu", ATTR{cpufreq/energy_performance_preference}="performance"

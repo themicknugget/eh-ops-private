@@ -72,22 +72,28 @@ spec:
         operator: Exists
         effect: NoSchedule
 
-    # Only deploy on nodes with AMD GPU Talos extension
+    # Only deploy on nodes where NFD has detected an AMD GPU PCI device.
+    # The chart default node_selector includes pci-0300_1002.present=true; our
+    # NodeFeatureRule bridges AMD iGPUs (class 0380) into that label as well.
     node_selector_enabled: true
     node_selector:
       kubernetes.io/arch: amd64
-      extensions.talos.dev/amdgpu: "20260110-v1.12.4"
 
     # NFD detects AMD GPU PCI devices and sets feature.node.kubernetes.io/pci-0300_1002.present=true,
     # which the device plugin and labeller DaemonSets require in their nodeSelector
     nfd:
       enabled: true
 
-    # Scope NFD workers to only nodes with the AMD GPU Talos extension
+    # Scope NFD workers to nodes with the AMD GPU Talos extension (any version)
     node-feature-discovery:
       worker:
-        nodeSelector:
-          extensions.talos.dev/amdgpu: "20260110-v1.12.4"
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: extensions.talos.dev/amdgpu
+                      operator: Exists
         tolerations:
           - key: CriticalAddonsOnly
             operator: Exists

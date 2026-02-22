@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kasa-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kasa-exporter
+  template:
+    metadata:
+      labels:
+        app: kasa-exporter
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: exporter
+          image: python:3.13-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - pip install -q python-kasa prometheus-client && python /scripts/exporter.py
+          env:
+            - name: KASA_TARGET
+              value: "192.168.1.158"
+          ports:
+            - name: metrics
+              containerPort: 9233
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9233
+            # pip install takes ~20s on first start
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: script
+          configMap:
+            name: kasa-exporter
+            items:
+              - key: exporter.py
+                path: exporter.py

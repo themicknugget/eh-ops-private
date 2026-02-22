@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kasa-exporter
+data:
+  exporter.py: |
+    #!/usr/bin/env python3
+    import asyncio
+    import logging
+    import os
+
+    from kasa import SmartStrip
+    from prometheus_client import Gauge, start_http_server
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    log = logging.getLogger(__name__)
+
+    TARGET = os.environ.get("KASA_TARGET", "192.168.1.158")
+    POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "30"))
+    PORT = int(os.environ.get("PORT", "9233"))
+
+    kasa_online      = Gauge("kasa_online",      "Device online")
+    kasa_rssi        = Gauge("kasa_rssi",        "WiFi RSSI dBm",        ["alias", "id"])
+    kasa_relay_state = Gauge("kasa_relay_state", "Relay state (1=on)",   ["alias", "id"])
+    kasa_on_time     = Gauge("kasa_on_time",     "Seconds since last on",["alias", "id"])
+    kasa_current     = Gauge("kasa_current",     "Current in Ampere",    ["alias", "id"])
+    kasa_voltage     = Gauge("kasa_voltage",     "Voltage in Volt",      ["alias", "id"])
+    kasa_power_load  = Gauge("kasa_power_load",  "Power in Watt",        ["alias", "id"])
+    kasa_power_total = Gauge("kasa_power_total", "Total energy in kWh",  ["alias", "id"])
+
+
+    async def collect():
+        try:
+            strip = SmartStrip(TARGET)
+            await strip.update()
+
+            info = strip.sys_info
+            kasa_rssi.labels(alias=info["alias"], id=info["deviceId"]).set(info["rssi"])
+
+            for child in strip.children:
+                c = child.sys_info
+                a, i = c["alias"], c["id"]
+
+                kasa_relay_state.labels(alias=a, id=i).set(c.get("state", 0))
+                kasa_on_time.labels(alias=a, id=i).set(c.get("on_time", 0))
+
+                try:
+                    e = await child.get_emeter_realtime()
+                    # device returns milli-units; fall back to base units for older fw
+                    kasa_current.labels(alias=a, id=i).set(
+                        e.get("current", e.get("current_ma", 0) / 1000)
+                    )
+                    kasa_voltage.labels(alias=a, id=i).set(
+                        e.get("voltage", e.get("voltage_mv", 0) / 1000)
+                    )
+                    kasa_power_load.labels(alias=a, id=i).set(
+                        e.get("power", e.get("power_mw", 0) / 1000)
+                    )
+                    kasa_power_total.labels(alias=a, id=i).set(
+                        e.get("total", e.get("total_wh", 0) / 1000)
+                    )
+                except Exception as ex:
+                    log.warning("emeter error for %s: %s", a, ex)
+
+            kasa_online.set(1)
+            log.debug("collected %d outlets from %s", len(strip.children), TARGET)
+
+        except Exception as ex:
+            log.error("collection error: %s", ex)
+            kasa_online.set(0)
+
+
+    async def main():
+        start_http_server(PORT)
+        log.info("serving metrics on :%d, polling %s every %ds", PORT, TARGET, POLL_INTERVAL)
+        while True:
+            await collect()
+            await asyncio.sleep(POLL_INTERVAL)
+
+
+    if __name__ == "__main__":
+        asyncio.run(main())

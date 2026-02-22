@@ -55,6 +55,10 @@ spec:
                 requests:
                   storage: 50Gi
         additionalScrapeConfigs:
+          - job_name: kasa
+            static_configs:
+              - targets:
+                  - kasa-exporter.observability.svc.cluster.local:9233
           # Talos kubelet metrics
           - job_name: talos-kubelet
             kubernetes_sd_configs:

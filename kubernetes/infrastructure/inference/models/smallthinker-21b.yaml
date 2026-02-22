@@ -15,7 +15,7 @@ spec:
       interval: 5m
   values:
     name: smallthinker-21b
-    backend: powerinfer
+    backend: powerinfer-moe
 
     source:
       huggingface: PowerInfer/SmallThinker-21BA3B-Instruct-GGUF

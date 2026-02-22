@@ -6,32 +6,34 @@ Get backend name
 {{- end -}}
 
 {{/*
-Get backend configuration (returns dict)
+Get backend configuration as JSON string
 */}}
-{{- define "inference-model.backend" -}}
+{{- define "inference-model.backendJson" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- $backends := .Values.backends | default dict -}}
 {{- $defaultBackend := index $backends "llamacpp-vulkan" | default dict -}}
-{{- index $backends $backendName | default $defaultBackend -}}
+{{- $backend := index $backends $backendName | default $defaultBackend -}}
+{{- $backend | toJson -}}
 {{- end -}}
 
 {{/*
 Get image for backend
 */}}
 {{- define "inference-model.image" -}}
-{{- $backend := include "inference-model.backend" . -}}
-{{- $image := index $backend "image" | default dict -}}
-{{- $repo := index $image "repository" | default "ghcr.io/ggml-org/llama.cpp" -}}
-{{- $tag := index $image "tag" | default "server-vulkan" -}}
-{{- printf "%s:%s" $repo $tag -}}
+{{- $backend := include "inference-model.backendJson" . | fromJson -}}
+{{- $image := dict "repository" "ghcr.io/ggml-org/llama.cpp" "tag" "server-vulkan" -}}
+{{- if $backend.image -}}
+{{- $image = $backend.image -}}
+{{- end -}}
+{{- printf "%s:%s" $image.repository $image.tag -}}
 {{- end -}}
 
 {{/*
 Get port for backend
 */}}
 {{- define "inference-model.port" -}}
-{{- $backend := include "inference-model.backend" . -}}
-{{- .Values.service.port | default (index $backend "port") | default 8080 -}}
+{{- $backend := include "inference-model.backendJson" . | fromJson -}}
+{{- .Values.service.port | default $backend.port | default 8080 -}}
 {{- end -}}
 
 {{/*

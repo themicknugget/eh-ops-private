@@ -1,7 +1,8 @@
 {{- if .Values.name -}}
 {{- $backendName := .Values.backend | default "llamacpp-vulkan" -}}
 {{- $backends := .Values.backends | default dict -}}
-{{- $backend := index $backends $backendName | default (index $backends "llamacpp-vulkan") | default dict -}}
+{{- $backendRaw := index $backends $backendName | default (index $backends "llamacpp-vulkan") | default dict -}}
+{{- $backend := $backendRaw | toJson | fromJson -}}
 {{- $port := include "inference-model.port" . | int -}}
 {{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
 {{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}

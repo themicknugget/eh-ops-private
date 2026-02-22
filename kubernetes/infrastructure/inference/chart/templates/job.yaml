@@ -86,14 +86,19 @@ spec:
                       app.kubernetes.io/name: {{ .Values.name }}
                       app.kubernetes.io/component: download-worker
                   spec:
-                    {{- with .Values.nodeSelector }}
                     nodeSelector:
-                      {{- toYaml . | nindent 20 }}
-                    {{- end }}
-                    {{- with .Values.tolerations }}
+              {{- with .Values.nodeSelector }}
+              {{- range $key, $value := . }}
+                      {{ $key }}: {{ $value }}
+              {{- end }}
+              {{- end }}
                     tolerations:
-                      {{- toYaml . | nindent 20 }}
-                    {{- end }}
+              {{- with .Values.tolerations }}
+              {{- range . }}
+                      - key: {{ .key }}
+                        operator: {{ .operator }}
+              {{- end }}
+              {{- end }}
                     restartPolicy: OnFailure
                     containers:
                       - name: download

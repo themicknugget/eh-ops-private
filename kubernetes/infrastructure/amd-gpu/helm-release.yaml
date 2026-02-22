@@ -82,3 +82,15 @@ spec:
     # which the device plugin and labeller DaemonSets require in their nodeSelector
     nfd:
       enabled: true
+
+    # Scope NFD workers to only nodes with the AMD GPU Talos extension
+    node-feature-discovery:
+      worker:
+        nodeSelector:
+          extensions.talos.dev/amdgpu: "20260110-v1.12.4"
+        tolerations:
+          - key: CriticalAddonsOnly
+            operator: Exists
+          - key: node.cilium.io/agent-not-ready
+            operator: Exists
+            effect: NoSchedule

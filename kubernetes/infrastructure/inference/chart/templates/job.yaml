@@ -44,13 +44,17 @@ spec:
               kubectl_url = f'https://dl.k8s.io/release/{version}/bin/linux/amd64/kubectl'
               print(f'Downloading kubectl {version}...')
               urllib.request.urlretrieve(kubectl_url, '/tmp/kubectl')
-              os.chmod('/tmp/kubectl', 0o755)
-              print('kubectl downloaded')
+              print('Download complete')
               "
+              chmod +x /tmp/kubectl
+              echo "kubectl ready"
 
               MODEL_DIR=/models/{{ $modelDir }}
               JOB_NAME={{ .Values.name }}-download-worker
               NAMESPACE={{ .Release.Namespace }}
+
+              # Use downloaded kubectl
+              export PATH="/tmp:$PATH"
 
               # Check if already downloaded - fast exit
               if [ -f "${MODEL_DIR}/.ready" ]; then

@@ -10,6 +10,18 @@ data:
     import logging
     import os
 
+    # HS300 reports "MST7MDT" (POSIX-style timezone) which is not in the IANA
+    # database. Patch zoneinfo before kasa imports it to avoid ZoneInfoNotFoundError.
+    import zoneinfo as _zi
+    _orig_ZoneInfo = _zi.ZoneInfo
+    class _SafeZoneInfo:
+        def __new__(cls, key):
+            try:
+                return _orig_ZoneInfo(key)
+            except _zi.ZoneInfoNotFoundError:
+                return _orig_ZoneInfo("UTC")
+    _zi.ZoneInfo = _SafeZoneInfo
+
     from kasa import SmartStrip
     from prometheus_client import Gauge, start_http_server
 

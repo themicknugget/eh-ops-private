@@ -26,7 +26,7 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $tag = "rocm-7.2" -}}
 {{- else if eq $backendName "powerinfer-moe" -}}
 {{- $repo = "ghcr.io/cecil-the-coder/powerinfer-strix-halo-rocm" -}}
-{{- $tag = "latest" -}}
+{{- $tag = "sha-b7ffe9c" -}}
 {{- else if eq $backendName "llamacpp-cpu" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server" -}}

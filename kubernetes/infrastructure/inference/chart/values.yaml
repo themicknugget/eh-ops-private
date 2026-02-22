@@ -236,7 +236,7 @@ backends:
   powerinfer-moe:
     image:
       repository: ghcr.io/cecil-the-coder/powerinfer-strix-halo-rocm
-      tag: latest
+      tag: sha-b7ffe9c
     port: 8080
     args:
       - /app/server-moe

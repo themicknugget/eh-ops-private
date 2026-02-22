@@ -5,5 +5,5 @@ kind: Kustomization
 # and adding it to the resources list below
 
 resources:
-  - minimax-m2.5-reap.yaml
-  - minimax-m2.5-reap-139b.yaml
+  - minimax-m25-reap.yaml
+  - minimax-m25-reap-139b.yaml

@@ -59,7 +59,7 @@ spec:
                 echo "--- Trimming $NODE ---"
 
                 # Create a one-time job to run fstrim on this node
-                cat <<EOF | kubectl apply -f -
+                kubectl create -f - <<EOF
               apiVersion: batch/v1
               kind: Job
               metadata:

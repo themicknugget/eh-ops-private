@@ -6,34 +6,152 @@ Get backend name
 {{- end -}}
 
 {{/*
-Get backend configuration as JSON string
-*/}}
-{{- define "inference-model.backendJson" -}}
-{{- $backendName := include "inference-model.backendName" . -}}
-{{- $backends := .Values.backends | default dict -}}
-{{- $defaultBackend := index $backends "llamacpp-vulkan" | default dict -}}
-{{- $backend := index $backends $backendName | default $defaultBackend -}}
-{{- $backend | toJson -}}
-{{- end -}}
-
-{{/*
-Get image for backend
+Get image for model
+Checks: 1. values.image  2. backend-specific defaults
 */}}
 {{- define "inference-model.image" -}}
-{{- $backend := include "inference-model.backendJson" . | fromJson -}}
-{{- $image := dict "repository" "ghcr.io/ggml-org/llama.cpp" "tag" "server-vulkan" -}}
-{{- if $backend.image -}}
-{{- $image = $backend.image -}}
+{{- $repo := .Values.image.repository | default "" -}}
+{{- $tag := .Values.image.tag | default "" -}}
+{{- if not $repo -}}
+{{- /* Default images per backend */ -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if eq $backendName "llamacpp-vulkan" -}}
+{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
+{{- $tag = "server-vulkan" -}}
+{{- else if eq $backendName "llamacpp-vulkan-moe" -}}
+{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
+{{- $tag = "server-vulkan" -}}
+{{- else if eq $backendName "llamacpp-rocm" -}}
+{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
+{{- $tag = "server-rocm" -}}
+{{- else if eq $backendName "vllm" -}}
+{{- $repo = "vllm/vllm-openai" -}}
+{{- $tag = "latest" -}}
+{{- else -}}
+{{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
+{{- $tag = "server-vulkan" -}}
 {{- end -}}
-{{- printf "%s:%s" $image.repository $image.tag -}}
+{{- end -}}
+{{- printf "%s:%s" $repo $tag -}}
 {{- end -}}
 
 {{/*
-Get port for backend
+Get port for model
 */}}
 {{- define "inference-model.port" -}}
-{{- $backend := include "inference-model.backendJson" . | fromJson -}}
-{{- .Values.service.port | default $backend.port | default 8080 -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- $port := .Values.service.port | default 8080 -}}
+{{- if eq $backendName "vllm" -}}
+{{- $port = .Values.service.port | default 8000 -}}
+{{- end -}}
+{{- $port -}}
+{{- end -}}
+
+{{/*
+Get backend env vars
+*/}}
+{{- define "inference-model.backendEnv" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if eq $backendName "llamacpp-vulkan" -}}
+- name: LLAMA_HIP_UMA
+  value: "ON"
+{{- else if eq $backendName "llamacpp-vulkan-moe" -}}
+- name: LLAMA_HIP_UMA
+  value: "ON"
+- name: LLAMA_ARG_N_GPU_LAYERS
+  value: "99"
+- name: LLAMA_ARG_FLASH_ATTN
+  value: "1"
+- name: LLAMA_ARG_CACHE_TYPE_K
+  value: "q4_0"
+- name: LLAMA_ARG_CACHE_TYPE_V
+  value: "q4_0"
+- name: LLAMA_ARG_THREADS
+  value: "12"
+- name: LLAMA_ARG_BATCH_SIZE
+  value: "4096"
+- name: LLAMA_ARG_UBATCH_SIZE
+  value: "1024"
+- name: LLAMA_ARG_ENDPOINT_METRICS
+  value: "1"
+{{- else if eq $backendName "llamacpp-rocm" -}}
+- name: HSA_OVERRIDE_GFX_VERSION
+  value: "11.5.1"
+- name: ROCBLAS_USE_HIPBLASLT
+  value: "1"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get backend args as YAML list
+*/}}
+{{- define "inference-model.backendArgs" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+- llama-server
+- -hf
+- $(HF_SOURCE)
+- --host
+- 0.0.0.0
+- --port
+- "8080"
+- --metrics
+{{- else if eq $backendName "vllm" -}}
+- --model
+- $(HF_SOURCE)
+- --host
+- 0.0.0.0
+- --port
+- "8000"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get backend security context
+*/}}
+{{- define "inference-model.securityContext" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+capabilities:
+  add: [SYS_PTRACE]
+seccompProfile:
+  type: Unconfined
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get backend volumes
+*/}}
+{{- define "inference-model.volumes" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+- name: dri
+  hostPath:
+    path: /dev/dri
+- name: kfd
+  hostPath:
+    path: /dev/kfd
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get backend volume mounts
+*/}}
+{{- define "inference-model.volumeMounts" -}}
+{{- $backendName := include "inference-model.backendName" . -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+- mountPath: /dev/dri
+  name: dri
+- mountPath: /dev/kfd
+  name: kfd
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get backend readiness path
+*/}}
+{{- define "inference-model.readinessPath" -}}
+/health
 {{- end -}}
 
 {{/*

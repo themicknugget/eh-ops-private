@@ -4,6 +4,11 @@ name: ""
 # Backend configuration
 backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, vllm
 
+# Image (optional - defaults based on backend)
+image:
+  repository: ""
+  tag: ""
+
 # Model source
 source:
   huggingface: ""  # e.g., meta-llama/Llama-3.1-8B-Instruct

@@ -1,8 +1,4 @@
 {{- if .Values.name -}}
-{{- $backendName := .Values.backend | default "llamacpp-vulkan" -}}
-{{- $backends := .Values.backends | default dict -}}
-{{- $backendRaw := index $backends $backendName | default (index $backends "llamacpp-vulkan") | default dict -}}
-{{- $backend := $backendRaw | toJson | fromJson -}}
 {{- $port := include "inference-model.port" . | int -}}
 {{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
 {{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}
@@ -114,13 +110,9 @@ spec:
         - name: inference
           image: {{ include "inference-model.image" . }}
           imagePullPolicy: IfNotPresent
-          {{- $args := index $backend "args" | default list }}
-          {{- if $args }}
           args:
-            {{- range $args }}
-            - {{ . | replace "$(HF_SOURCE)" (printf "/models/%s" $modelDir) }}
-            {{- end }}
-          {{- end }}
+            {{- $hfSource := printf "/models/%s" $modelDir -}}
+            {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ $port }}
@@ -141,19 +133,13 @@ spec:
               value: {{ .Values.source.contextSize | quote }}
             {{- end }}
             {{- /* Backend env vars */ -}}
-            {{- $backendEnv := index $backend "env" | default list }}
-            {{- range $backendEnv }}
-            - {{ toYaml . | nindent 14 | trim }}
-            {{- end }}
+            {{- include "inference-model.backendEnv" . | nindent 12 }}
             {{- /* User env vars (can override backend defaults) */ -}}
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- $securityCtx := index $backend "securityContext" }}
-          {{- if $securityCtx }}
           securityContext:
-            {{- toYaml $securityCtx | nindent 12 }}
-          {{- end }}
+            {{- include "inference-model.securityContext" . | nindent 12 }}
           volumeMounts:
             - name: model-cache
               mountPath: /models
@@ -162,23 +148,22 @@ spec:
               mountPath: /prompt/templates
               readOnly: true
             {{- end }}
-            {{- $volumeMounts := index $backend "volumeMounts" | default list }}
-            {{- toYaml $volumeMounts | nindent 12 }}
+            {{- include "inference-model.volumeMounts" . | nindent 12 }}
           livenessProbe:
             httpGet:
-              path: {{ index $backend "readinessPath" | default "/health" }}
+              path: {{ include "inference-model.readinessPath" . }}
               port: {{ $port }}
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: {{ index $backend "readinessPath" | default "/health" }}
+              path: {{ include "inference-model.readinessPath" . }}
               port: {{ $port }}
             initialDelaySeconds: 10
             periodSeconds: 5
           startupProbe:
             httpGet:
-              path: {{ index $backend "readinessPath" | default "/health" }}
+              path: {{ include "inference-model.readinessPath" . }}
               port: {{ $port }}
             failureThreshold: 180  # 30 minutes max for large models
             periodSeconds: 10
@@ -191,6 +176,5 @@ spec:
           configMap:
             name: {{ .Values.name }}-template
         {{- end }}
-        {{- $volumes := index $backend "volumes" | default list }}
-        {{- toYaml $volumes | nindent 8 }}
+        {{- include "inference-model.volumes" . | nindent 8 }}
 {{- end -}}

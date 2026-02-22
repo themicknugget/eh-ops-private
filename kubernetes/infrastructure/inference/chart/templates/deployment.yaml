@@ -155,22 +155,27 @@ spec:
           args:
             {{- $hfSource := printf "/models/%s" $modelDir -}}
             {{- $backendName := include "inference-model.backendName" . -}}
-            {{- if eq $backendName "llamacpp-cpu" -}}
-            {{- /* For CPU backend, use specific model file if provided */ -}}
+            {{- /* Use specific shard file when provided (required for split GGUF models) */ -}}
             {{- if .Values.storage.modelFile -}}
             {{- $hfSource = printf "/models/%s/%s" $modelDir .Values.storage.modelFile -}}
-            {{- else -}}
-            {{- $hfSource = printf "/models/%s" $modelDir -}}
-            {{- end -}}
             {{- end -}}
             {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ $port }}
               protocol: TCP
-          {{- with .Values.resources }}
+          {{- $backendName2 := include "inference-model.backendName" . -}}
+          {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" -}}
+          {{- $userRes := .Values.resources | default dict -}}
+          {{- $res := $userRes -}}
+          {{- if has $backendName2 $gpuBackends -}}
+          {{- $gpuLimit := dict "amd.com/gpu" "1" -}}
+          {{- $backendRes := dict "limits" $gpuLimit "requests" $gpuLimit -}}
+          {{- $res = merge $userRes $backendRes -}}
+          {{- end -}}
+          {{- if $res }}
           resources:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml $res | nindent 12 }}
           {{- end }}
           env:
             - name: HF_HOME

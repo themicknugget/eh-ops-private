@@ -1,13 +1,9 @@
-machine:
-  kernel:
-    modules:
-      # Allow GPU to use up to 120GB GTT (leaves 8GB for OS)
-      - name: ttm
-        parameters:
-          - pages_limit=31457280
-      - name: amdgpu
-        parameters:
-          # Disable Context-Save-Restore for GPU stability under ROCm workloads
-          - cwsr_enable=0
-          # Legacy GTT size hint (120GB in MB) for older software compatibility
-          - gttsize=122880
+# GPU memory kernel args are embedded in the Talos image schematic, not here.
+# Schematic: f94600d1741211e7522ac1747f8552f531b03b7c6cc9a673d824a4ca2b0614b5
+# Kernel args added:
+#   ttm.pages_limit=31457280    (120GB GTT, leaves 8GB for OS)
+#   amdgpu.gttsize=122880       (legacy 120GB hint for older software)
+#   amdgpu.cwsr_enable=0        (disable CWSR for ROCm stability)
+#
+# To update: POST new schematic to factory.talos.dev/schematics,
+# then update talosImageURL in talconfig.yaml and run talosctl upgrade.

@@ -139,12 +139,11 @@ nodes:
     ipAddress: 192.168.1.56
     controlPlane: false
     installDisk: /dev/nvme0n1
-    talosImageURL: factory.talos.dev/metal-installer/146adf619b07e86748eeb90b25af26e92c42b3a16c36fa71a85ff0289d3db675
+    talosImageURL: factory.talos.dev/metal-installer/f94600d1741211e7522ac1747f8552f531b03b7c6cc9a673d824a4ca2b0614b5
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/shadow-local-storage.yaml"
-      - "@./patches/shadow-gpu-memory.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

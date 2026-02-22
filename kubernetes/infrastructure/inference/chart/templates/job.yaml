@@ -80,6 +80,8 @@ spec:
           env:
             - name: HF_HOME
               value: /models
+            - name: HOME
+              value: /tmp
             {{- if .Values.download.tokenSecret }}
             - name: HF_TOKEN
               valueFrom:

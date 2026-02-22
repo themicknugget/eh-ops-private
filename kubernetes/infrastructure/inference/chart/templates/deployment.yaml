@@ -1,5 +1,7 @@
 {{- if .Values.name -}}
-{{- $backend := include "inference-model.backend" . | fromYaml -}}
+{{- $backendName := .Values.backend | default "llamacpp-vulkan" -}}
+{{- $backends := .Values.backends | default dict -}}
+{{- $backend := index $backends $backendName | default (index $backends "llamacpp-vulkan") | default dict -}}
 {{- $port := include "inference-model.port" . | int -}}
 {{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
 {{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}
@@ -40,7 +42,7 @@ spec:
       {{- if .Values.download.enabled }}
       initContainers:
         - name: ensure-model
-          image: {{ .Values.download.image }}
+          image: {{ .Values.download.image | default "ghcr.io/huggingface/hub:latest" }}
           command:
             - sh
             - -c
@@ -111,9 +113,10 @@ spec:
         - name: inference
           image: {{ include "inference-model.image" . }}
           imagePullPolicy: IfNotPresent
-          {{- if $backend.args }}
+          {{- $args := index $backend "args" | default list }}
+          {{- if $args }}
           args:
-            {{- range $backend.args }}
+            {{- range $args }}
             - {{ . | replace "$(HF_SOURCE)" (printf "/models/%s" $modelDir) }}
             {{- end }}
           {{- end }}
@@ -137,16 +140,18 @@ spec:
               value: {{ .Values.source.contextSize | quote }}
             {{- end }}
             {{- /* Backend env vars */ -}}
-            {{- range $backend.env }}
+            {{- $backendEnv := index $backend "env" | default list }}
+            {{- range $backendEnv }}
             - {{ toYaml . | nindent 14 | trim }}
             {{- end }}
             {{- /* User env vars (can override backend defaults) */ -}}
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- with $backend.securityContext }}
+          {{- $securityCtx := index $backend "securityContext" }}
+          {{- if $securityCtx }}
           securityContext:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml $securityCtx | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: model-cache
@@ -156,24 +161,23 @@ spec:
               mountPath: /prompt/templates
               readOnly: true
             {{- end }}
-            {{- with $backend.volumeMounts }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- $volumeMounts := index $backend "volumeMounts" | default list }}
+            {{- toYaml $volumeMounts | nindent 12 }}
           livenessProbe:
             httpGet:
-              path: {{ $backend.readinessPath | default "/health" }}
+              path: {{ index $backend "readinessPath" | default "/health" }}
               port: {{ $port }}
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: {{ $backend.readinessPath | default "/health" }}
+              path: {{ index $backend "readinessPath" | default "/health" }}
               port: {{ $port }}
             initialDelaySeconds: 10
             periodSeconds: 5
           startupProbe:
             httpGet:
-              path: {{ $backend.readinessPath | default "/health" }}
+              path: {{ index $backend "readinessPath" | default "/health" }}
               port: {{ $port }}
             failureThreshold: 180  # 30 minutes max for large models
             periodSeconds: 10
@@ -186,7 +190,6 @@ spec:
           configMap:
             name: {{ .Values.name }}-template
         {{- end }}
-        {{- with $backend.volumes }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- $volumes := index $backend "volumes" | default list }}
+        {{- toYaml $volumes | nindent 8 }}
 {{- end -}}

@@ -44,3 +44,6 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
+
+    download:
+      tokenSecret: hf-token

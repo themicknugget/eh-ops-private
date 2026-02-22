@@ -7,7 +7,6 @@ metadata:
   name: turbosparse-mistral-7b-convert
   namespace: inference
 spec:
-  suspend: true
   ttlSecondsAfterFinished: 604800  # 7 days
   template:
     spec:

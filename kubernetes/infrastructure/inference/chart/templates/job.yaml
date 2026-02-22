@@ -26,12 +26,15 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: download
-          image: {{ .Values.download.image | default "ghcr.io/huggingface/hub:latest" }}
+          image: python:3.11-slim
           command:
             - sh
             - -c
             - |
               set -e
+
+              # Install huggingface-cli
+              pip install -q huggingface_hub
 
               MODEL_DIR=/models/{{ $modelDir }}
 

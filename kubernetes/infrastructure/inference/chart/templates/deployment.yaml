@@ -39,7 +39,7 @@ spec:
       {{- if .Values.download.enabled }}
       initContainers:
         - name: ensure-model
-          image: {{ .Values.download.image | default "ghcr.io/huggingface/hub:latest" }}
+          image: {{ .Values.download.image | default "python:3.11-slim" }}
           command:
             - sh
             - -c
@@ -83,6 +83,10 @@ spec:
 
               # 4. Job failed or timeout - download ourselves
               echo "Download job not available, downloading model to ${MODEL_DIR}..."
+
+              # Install huggingface-cli
+              pip install -q huggingface_hub
+
               mkdir -p "${MODEL_DIR}"
               rm -f "${MODEL_DIR}/.failed"
               touch "${MODEL_DIR}/.downloading"

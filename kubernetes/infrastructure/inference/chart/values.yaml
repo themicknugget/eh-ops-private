@@ -39,7 +39,8 @@ storage:
 # Download configuration
 download:
   enabled: true
-  image: ghcr.io/huggingface/hub:latest
+  # Image for downloading models (installs huggingface-cli on startup)
+  image: python:3.11-slim
   # HuggingFace token for gated models (optional)
   # tokenSecret: hf-token
   # tokenSecretKey: token

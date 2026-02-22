@@ -86,7 +86,7 @@ spec:
                   app.kubernetes.io/managed-by: {{ .Values.name }}-download
               spec:
                 backoffLimit: 3
-                ttlSecondsAfterFinished: 3600
+                ttlSecondsAfterFinished: 300
                 template:
                   metadata:
                     labels:

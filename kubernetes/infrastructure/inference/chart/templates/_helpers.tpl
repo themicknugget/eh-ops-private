@@ -91,7 +91,6 @@ Get backend args as YAML list
 {{- define "inference-model.backendArgs" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
-- llama-server
 - -hf
 - $(HF_SOURCE)
 - --host
@@ -100,7 +99,6 @@ Get backend args as YAML list
 - "8080"
 - --metrics
 {{- else if eq $backendName "llamacpp-cpu" -}}
-- llama-server
 - -m
 - $(HF_SOURCE)
 - --host

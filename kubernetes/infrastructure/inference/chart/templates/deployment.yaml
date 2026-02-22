@@ -36,6 +36,11 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       {{- if .Values.download.enabled }}
       initContainers:
         - name: ensure-model
@@ -84,8 +89,9 @@ spec:
               # 4. Job failed or timeout - download ourselves
               echo "Download job not available, downloading model to ${MODEL_DIR}..."
 
-              # Install huggingface-cli
-              pip install -q huggingface_hub
+              # Install huggingface-cli with CLI extras
+              pip install --user "huggingface_hub[cli]"
+              export PATH="$HOME/.local/bin:$PATH"
 
               mkdir -p "${MODEL_DIR}"
               rm -f "${MODEL_DIR}/.failed"
@@ -116,6 +122,12 @@ spec:
                   name: {{ .Values.download.tokenSecret }}
                   key: {{ .Values.download.tokenSecretKey | default "token" }}
             {{- end }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: model-cache
               mountPath: /models

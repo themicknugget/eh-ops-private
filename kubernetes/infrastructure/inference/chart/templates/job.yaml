@@ -24,17 +24,26 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: download
           image: python:3.11-slim
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           command:
             - sh
             - -c
             - |
               set -e
 
-              # Install huggingface-cli
-              pip install -q huggingface_hub
+              # Install huggingface-cli with CLI extras
+              pip install --user "huggingface_hub[cli]"
+              export PATH="$HOME/.local/bin:$PATH"
 
               MODEL_DIR=/models/{{ $modelDir }}
 

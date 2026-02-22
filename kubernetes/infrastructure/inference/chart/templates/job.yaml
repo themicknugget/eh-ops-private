@@ -28,12 +28,18 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: launcher
-          image: bitnami/kubectl:latest
+          image: python:3.11-slim
           command:
-            - sh
+            - bash
             - -c
             - |
               set -e
+
+              # Install kubectl
+              apt-get update && apt-get install -y curl
+              curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+              chmod +x kubectl
+              mv kubectl /usr/local/bin/
 
               MODEL_DIR=/models/{{ $modelDir }}
               JOB_NAME={{ .Values.name }}-download-worker

@@ -22,7 +22,7 @@ data:
                 return _orig_ZoneInfo("UTC")
     _zi.ZoneInfo = _SafeZoneInfo
 
-    from kasa import SmartStrip
+    from kasa.iot import IotStrip
     from prometheus_client import Gauge, start_http_server
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -44,18 +44,18 @@ data:
 
     async def collect():
         try:
-            strip = SmartStrip(TARGET)
+            strip = IotStrip(TARGET)
             await strip.update()
 
             info = strip.sys_info
             kasa_rssi.labels(alias=info["alias"], id=info["deviceId"]).set(info["rssi"])
 
             for child in strip.children:
-                c = child.sys_info
-                a, i = c["alias"], c["id"]
+                a = child.alias
+                i = child.sys_info.get("id") or child.device_id or a
 
-                kasa_relay_state.labels(alias=a, id=i).set(c.get("state", 0))
-                kasa_on_time.labels(alias=a, id=i).set(c.get("on_time", 0))
+                kasa_relay_state.labels(alias=a, id=i).set(1 if child.is_on else 0)
+                kasa_on_time.labels(alias=a, id=i).set(child.sys_info.get("on_time", 0))
 
                 try:
                     e = await child.get_emeter_realtime()
@@ -76,7 +76,7 @@ data:
                     log.warning("emeter error for %s: %s", a, ex)
 
             kasa_online.set(1)
-            log.debug("collected %d outlets from %s", len(strip.children), TARGET)
+            log.info("collected %d outlets from %s", len(strip.children), TARGET)
 
         except Exception as ex:
             log.error("collection error: %s", ex)

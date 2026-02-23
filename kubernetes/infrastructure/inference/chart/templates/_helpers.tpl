@@ -131,7 +131,6 @@ Get backend args as YAML list
 - --port
 - "8080"
 - --metrics
-- --no-mmap
 {{- else if eq $backendName "llamacpp-cpu" -}}
 - -m
 - $(HF_SOURCE)

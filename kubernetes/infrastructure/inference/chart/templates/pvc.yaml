@@ -4,8 +4,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.storage.sharedPvc | default "model-cache" }}
   labels:
-    {{- include "inference-model.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name }}
     app.kubernetes.io/component: model-cache
+    app.kubernetes.io/managed-by: flux
 spec:
   accessModes:
     - ReadWriteOnce

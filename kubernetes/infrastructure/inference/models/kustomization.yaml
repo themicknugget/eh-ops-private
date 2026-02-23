@@ -30,3 +30,7 @@ resources:
   - whisper-large-v3-turbo.yaml
   - orpheus-3b.yaml
   - phi-4-mini-miniryzen.yaml
+  - deepseek-r1-0528-8b-miniryzen.yaml
+  - qwen2-5-7b-miniryzen.yaml
+  - llama-3-2-3b-miniryzen.yaml
+  - smollm2-1-7b-miniryzen.yaml

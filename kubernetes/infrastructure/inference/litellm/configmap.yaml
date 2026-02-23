@@ -164,6 +164,34 @@ data:
           api_key: dummy
           timeout: 1800
 
+      - model_name: deepseek-r1-0528-8b
+        litellm_params:
+          model: openai/deepseek-r1-0528-8b
+          api_base: http://deepseek-r1-0528-8b-miniryzen.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen2-5-7b
+        litellm_params:
+          model: openai/qwen2-5-7b
+          api_base: http://qwen2-5-7b-miniryzen.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: llama-3-2-3b
+        litellm_params:
+          model: openai/llama-3-2-3b
+          api_base: http://llama-3-2-3b-miniryzen.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: smollm2-1-7b
+        litellm_params:
+          model: openai/smollm2-1-7b
+          api_base: http://smollm2-1-7b-miniryzen.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
       - model_name: command-a
         litellm_params:
           model: openai/command-a

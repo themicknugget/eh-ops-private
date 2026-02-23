@@ -116,6 +116,7 @@ nodes:
             net.ipv4.tcp_congestion_control: "bbr"
             net.core.default_qdisc: "fq"
       - *spegel_registry_mirrors
+      - "@./patches/local-storage.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
@@ -143,7 +144,7 @@ nodes:
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
-      - "@./patches/shadow-local-storage.yaml"
+      - "@./patches/local-storage.yaml"
       - "@./patches/shadow-cpu-epp.yaml"
     networkInterfaces:
       - deviceSelector:

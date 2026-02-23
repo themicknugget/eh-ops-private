@@ -5,3 +5,4 @@ resources:
   - spread-pods.yaml
   - avoid-gpu-nodes.yaml
   - cert-approver-control-plane.yaml
+  - cloudbox-gateway-proxy-protocol.yaml

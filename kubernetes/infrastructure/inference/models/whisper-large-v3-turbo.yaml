@@ -29,6 +29,9 @@ spec:
       include: "ggml-large-v3-turbo-q8_0.bin"
       tokenSecret: hf-token
 
+    gpu:
+      exclusive: false
+
     resources:
       requests:
         memory: 2Gi

@@ -14,6 +14,11 @@ source:
   huggingface: ""  # e.g., meta-llama/Llama-3.1-8B-Instruct
   contextSize: ""  # e.g., "131072" for 128k context
 
+# GPU scheduling — set exclusive: false to share the GPU with other pods
+# (devices are still mounted; only the amd.com/gpu resource claim is skipped)
+gpu:
+  exclusive: true
+
 # Resource configuration
 resources:
   requests:

@@ -182,7 +182,7 @@ data:
       - model_name: orpheus-3b
         litellm_params:
           model: openai/orpheus-3b
-          api_base: http://orpheus-3b.inference.svc.cluster.local:8000/v1
+          api_base: http://orpheus-3b.inference.svc.cluster.local:5005/v1
           api_key: dummy
         model_info:
           mode: audio_speech

@@ -30,6 +30,9 @@ spec:
       include: "*Q8_0.gguf"
       tokenSecret: hf-token
 
+    gpu:
+      exclusive: false
+
     resources:
       requests:
         memory: 4Gi
@@ -49,13 +52,13 @@ spec:
         operator: Exists
 
     sidecar:
-      enabled: true
+      enabled: false  # no upstream image published; build required
       image:
         repository: ghcr.io/lex-au/orpheus-fastapi
         tag: rocm-latest
-      port: 8000
+      port: 5005
       env:
-        - name: LLM_BASE_URL
+        - name: ORPHEUS_API_URL
           value: http://localhost:8080/v1
       resources:
         requests:

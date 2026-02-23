@@ -182,7 +182,7 @@ spec:
           {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" "whisper-cpp" -}}
           {{- $userRes := .Values.resources | default dict -}}
           {{- $res := $userRes -}}
-          {{- if has $backendName2 $gpuBackends -}}
+          {{- if and (has $backendName2 $gpuBackends) (ne .Values.gpu.exclusive false) -}}
           {{- $gpuLimit := dict "amd.com/gpu" "1" -}}
           {{- $backendRes := dict "limits" $gpuLimit "requests" $gpuLimit -}}
           {{- $res = merge $userRes $backendRes -}}

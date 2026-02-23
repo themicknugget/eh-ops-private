@@ -32,7 +32,7 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $tag = "latest" -}}
 {{- else if eq $backendName "whisper-cpp" -}}
 {{- $repo = "ghcr.io/ggml-org/whisper.cpp" -}}
-{{- $tag = "main" -}}
+{{- $tag = "main-vulkan-364c77f4ca2737e3287652e0e8a8c6dce3231bba" -}}
 {{- else -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}
@@ -181,7 +181,7 @@ Get backend security context
 */}}
 {{- define "inference-model.securityContext" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 capabilities:
   add: [SYS_PTRACE]
 seccompProfile:
@@ -194,7 +194,7 @@ Get backend volumes
 */}}
 {{- define "inference-model.volumes" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - name: dri
   hostPath:
     path: /dev/dri
@@ -209,7 +209,7 @@ Get backend volume mounts
 */}}
 {{- define "inference-model.volumeMounts" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - mountPath: /dev/dri
   name: dri
 - mountPath: /dev/kfd

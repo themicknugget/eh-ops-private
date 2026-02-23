@@ -17,7 +17,7 @@ source:
 # GPU scheduling — set exclusive: false to share the GPU with other pods
 # (devices are still mounted; only the amd.com/gpu resource claim is skipped)
 gpu:
-  exclusive: true
+  exclusive: false
 
 # Resource configuration
 resources:

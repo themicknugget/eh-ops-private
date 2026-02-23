@@ -30,9 +30,6 @@ spec:
       include: "*Q8_0.gguf"
       tokenSecret: hf-token
 
-    gpu:
-      exclusive: false
-
     resources:
       requests:
         memory: 4Gi

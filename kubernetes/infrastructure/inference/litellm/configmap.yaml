@@ -115,6 +115,13 @@ data:
           api_key: dummy
           timeout: 1800
 
+      - model_name: phi-4-mini
+        litellm_params:
+          model: openai/phi-4-mini
+          api_base: http://phi-4-mini-miniryzen.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
       - model_name: gpt-oss-120b
         litellm_params:
           model: openai/gpt-oss-120b

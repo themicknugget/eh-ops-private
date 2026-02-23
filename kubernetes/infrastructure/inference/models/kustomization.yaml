@@ -29,3 +29,4 @@ resources:
   - glm-4-7-flash.yaml
   - whisper-large-v3-turbo.yaml
   - orpheus-3b.yaml
+  - phi-4-mini-miniryzen.yaml

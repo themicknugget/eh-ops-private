@@ -74,6 +74,10 @@ Get backend env vars
 {{- if eq $backendName "llamacpp-vulkan" -}}
 - name: LLAMA_HIP_UMA
   value: "ON"
+- name: LLAMA_ARG_N_GPU_LAYERS
+  value: "99"
+- name: LLAMA_ARG_ENDPOINT_METRICS
+  value: "1"
 {{- else if eq $backendName "llamacpp-vulkan-moe" -}}
 - name: LLAMA_HIP_UMA
   value: "ON"

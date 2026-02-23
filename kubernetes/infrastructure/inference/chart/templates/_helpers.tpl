@@ -24,9 +24,6 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- else if eq $backendName "llamacpp-rocm" -}}
 {{- $repo = "docker.io/kyuz0/amd-strix-halo-toolboxes" -}}
 {{- $tag = "rocm-7.2" -}}
-{{- else if eq $backendName "powerinfer-moe" -}}
-{{- $repo = "ghcr.io/cecil-the-coder/powerinfer-strix-halo-rocm" -}}
-{{- $tag = "sha-4eccf2a" -}}
 {{- else if eq $backendName "llamacpp-cpu" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server" -}}
@@ -49,8 +46,6 @@ Required for toolbox-style images that default to /bin/bash
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if eq $backendName "llamacpp-rocm" -}}
 - /usr/local/bin/llama-server
-{{- else if eq $backendName "powerinfer-moe" -}}
-- /app/server
 {{- end -}}
 {{- end -}}
 
@@ -116,17 +111,6 @@ Get backend env vars
   value: "1024"
 - name: LLAMA_ARG_ENDPOINT_METRICS
   value: "1"
-{{- else if eq $backendName "powerinfer-moe" -}}
-- name: HSA_OVERRIDE_GFX_VERSION
-  value: "11.5.1"
-- name: LLAMA_HIP_UMA
-  value: "ON"
-- name: ROCBLAS_USE_HIPBLASLT
-  value: "1"
-- name: HSA_ENABLE_SDMA
-  value: "0"
-- name: GPU_MAX_HW_QUEUES
-  value: "1"
 {{- end -}}
 {{- end -}}
 
@@ -136,15 +120,6 @@ Get backend args as YAML list
 {{- define "inference-model.backendArgs" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
-- -m
-- $(HF_SOURCE)
-- --host
-- 0.0.0.0
-- --port
-- "8080"
-- --metrics
-- --no-mmap
-{{- else if eq $backendName "powerinfer-moe" -}}
 - -m
 - $(HF_SOURCE)
 - --host
@@ -178,7 +153,7 @@ Get backend security context
 */}}
 {{- define "inference-model.securityContext" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "powerinfer-moe") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
 capabilities:
   add: [SYS_PTRACE]
 seccompProfile:
@@ -191,7 +166,7 @@ Get backend volumes
 */}}
 {{- define "inference-model.volumes" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "powerinfer-moe") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
 - name: dri
   hostPath:
     path: /dev/dri
@@ -206,7 +181,7 @@ Get backend volume mounts
 */}}
 {{- define "inference-model.volumeMounts" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "powerinfer-moe") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
 - mountPath: /dev/dri
   name: dri
 - mountPath: /dev/kfd

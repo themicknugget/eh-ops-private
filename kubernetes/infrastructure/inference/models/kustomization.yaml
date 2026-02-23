@@ -15,9 +15,6 @@ resources:
   - qwen3-235b-a22b.yaml
   - qwen3-next-80b.yaml
   - qwen3-coder-next.yaml
-  # PowerInfer MoE backend (SmallThinker sparse inference)
-  - smallthinker-4b.yaml
-  - smallthinker-21b.yaml
   # ReLU-activated models without PowerInfer activation predictors (dense inference)
   - prosparse-llama-7b.yaml
   - prosparse-llama-13b.yaml

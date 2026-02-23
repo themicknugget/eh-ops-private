@@ -119,7 +119,7 @@ Get backend args as YAML list
 */}}
 {{- define "inference-model.backendArgs" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") -}}
 - -m
 - $(HF_SOURCE)
 {{- if .Values.storage.mmprojFile }}
@@ -131,6 +131,19 @@ Get backend args as YAML list
 - --port
 - "8080"
 - --metrics
+{{- else if eq $backendName "llamacpp-rocm" -}}
+- -m
+- $(HF_SOURCE)
+{{- if .Values.storage.mmprojFile }}
+- --mmproj
+- $(MMPROJ_SOURCE)
+{{- end }}
+- --host
+- 0.0.0.0
+- --port
+- "8080"
+- --metrics
+- --no-mmap
 {{- else if eq $backendName "llamacpp-cpu" -}}
 - -m
 - $(HF_SOURCE)

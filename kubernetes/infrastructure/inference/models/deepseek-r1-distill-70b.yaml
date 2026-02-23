@@ -50,3 +50,7 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
+
+    httpRoute:
+      enabled: true
+      hostname: deepseek-r1-distill-70b.${DOMAIN1}

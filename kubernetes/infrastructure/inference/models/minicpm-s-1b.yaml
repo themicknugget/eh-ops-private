@@ -46,3 +46,7 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
+
+    httpRoute:
+      enabled: true
+      hostname: minicpm-s-1b.${DOMAIN1}

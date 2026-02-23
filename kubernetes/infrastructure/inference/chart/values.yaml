@@ -78,8 +78,8 @@ httpRoute:
   enabled: false
   hostname: ""
   gateway:
-    name: cilium
-    namespace: cilium
+    name: external-gateway
+    namespace: kube-system
 
 # Backend-specific defaults
 backends:

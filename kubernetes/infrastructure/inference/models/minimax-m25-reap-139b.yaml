@@ -48,3 +48,7 @@ spec:
 
     download:
       tokenSecret: hf-token
+
+    httpRoute:
+      enabled: true
+      hostname: minimax-m25-reap-139b.${DOMAIN1}

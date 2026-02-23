@@ -90,3 +90,87 @@ data:
           api_key: dummy
           timeout: 1800
 
+      - model_name: gemma-3-27b
+        litellm_params:
+          model: openai/gemma-3-27b
+          api_base: http://gemma-3-27b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: mistral-small-3-1-24b
+        litellm_params:
+          model: openai/mistral-small-3-1-24b
+          api_base: http://mistral-small-3-1-24b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: phi-4-reasoning-plus
+        litellm_params:
+          model: openai/phi-4-reasoning-plus
+          api_base: http://phi-4-reasoning-plus.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: phi-4-mini
+        litellm_params:
+          model: openai/phi-4-mini
+          api_base: http://phi-4-mini.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: gpt-oss-120b
+        litellm_params:
+          model: openai/gpt-oss-120b
+          api_base: http://gpt-oss-120b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: gpt-oss-20b
+        litellm_params:
+          model: openai/gpt-oss-20b
+          api_base: http://gpt-oss-20b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen2-5-vl-72b
+        litellm_params:
+          model: openai/qwen2-5-vl-72b
+          api_base: http://qwen2-5-vl-72b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen3-vl-30b
+        litellm_params:
+          model: openai/qwen3-vl-30b
+          api_base: http://qwen3-vl-30b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen2-5-coder-32b
+        litellm_params:
+          model: openai/qwen2-5-coder-32b
+          api_base: http://qwen2-5-coder-32b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: deepseek-r1-0528-8b
+        litellm_params:
+          model: openai/deepseek-r1-0528-8b
+          api_base: http://deepseek-r1-0528-8b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: command-a
+        litellm_params:
+          model: openai/command-a
+          api_base: http://command-a.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: glm-4-7-flash
+        litellm_params:
+          model: openai/glm-4-7-flash
+          api_base: http://glm-4-7-flash.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+

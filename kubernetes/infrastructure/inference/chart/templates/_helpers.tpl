@@ -122,6 +122,10 @@ Get backend args as YAML list
 {{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") -}}
 - -m
 - $(HF_SOURCE)
+{{- if .Values.storage.mmprojFile }}
+- --mmproj
+- $(MMPROJ_SOURCE)
+{{- end }}
 - --host
 - 0.0.0.0
 - --port

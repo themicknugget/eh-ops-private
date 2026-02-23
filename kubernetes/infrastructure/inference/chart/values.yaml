@@ -35,6 +35,8 @@ storage:
   # PVC size (only used when createPvc is true)
   size: 500Gi
   className: ""  # Uses default storage class if empty
+  # Multimodal projector file for vision models (passed to --mmproj)
+  mmprojFile: ""
 
 # Download configuration
 download:
@@ -44,7 +46,8 @@ download:
   # HuggingFace token for gated models (optional)
   # tokenSecret: hf-token
   # tokenSecretKey: token
-  # Only download files matching this glob pattern (e.g., "Q8_0/*.gguf" for bartowski split repos)
+  # Glob pattern(s) for selective download. Comma-separate for multiple patterns,
+  # e.g. "*Q6_K.gguf,mmproj-*f16.gguf" to grab model + mmproj in one pass.
   include: ""
 
 # Scaling configuration

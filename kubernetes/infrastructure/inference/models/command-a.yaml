@@ -1,0 +1,51 @@
+# Cohere Command-A 111B (MoE)
+# IQ4_XS quantization - ~60 GiB split, 256K context
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: command-a
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: command-a
+    backend: llamacpp-vulkan
+
+    source:
+      huggingface: bartowski/CohereForAI_c4ai-command-a-03-2025-GGUF
+      contextSize: "262144"
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: command-a
+      modelFile: CohereForAI_c4ai-command-a-03-2025-IQ4_XS/CohereForAI_c4ai-command-a-03-2025-IQ4_XS-00001-of-00002.gguf
+
+    download:
+      include: "CohereForAI_c4ai-command-a-03-2025-IQ4_XS/*.gguf"
+      tokenSecret: hf-token
+
+    resources:
+      requests:
+        memory: 62Gi
+        cpu: "4"
+      limits:
+        memory: 80Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

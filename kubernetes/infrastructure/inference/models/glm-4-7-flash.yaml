@@ -1,0 +1,51 @@
+# GLM-4.7 Flash 30B-A3B (MoE)
+# Q4_K_M quantization - ~19 GiB, 128K context
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: glm-4-7-flash
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: glm-4-7-flash
+    backend: llamacpp-vulkan-moe
+
+    source:
+      huggingface: bartowski/zai-org_GLM-4.7-Flash-GGUF
+      contextSize: "131072"
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: glm-4-7-flash
+      modelFile: zai-org_GLM-4.7-Flash-Q4_K_M.gguf
+
+    download:
+      include: "*Q4_K_M.gguf"
+      tokenSecret: hf-token
+
+    resources:
+      requests:
+        memory: 20Gi
+        cpu: "4"
+      limits:
+        memory: 30Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

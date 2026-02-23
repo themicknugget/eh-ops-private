@@ -1,0 +1,51 @@
+# Microsoft Phi-4-reasoning-plus (dense)
+# Q8_0 quantization - ~16 GiB, 32K context
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: phi-4-reasoning-plus
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: phi-4-reasoning-plus
+    backend: llamacpp-vulkan
+
+    source:
+      huggingface: bartowski/microsoft_Phi-4-reasoning-plus-GGUF
+      contextSize: "32768"
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: phi-4-reasoning-plus
+      modelFile: microsoft_Phi-4-reasoning-plus-Q8_0.gguf
+
+    download:
+      include: "*Q8_0.gguf"
+      tokenSecret: hf-token
+
+    resources:
+      requests:
+        memory: 16Gi
+        cpu: "4"
+      limits:
+        memory: 24Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

@@ -126,7 +126,9 @@ spec:
 
               hf download "{{ .Values.source.huggingface }}" \
               {{- if .Values.download.include }}
-                --include "{{ .Values.download.include }}" \
+              {{- range (splitList "," .Values.download.include) }}
+                --include {{ . | trim | quote }} \
+              {{- end }}
               {{- end }}
                 --local-dir "${MODEL_DIR}"
 
@@ -167,7 +169,11 @@ spec:
             {{- if .Values.storage.modelFile -}}
             {{- $hfSource = printf "/models/%s/%s" $modelDir .Values.storage.modelFile -}}
             {{- end -}}
-            {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | nindent 12 }}
+            {{- $mmprojSource := "" -}}
+            {{- if .Values.storage.mmprojFile -}}
+            {{- $mmprojSource = printf "/models/%s/%s" $modelDir .Values.storage.mmprojFile -}}
+            {{- end -}}
+            {{- include "inference-model.backendArgs" . | replace "$(HF_SOURCE)" $hfSource | replace "$(MMPROJ_SOURCE)" $mmprojSource | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ $port }}

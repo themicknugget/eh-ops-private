@@ -38,7 +38,7 @@ spec:
         memory: 65Gi
         cpu: "4"
       limits:
-        memory: 85Gi
+        memory: 100Gi
 
     scaling:
       cooldownPeriod: 300

@@ -179,7 +179,7 @@ spec:
               containerPort: {{ $port }}
               protocol: TCP
           {{- $backendName2 := include "inference-model.backendName" . -}}
-          {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" "whisper-cpp" -}}
+          {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" -}}
           {{- $userRes := .Values.resources | default dict -}}
           {{- $res := $userRes -}}
           {{- if and (has $backendName2 $gpuBackends) (ne .Values.gpu.exclusive false) -}}

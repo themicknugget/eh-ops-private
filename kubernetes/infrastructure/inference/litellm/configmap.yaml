@@ -9,9 +9,6 @@ data:
       timeout: 1800
       stream_timeout: 1800
 
-    general_settings:
-      health_check_interval: 300
-
     router_settings:
       # LLM cold starts can take minutes — keep retrying until KubeElasti scales the pod up
       num_retries: 120

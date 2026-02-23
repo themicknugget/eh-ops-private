@@ -15,7 +15,3 @@ resources:
   - qwen3-235b-a22b.yaml
   - qwen3-next-80b.yaml
   - qwen3-coder-next.yaml
-  # ReLU-activated models without PowerInfer activation predictors (dense inference)
-  - prosparse-llama-7b.yaml
-  - prosparse-llama-13b.yaml
-  - minicpm-s-1b.yaml

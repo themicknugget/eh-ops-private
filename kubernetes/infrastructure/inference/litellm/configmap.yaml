@@ -90,23 +90,3 @@ data:
           api_key: dummy
           timeout: 1800
 
-      - model_name: prosparse-llama-7b
-        litellm_params:
-          model: openai/prosparse-llama-7b
-          api_base: http://prosparse-llama-7b.inference.svc.cluster.local:8080/v1
-          api_key: dummy
-          timeout: 1800
-
-      - model_name: prosparse-llama-13b
-        litellm_params:
-          model: openai/prosparse-llama-13b
-          api_base: http://prosparse-llama-13b.inference.svc.cluster.local:8080/v1
-          api_key: dummy
-          timeout: 1800
-
-      - model_name: minicpm-s-1b
-        litellm_params:
-          model: openai/minicpm-s-1b
-          api_base: http://minicpm-s-1b.inference.svc.cluster.local:8080/v1
-          api_key: dummy
-          timeout: 1800

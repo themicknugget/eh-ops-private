@@ -19,7 +19,7 @@ spec:
 
     source:
       huggingface: bartowski/microsoft_Phi-4-mini-instruct-GGUF
-      contextSize: "131072"
+      contextSize: "16384"
 
     storage:
       sharedPvc: model-cache-miniryzen

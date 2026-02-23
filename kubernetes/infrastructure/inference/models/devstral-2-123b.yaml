@@ -49,7 +49,3 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
-
-    httpRoute:
-      enabled: true
-      hostname: devstral-2-123b.${DOMAIN1}

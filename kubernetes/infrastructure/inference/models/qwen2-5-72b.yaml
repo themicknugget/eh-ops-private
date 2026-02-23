@@ -49,7 +49,3 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
-
-    httpRoute:
-      enabled: true
-      hostname: qwen2-5-72b.${DOMAIN1}

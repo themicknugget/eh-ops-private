@@ -10,6 +10,8 @@ resources:
   - model-cache.yaml
   # KubeElasti operator (for scale-to-zero)
   - kubeeelasti/
+  # LiteLLM proxy (single entrypoint at inference.${DOMAIN1})
+  - litellm/
   # Model deployments
   - models/
 

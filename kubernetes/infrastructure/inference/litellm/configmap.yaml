@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+  namespace: inference
+data:
+  config.yaml: |
+    litellm_settings:
+      timeout: 1800
+      stream_timeout: 1800
+
+    general_settings:
+      health_check_interval: 300
+
+    router_settings:
+      # LLM cold starts can take minutes — keep retrying until KubeElasti scales the pod up
+      num_retries: 120
+      retry_after: 15
+      allowed_fails: 9999
+      routing_strategy: simple-shuffle
+
+    model_list:
+      - model_name: minimax-m25-reap
+        litellm_params:
+          model: openai/minimax-m25-reap
+          api_base: http://minimax-m25-reap.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: minimax-m25-reap-139b
+        litellm_params:
+          model: openai/minimax-m25-reap-139b
+          api_base: http://minimax-m25-reap-139b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: deepseek-r1-distill-70b
+        litellm_params:
+          model: openai/deepseek-r1-distill-70b
+          api_base: http://deepseek-r1-distill-70b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: llama-4-scout
+        litellm_params:
+          model: openai/llama-4-scout
+          api_base: http://llama-4-scout.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: llama-3-3-70b
+        litellm_params:
+          model: openai/llama-3-3-70b
+          api_base: http://llama-3-3-70b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen2-5-72b
+        litellm_params:
+          model: openai/qwen2-5-72b
+          api_base: http://qwen2-5-72b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: devstral-2-123b
+        litellm_params:
+          model: openai/devstral-2-123b
+          api_base: http://devstral-2-123b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen3-235b-a22b
+        litellm_params:
+          model: openai/qwen3-235b-a22b
+          api_base: http://qwen3-235b-a22b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen3-next-80b
+        litellm_params:
+          model: openai/qwen3-next-80b
+          api_base: http://qwen3-next-80b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: qwen3-coder-next
+        litellm_params:
+          model: openai/qwen3-coder-next
+          api_base: http://qwen3-coder-next.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: prosparse-llama-7b
+        litellm_params:
+          model: openai/prosparse-llama-7b
+          api_base: http://prosparse-llama-7b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: prosparse-llama-13b
+        litellm_params:
+          model: openai/prosparse-llama-13b
+          api_base: http://prosparse-llama-13b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800
+
+      - model_name: minicpm-s-1b
+        litellm_params:
+          model: openai/minicpm-s-1b
+          api_base: http://minicpm-s-1b.inference.svc.cluster.local:8080/v1
+          api_key: dummy
+          timeout: 1800

@@ -49,7 +49,3 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
-
-    httpRoute:
-      enabled: true
-      hostname: llama-3-3-70b.${DOMAIN1}

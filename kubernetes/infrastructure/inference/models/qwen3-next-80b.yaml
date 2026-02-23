@@ -50,7 +50,3 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
-
-    httpRoute:
-      enabled: true
-      hostname: qwen3-next-80b.${DOMAIN1}

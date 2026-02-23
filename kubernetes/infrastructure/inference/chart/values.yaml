@@ -52,7 +52,7 @@ scaling:
   cooldownPeriod: 600  # Seconds idle before scale to 0
   maxReplicas: 2
   # triggerQuery: override the default Prometheus query (defaults to envoy request rate for this model)
-  triggerThreshold: "0.1"
+  triggerThreshold: "1"
 
 # Pod placement
 nodeSelector: {}

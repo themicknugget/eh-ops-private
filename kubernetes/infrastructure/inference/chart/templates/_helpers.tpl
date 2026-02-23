@@ -26,7 +26,7 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $tag = "rocm-7.2" -}}
 {{- else if eq $backendName "powerinfer-moe" -}}
 {{- $repo = "ghcr.io/cecil-the-coder/powerinfer-strix-halo-rocm" -}}
-{{- $tag = "sha-ef4a17c" -}}
+{{- $tag = "sha-4eccf2a" -}}
 {{- else if eq $backendName "llamacpp-cpu" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server" -}}
@@ -50,7 +50,7 @@ Required for toolbox-style images that default to /bin/bash
 {{- if eq $backendName "llamacpp-rocm" -}}
 - /usr/local/bin/llama-server
 {{- else if eq $backendName "powerinfer-moe" -}}
-- /app/server-moe
+- /app/server
 {{- end -}}
 {{- end -}}
 

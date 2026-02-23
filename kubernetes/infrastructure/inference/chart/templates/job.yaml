@@ -195,7 +195,9 @@ spec:
                             # Download (hf is resumable)
                             hf download "{{ .Values.source.huggingface }}" \\
                             {{- if .Values.download.include }}
-                              --include "{{ .Values.download.include }}" \\
+                            {{- range (splitList "," .Values.download.include) }}
+                              --include {{ . | trim | quote }} \\
+                            {{- end }}
                             {{- end }}
                               --local-dir "\${MODEL_DIR}"
 

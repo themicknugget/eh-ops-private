@@ -27,3 +27,5 @@ resources:
   - deepseek-r1-0528-8b.yaml
   - command-a.yaml
   - glm-4-7-flash.yaml
+  - whisper-large-v3-turbo.yaml
+  - orpheus-3b.yaml

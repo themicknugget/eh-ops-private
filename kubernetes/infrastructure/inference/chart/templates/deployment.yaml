@@ -179,7 +179,7 @@ spec:
               containerPort: {{ $port }}
               protocol: TCP
           {{- $backendName2 := include "inference-model.backendName" . -}}
-          {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" -}}
+          {{- $gpuBackends := list "llamacpp-rocm" "llamacpp-vulkan" "llamacpp-vulkan-moe" "whisper-cpp" -}}
           {{- $userRes := .Values.resources | default dict -}}
           {{- $res := $userRes -}}
           {{- if has $backendName2 $gpuBackends -}}
@@ -237,6 +237,22 @@ spec:
               port: {{ $port }}
             failureThreshold: 180  # 30 minutes max for large models
             periodSeconds: 10
+        {{- if .Values.sidecar.enabled }}
+        - name: sidecar
+          image: {{ .Values.sidecar.image.repository }}:{{ .Values.sidecar.image.tag }}
+          ports:
+            - name: sidecar
+              containerPort: {{ .Values.sidecar.port }}
+              protocol: TCP
+          {{- with .Values.sidecar.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.sidecar.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- end }}
       volumes:
         - name: model-cache
           persistentVolumeClaim:

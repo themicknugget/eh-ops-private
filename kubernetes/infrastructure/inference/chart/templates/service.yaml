@@ -17,6 +17,12 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    {{- if .Values.sidecar.enabled }}
+    - port: {{ .Values.sidecar.port }}
+      targetPort: sidecar
+      protocol: TCP
+      name: sidecar
+    {{- end }}
   selector:
     {{- include "inference-model.labels" . | nindent 4 }}
 {{- end -}}

@@ -1,0 +1,48 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: whisper-large-v3-turbo
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: whisper-large-v3-turbo
+    backend: whisper-cpp
+
+    source:
+      huggingface: ggerganov/whisper.cpp
+
+    storage:
+      sharedPvc: model-cache
+      modelDir: whisper-large-v3-turbo
+      modelFile: ggml-large-v3-turbo-q8_0.bin
+
+    download:
+      include: "ggml-large-v3-turbo-q8_0.bin"
+      tokenSecret: hf-token
+
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: "2"
+      limits:
+        memory: 6Gi
+
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+
+    nodeSelector:
+      kubernetes.io/hostname: shadow
+
+    tolerations:
+      - key: amd.com/gpu
+        operator: Exists

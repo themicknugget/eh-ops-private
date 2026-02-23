@@ -48,6 +48,9 @@ data:
     autoDirectNodeRoutes: true
     directRoutingSkipUnreachable: true
 
+    # 1420 for WireGuard/Tailscale overhead on edge nodes
+    MTU: 1420
+
     # Enable kube-proxy replacement
     kubeProxyReplacement: true
 

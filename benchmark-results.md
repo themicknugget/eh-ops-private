@@ -279,3 +279,181 @@ CPU:
 
 ---
 
+## New Model Benchmarks — K8s Jobs (Vulkan/ROCm direct)
+
+**Date:** 2026-02-23 09:37 UTC  
+**Hardware:** AMD Strix Halo — Radeon 8060S (gfx1151), 128 GB unified memory  
+**Access:** K8s Job on shadow node (no LiteLLM, no KubeElasti interference)  
+**Benchmark:** 3-run average after 1 warmup; 128 max tokens; 8192 context  
+**Prompt:** ~600 tokens (infrastructure scenario)  
+**Vulkan:** mmap enabled (no --no-mmap); LLAMA_HIP_UMA=ON  
+**ROCm:** --no-mmap; flash-attn; q4_0 KV cache  
+
+**PP** = prompt processing speed (tok/s, from llama.cpp timings field)  
+**TG** = token generation speed (tok/s)  
+**Load** = server start + model load time (8K context)  
+
+| Model | Quant | Size | Params | Active | Backend | Load | PP (tok/s) | TG (tok/s) |
+|-------|-------|------|--------|--------|---------|------|-----------|-----------|
+| Phi-4-mini Instruct Q8_0 | Q8_0 | ~4 GiB | 3.8B | 3.8B | Vulkan (mmap) | 10s | 1416.7 ±275.2 | 50.2 ±0.5 |
+| DeepSeek R1-0528 Qwen3 8B Q8_0 | Q8_0 | ~8 GiB | 8B | 8B | Vulkan (mmap) | 10s | 700.8 ±64.9 | 26.6 ±0.0 |
+| GPT-OSS 20B Q8_0 | Q8_0 | ~12 GiB | 20B | ~4B | Vulkan (mmap) | 10s | 947.1 ±106.7 | 77.2 ±0.2 |
+| Phi-4-reasoning-plus Q8_0 | Q8_0 | ~16 GiB | 14B | 14B | Vulkan (mmap) | 10s | 467.4 ±5.2 | 14.5 ±0.0 |
+| Mistral Small 3.1 24B Instruct Q5_K_M | Q5_K_M | ~17 GiB | 24B | 24B | Vulkan (mmap) | 10s | 250.8 ±2.2 | 13.2 ±0.0 |
+| GLM-4.7 Flash 30B-A3B Q4_K_M | Q4_K_M | ~19 GiB | 30B | 3B | Vulkan (mmap) | 10s | 547.2 ±132.3 | 62.1 ±1.3 |
+| Qwen2.5-Coder 32B Instruct Q4_K_M | Q4_K_M | ~20 GiB | 32B | 32B | Vulkan (mmap) | 10s | 202.3 ±5.2 | 11.1 ±0.0 |
+| Gemma 3 27B Instruct Q6_K (vision) | Q6_K | ~22 GiB | 27B | 27B | Vulkan (mmap) | — | — | ERROR: server died |
+| Qwen3-VL 30B-A3B Instruct Q4_K_M (vision) | Q4_K_M | ~19 GiB | 30B | 3B | Vulkan (mmap) | — | — | ERROR: server died |
+| Qwen2.5-VL 72B Instruct IQ4_XS (vision) | IQ4_XS | ~40 GiB | 72B | 72B | Vulkan (mmap) | — | — | ERROR: server died |
+| GPT-OSS 120B Q4_K_M | Q4_K_M | ~63 GiB | 120B | ~20B | Vulkan (mmap) | 40s | 332.4 ±32.2 | 57.0 ±0.7 |
+| Qwen3-Coder-Next 80B Q6_K | Q6_K | ~66 GiB | 80B | 3B | Vulkan (mmap) | 1m30s | 324.2 ±28.9 | 38.0 ±0.1 |
+| Command-A 111B IQ4_XS | IQ4_XS | ~60 GiB | 111B | ~14B | Vulkan (mmap) | 30s | 36.8 ±0.0 | 3.4 ±0.0 |
+| MiniMax M2.5 REAP 139B MXFP4 [reference] | MXFP4 | ~71 GiB | 139B | 10B | ROCm 7.2 (--no-mmap) | 50s | 166.8 ±3.2 | 22.7 ±0.5 |
+
+<details><summary>Per-run detail</summary>
+
+```
+Phi-4-mini Instruct Q8_0:
+  Run 1: pp=1101.93 tg=50.68 (prompt=545 tok, gen=128 tok)
+  Run 2: pp=1611.43 tg=50.05 (prompt=545 tok, gen=128 tok)
+  Run 3: pp=1536.83 tg=49.77 (prompt=545 tok, gen=128 tok)
+DeepSeek R1-0528 Qwen3 8B Q8_0:
+  Run 1: pp=626.97 tg=26.59 (prompt=582 tok, gen=128 tok)
+  Run 2: pp=748.74 tg=26.55 (prompt=582 tok, gen=128 tok)
+  Run 3: pp=726.69 tg=26.51 (prompt=582 tok, gen=128 tok)
+GPT-OSS 20B Q8_0:
+  Run 1: pp=830.96 tg=77.26 (prompt=545 tok, gen=128 tok)
+  Run 2: pp=969.78 tg=76.99 (prompt=542 tok, gen=128 tok)
+  Run 3: pp=1040.64 tg=77.29 (prompt=542 tok, gen=128 tok)
+Phi-4-reasoning-plus Q8_0:
+  Run 1: pp=461.58 tg=14.51 (prompt=555 tok, gen=128 tok)
+  Run 2: pp=471.45 tg=14.51 (prompt=552 tok, gen=128 tok)
+  Run 3: pp=469.17 tg=14.51 (prompt=552 tok, gen=128 tok)
+Mistral Small 3.1 24B Instruct Q5_K_M:
+  Run 1: pp=251.68 tg=13.21 (prompt=593 tok, gen=128 tok)
+  Run 2: pp=252.50 tg=13.20 (prompt=590 tok, gen=128 tok)
+  Run 3: pp=248.26 tg=13.21 (prompt=590 tok, gen=128 tok)
+GLM-4.7 Flash 30B-A3B Q4_K_M:
+  Run 1: pp=394.49 tg=63.51 (prompt=553 tok, gen=128 tok)
+  Run 2: pp=619.78 tg=62.02 (prompt=553 tok, gen=128 tok)
+  Run 3: pp=627.20 tg=60.89 (prompt=553 tok, gen=128 tok)
+Qwen2.5-Coder 32B Instruct Q4_K_M:
+  Run 1: pp=196.36 tg=11.07 (prompt=608 tok, gen=128 tok)
+  Run 2: pp=205.13 tg=11.09 (prompt=608 tok, gen=128 tok)
+  Run 3: pp=205.58 tg=11.06 (prompt=608 tok, gen=128 tok)
+GPT-OSS 120B Q4_K_M:
+  Run 1: pp=296.62 tg=56.74 (prompt=545 tok, gen=128 tok)
+  Run 2: pp=341.64 tg=56.45 (prompt=542 tok, gen=128 tok)
+  Run 3: pp=358.97 tg=57.69 (prompt=542 tok, gen=128 tok)
+Qwen3-Coder-Next 80B Q6_K:
+  Run 1: pp=290.84 tg=37.83 (prompt=587 tok, gen=128 tok)
+  Run 2: pp=342.13 tg=38.11 (prompt=587 tok, gen=128 tok)
+  Run 3: pp=339.65 tg=38.02 (prompt=587 tok, gen=128 tok)
+Command-A 111B IQ4_XS:
+  Run 1: pp=36.82 tg=3.37 (prompt=597 tok, gen=128 tok)
+  Run 2: pp=36.76 tg=3.37 (prompt=594 tok, gen=128 tok)
+  Run 3: pp=36.74 tg=3.37 (prompt=594 tok, gen=128 tok)
+MiniMax M2.5 REAP 139B MXFP4 [reference]:
+  Run 1: pp=170.18 tg=23.24 (prompt=579 tok, gen=128 tok)
+  Run 2: pp=166.41 tg=22.68 (prompt=579 tok, gen=128 tok)
+  Run 3: pp=163.78 tg=22.29 (prompt=579 tok, gen=128 tok)
+```
+
+</details>
+
+
+---
+
+## Vision Model Benchmarks (re-run after download fix)
+
+**Date:** 2026-02-23 09:59 UTC  
+**Hardware:** AMD Strix Halo — Radeon 8060S (gfx1151), 128 GB unified memory  
+**Access:** K8s Job on shadow node (Vulkan backend, mmap enabled)  
+**Benchmark:** 3-run average after 1 warmup; 128 max tokens; 8192 context  
+**Note:** Text-only benchmark (vision/mmproj not tested); prior downloads failed due to include bug  
+
+| Model | Quant | Size | Params | Active | Load | PP (tok/s) | TG (tok/s) |
+|-------|-------|------|--------|--------|------|-----------|-----------|
+| Qwen3-VL 30B-A3B Instruct Q4_K_M (vision) | Q4_K_M | ~19 GiB | 30B | 3B | 10s | 696.0 ±104.7 | 79.9 ±0.9 |
+| Gemma 3 27B Instruct Q6_K (vision) | Q6_K | ~22 GiB | 27B | 27B | — | — | — |
+| Qwen2.5-VL 72B Instruct IQ4_XS (vision) | IQ4_XS | ~40 GiB | 72B | 72B | — | — | — |
+
+<details><summary>Per-run detail</summary>
+
+```
+Qwen3-VL 30B-A3B Instruct Q4_K_M (vision):
+  Run 1: pp=575.11 tg=78.83 (prompt=587 tok, gen=128 tok)
+  Run 2: pp=757.37 tg=80.67 (prompt=587 tok, gen=128 tok)
+  Run 3: pp=755.54 tg=80.17 (prompt=587 tok, gen=128 tok)
+```
+
+</details>
+
+
+---
+
+## Vision Model Benchmarks (re-run after download fix)
+
+**Date:** 2026-02-23 10:00 UTC  
+**Hardware:** AMD Strix Halo — Radeon 8060S (gfx1151), 128 GB unified memory  
+**Access:** K8s Job on shadow node (Vulkan backend, mmap enabled)  
+**Benchmark:** 3-run average after 1 warmup; 128 max tokens; 8192 context  
+**Note:** Text-only benchmark (vision/mmproj not tested); prior downloads failed due to include bug  
+
+| Model | Quant | Size | Params | Active | Load | PP (tok/s) | TG (tok/s) |
+|-------|-------|------|--------|--------|------|-----------|-----------|
+| Qwen3-VL 30B-A3B Instruct Q4_K_M (vision) | Q4_K_M | ~19 GiB | 30B | 3B | 10s | 696.0 ±104.7 | 79.9 ±0.9 |
+| Gemma 3 27B Instruct Q6_K (vision) | Q6_K | ~22 GiB | 27B | 27B | 10s | 184.4 ±3.3 | 9.4 ±0.1 |
+| Qwen2.5-VL 72B Instruct IQ4_XS (vision) | IQ4_XS | ~40 GiB | 72B | 72B | — | — | — |
+
+<details><summary>Per-run detail</summary>
+
+```
+Qwen3-VL 30B-A3B Instruct Q4_K_M (vision):
+  Run 1: pp=575.11 tg=78.83 (prompt=587 tok, gen=128 tok)
+  Run 2: pp=757.37 tg=80.67 (prompt=587 tok, gen=128 tok)
+  Run 3: pp=755.54 tg=80.17 (prompt=587 tok, gen=128 tok)
+Gemma 3 27B Instruct Q6_K (vision):
+  Run 1: pp=180.69 tg=9.41 (prompt=599 tok, gen=128 tok)
+  Run 2: pp=186.90 tg=9.39 (prompt=599 tok, gen=128 tok)
+  Run 3: pp=185.71 tg=9.32 (prompt=599 tok, gen=128 tok)
+```
+
+</details>
+
+
+---
+
+## Vision Model Benchmarks (re-run after download fix)
+
+**Date:** 2026-02-23 10:03 UTC  
+**Hardware:** AMD Strix Halo — Radeon 8060S (gfx1151), 128 GB unified memory  
+**Access:** K8s Job on shadow node (Vulkan backend, mmap enabled)  
+**Benchmark:** 3-run average after 1 warmup; 128 max tokens; 8192 context  
+**Note:** Text-only benchmark (vision/mmproj not tested); prior downloads failed due to include bug  
+
+| Model | Quant | Size | Params | Active | Load | PP (tok/s) | TG (tok/s) |
+|-------|-------|------|--------|--------|------|-----------|-----------|
+| Qwen3-VL 30B-A3B Instruct Q4_K_M (vision) | Q4_K_M | ~19 GiB | 30B | 3B | 10s | 696.0 ±104.7 | 79.9 ±0.9 |
+| Gemma 3 27B Instruct Q6_K (vision) | Q6_K | ~22 GiB | 27B | 27B | 10s | 184.4 ±3.3 | 9.4 ±0.1 |
+| Qwen2.5-VL 72B Instruct IQ4_XS (vision) | IQ4_XS | ~40 GiB | 72B | 72B | 21s | 82.2 ±0.2 | 5.3 ±0.0 |
+
+<details><summary>Per-run detail</summary>
+
+```
+Qwen3-VL 30B-A3B Instruct Q4_K_M (vision):
+  Run 1: pp=575.11 tg=78.83 (prompt=587 tok, gen=128 tok)
+  Run 2: pp=757.37 tg=80.67 (prompt=587 tok, gen=128 tok)
+  Run 3: pp=755.54 tg=80.17 (prompt=587 tok, gen=128 tok)
+Gemma 3 27B Instruct Q6_K (vision):
+  Run 1: pp=180.69 tg=9.41 (prompt=599 tok, gen=128 tok)
+  Run 2: pp=186.90 tg=9.39 (prompt=599 tok, gen=128 tok)
+  Run 3: pp=185.71 tg=9.32 (prompt=599 tok, gen=128 tok)
+Qwen2.5-VL 72B Instruct IQ4_XS (vision):
+  Run 1: pp=82.38 tg=5.24 (prompt=598 tok, gen=128 tok)
+  Run 2: pp=82.27 tg=5.28 (prompt=598 tok, gen=128 tok)
+  Run 3: pp=82.07 tg=5.27 (prompt=598 tok, gen=128 tok)
+```
+
+</details>
+

@@ -19,8 +19,3 @@ resources:
   - prosparse-llama-7b.yaml
   - prosparse-llama-13b.yaml
   - minicpm-s-1b.yaml
-  # TurboSparse: safetensors-only, converted to GGUF by companion Jobs
-  - turbosparse-mistral-7b-convert.yaml
-  - turbosparse-mistral-7b.yaml
-  - turbosparse-mixtral-47b-convert.yaml
-  - turbosparse-mixtral-47b.yaml

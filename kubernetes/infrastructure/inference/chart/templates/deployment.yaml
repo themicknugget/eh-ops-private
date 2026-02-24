@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "inference-model.labels" . | nindent 4 }}
 spec:
-  replicas: 0  # KubeElasti controls scaling
+  replicas: {{ if ne .Values.scaling.enabled false }}0{{ else }}1{{ end }}
   strategy:
     type: Recreate  # Only one pod per model (limited GPU)
   selector:

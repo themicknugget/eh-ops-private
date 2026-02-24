@@ -1,4 +1,4 @@
-{{- if .Values.name -}}
+{{- if and .Values.name (ne .Values.scaling.enabled false) -}}
 {{- $query := .Values.scaling.triggerQuery | default (printf "sum(llamacpp:requests_processing{model=\"%s\"}) or vector(0)" .Values.name) -}}
 apiVersion: elasti.truefoundry.com/v1alpha1
 kind: ElastiService

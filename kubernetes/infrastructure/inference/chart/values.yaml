@@ -57,6 +57,7 @@ download:
 
 # Scaling configuration
 scaling:
+  enabled: true  # Set to false for backends without Prometheus metrics (e.g., whisper-cpp)
   cooldownPeriod: 600  # Seconds idle before scale to 0
   maxReplicas: 2
   # triggerQuery: override the default Prometheus query (defaults to envoy request rate for this model)

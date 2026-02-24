@@ -37,8 +37,7 @@ spec:
         memory: 6Gi
 
     scaling:
-      cooldownPeriod: 300
-      maxReplicas: 1
+      enabled: false
 
     nodeSelector:
       kubernetes.io/hostname: shadow

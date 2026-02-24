@@ -1,0 +1,11 @@
+# 32GB Swap configuration for shadow node
+# Apply with: talosctl patch machineconfig -n 192.168.1.56 --patch @shadow-swap.yaml
+---
+apiVersion: v1alpha1
+kind: SwapVolumeConfig
+name: shadow-swap
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  minSize: 32GiB
+  maxSize: 32GiB

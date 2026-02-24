@@ -1,0 +1,7 @@
+# Zswap configuration for shadow node
+# Compressed swap cache in RAM - provides OOM relief without disk partition
+# Apply with: talosctl patch machineconfig -n 192.168.1.56 --patch @shadow-zswap.yaml
+machine:
+  sysctls:
+    # Increase swappiness to use zswap more aggressively
+    vm.swappiness: "60"

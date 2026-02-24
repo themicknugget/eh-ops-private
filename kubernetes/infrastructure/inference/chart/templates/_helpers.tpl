@@ -32,7 +32,7 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $tag = "latest" -}}
 {{- else if eq $backendName "whisper-cpp" -}}
 {{- $repo = "ghcr.io/ggml-org/whisper.cpp" -}}
-{{- $tag = "main-vulkan-364c77f4ca2737e3287652e0e8a8c6dce3231bba" -}}
+{{- $tag = "main" -}}
 {{- else -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}

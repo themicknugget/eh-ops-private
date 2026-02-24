@@ -1,0 +1,46 @@
+---
+# Patches Cilium-managed gateway services for cloudbox nodes to add the cloudbox
+# public IPs as externalIPs so Cilium's eBPF kube-proxy replacement intercepts
+# traffic on ports 80/443 arriving at those IPs and routes it to the local
+# cilium-envoy pod. externalTrafficPolicy: Local ensures no cross-node hop and
+# preserves the real client source IP without needing PROXY protocol.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: cloudbox-gateway-external-ips
+spec:
+  background: true
+  rules:
+    - name: cloudbox-gateway
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              names:
+                - cilium-gateway-cloudbox-gateway
+              namespaces:
+                - kube-system
+      mutate:
+        patchStrategicMerge:
+          spec:
+            externalIPs:
+              - 129.80.242.223
+              - 129.80.7.123
+            externalTrafficPolicy: Local
+    - name: cloudbox3-gateway
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              names:
+                - cilium-gateway-cloudbox3-gateway
+              namespaces:
+                - kube-system
+      mutate:
+        patchStrategicMerge:
+          spec:
+            externalIPs:
+              - 158.101.43.196
+            externalTrafficPolicy: Local

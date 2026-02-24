@@ -6,7 +6,6 @@ resources:
   - cilium
   - cert-manager
   - gateway
-  - cloudbox-ingress
   - storage
   - tailscale
   - tailscale-connector

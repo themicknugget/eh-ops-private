@@ -12,7 +12,7 @@ resources:
   - kubeeelasti/
   # LiteLLM proxy (single entrypoint at inference.${DOMAIN1})
   - litellm/
-  # Model deployments
+  # Model deployments (includes KittenTTS variants)
   - models/
 
 # Common labels

@@ -1,0 +1,71 @@
+---
+# Docker build cache registry for GitHub Actions runners
+# Provides local cache for docker buildx --cache-from/--cache-to
+# Runs on miniryzen with local-path storage for persistence
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: docker-cache
+  namespace: github-runners
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-cache
+  namespace: github-runners
+  labels:
+    app: docker-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-cache
+  template:
+    metadata:
+      labels:
+        app: docker-cache
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: miniryzen
+      containers:
+        - name: registry
+          image: registry:2
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - name: cache
+              mountPath: /var/lib/registry
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: cache
+          persistentVolumeClaim:
+            claimName: docker-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-cache
+  namespace: github-runners
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5000
+      targetPort: http
+  selector:
+    app: docker-cache

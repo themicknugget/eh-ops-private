@@ -7,3 +7,4 @@ resources:
   - values-secret.sops.yaml
   - helm-release.yaml
   - httproute.yaml
+  - docker-cache.yaml

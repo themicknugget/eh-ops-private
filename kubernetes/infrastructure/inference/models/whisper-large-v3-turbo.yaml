@@ -36,6 +36,9 @@ spec:
       limits:
         memory: 6Gi
 
+    gpu:
+      exclusive: true
+
     scaling:
       enabled: false
 

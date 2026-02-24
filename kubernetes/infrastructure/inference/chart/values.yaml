@@ -14,10 +14,13 @@ source:
   huggingface: ""  # e.g., meta-llama/Llama-3.1-8B-Instruct
   contextSize: ""  # e.g., "131072" for 128k context
 
-# GPU scheduling — set exclusive: false to share the GPU with other pods
-# (devices are still mounted; only the amd.com/gpu resource claim is skipped)
+# GPU scheduling
+# exclusive: true  — claims amd.com/gpu: 1 (one pod at a time, AMD device plugin)
+# shared: true     — claims amd.com/gpu.shared: 1 (up to 8 concurrent, generic device plugin)
+# both false       — no resource claim (devices mounted but not tracked)
 gpu:
   exclusive: false
+  shared: false
 
 # Resource configuration
 resources:

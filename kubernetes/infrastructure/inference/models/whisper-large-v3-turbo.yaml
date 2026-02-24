@@ -37,7 +37,7 @@ spec:
         memory: 6Gi
 
     gpu:
-      exclusive: true
+      shared: true
 
     scaling:
       enabled: false

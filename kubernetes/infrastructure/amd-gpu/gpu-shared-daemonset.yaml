@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: amd-gpu-shared
+  namespace: amd-gpu-system
+spec:
+  selector:
+    matchLabels:
+      app: amd-gpu-shared
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: amd-gpu-shared
+    spec:
+      nodeSelector:
+        feature.node.kubernetes.io/pci-0300_1002.present: "true"
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: workload-type
+          operator: Equal
+          value: heavy
+        - effect: NoSchedule
+          key: node.cilium.io/agent-not-ready
+          operator: Exists
+      containers:
+        - name: generic-device-plugin
+          image: ghcr.io/squat/generic-device-plugin:latest
+          imagePullPolicy: Always
+          args:
+            - --domain
+            - amd.com
+            - --device
+            - >-
+              {"name":"gpu.shared","groups":[{"count":8,"paths":[
+              {"path":"/dev/dri/renderD128"},
+              {"path":"/dev/kfd"},
+              {"path":"/dev/dri/card0"}
+              ]}]}
+          ports:
+            - name: metrics
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: device-plugins
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: dev
+              mountPath: /dev
+      volumes:
+        - name: device-plugins
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+        - name: dev
+          hostPath:
+            path: /dev

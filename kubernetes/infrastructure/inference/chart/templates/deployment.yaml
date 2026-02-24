@@ -186,6 +186,10 @@ spec:
           {{- $gpuLimit := dict "amd.com/gpu" "1" -}}
           {{- $backendRes := dict "limits" $gpuLimit "requests" $gpuLimit -}}
           {{- $res = merge $userRes $backendRes -}}
+          {{- else if and (has $backendName2 $gpuBackends) .Values.gpu.shared -}}
+          {{- $gpuLimit := dict "amd.com/gpu.shared" "1" -}}
+          {{- $backendRes := dict "limits" $gpuLimit "requests" $gpuLimit -}}
+          {{- $res = merge $userRes $backendRes -}}
           {{- end -}}
           {{- if $res }}
           resources:

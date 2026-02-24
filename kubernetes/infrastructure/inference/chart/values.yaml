@@ -16,7 +16,7 @@ source:
 
 # GPU scheduling
 # exclusive: true  — claims amd.com/gpu: 1 (one pod at a time, AMD device plugin)
-# shared: true     — claims amd.com/gpu.shared: 1 (up to 8 concurrent, generic device plugin)
+# shared: true     — claims amd.com/gpu-shared: 1 (up to 8 concurrent, generic device plugin)
 # both false       — no resource claim (devices mounted but not tracked)
 gpu:
   exclusive: false

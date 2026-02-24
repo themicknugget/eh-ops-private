@@ -35,7 +35,7 @@ spec:
             - amd.com
             - --device
             - >-
-              {"name":"gpu.shared","groups":[{"count":8,"paths":[
+              {"name":"gpu-shared","groups":[{"count":8,"paths":[
               {"path":"/dev/dri/renderD128"},
               {"path":"/dev/kfd"},
               {"path":"/dev/dri/card0"}

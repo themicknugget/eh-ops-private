@@ -35,13 +35,22 @@ spec:
             - |
               set -ex
 
+              MODEL_DIR=/models/{{ $modelDir }}
+              JOB_NAME={{ .Values.name }}-download-worker
+              NAMESPACE={{ .Release.Namespace }}
+
+              # Check if already downloaded - fast exit before fetching kubectl
+              if [ -f "${MODEL_DIR}/.ready" ]; then
+                echo "Model already downloaded"
+                exit 0
+              fi
+
               # Force unbuffered Python output
               export PYTHONUNBUFFERED=1
 
               # Download kubectl using Python
               python3 -c "
               import urllib.request
-              import os
               url = 'https://dl.k8s.io/release/stable.txt'
               version = urllib.request.urlopen(url).read().decode().strip()
               kubectl_url = f'https://dl.k8s.io/release/{version}/bin/linux/amd64/kubectl'
@@ -52,18 +61,8 @@ spec:
               chmod +x /tmp/kubectl
               echo "kubectl ready"
 
-              MODEL_DIR=/models/{{ $modelDir }}
-              JOB_NAME={{ .Values.name }}-download-worker
-              NAMESPACE={{ .Release.Namespace }}
-
               # Use downloaded kubectl
               export PATH="/tmp:$PATH"
-
-              # Check if already downloaded - fast exit
-              if [ -f "${MODEL_DIR}/.ready" ]; then
-                echo "Model already downloaded"
-                exit 0
-              fi
 
               echo "Ensuring download worker job is running..."
 

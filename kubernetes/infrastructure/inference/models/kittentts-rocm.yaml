@@ -39,3 +39,5 @@ spec:
     tolerations:
       - key: amd.com/gpu
         operator: Exists
+      - key: ci-runner
+        operator: Exists

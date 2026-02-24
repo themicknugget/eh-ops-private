@@ -31,8 +31,8 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $repo = "vllm/vllm-openai" -}}
 {{- $tag = "latest" -}}
 {{- else if eq $backendName "whisper-cpp" -}}
-{{- $repo = "ghcr.io/ggml-org/whisper.cpp" -}}
-{{- $tag = "main" -}}
+{{- $repo = "ghcr.io/kth8/whisper-server-vulkan" -}}
+{{- $tag = "latest" -}}
 {{- else -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}
@@ -50,7 +50,7 @@ Required for toolbox-style images that default to /bin/bash
 {{- if eq $backendName "llamacpp-rocm" -}}
 - /usr/local/bin/llama-server
 {{- else if eq $backendName "whisper-cpp" -}}
-- /app/build/bin/whisper-server
+- /usr/local/bin/whisper-server
 {{- end -}}
 {{- end -}}
 
@@ -177,6 +177,8 @@ Get backend args as YAML list
 - 0.0.0.0
 - --port
 - "8080"
+- --inference-path
+- /v1/audio/transcriptions
 {{- end -}}
 {{- end -}}
 

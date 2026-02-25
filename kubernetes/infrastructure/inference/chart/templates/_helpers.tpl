@@ -145,7 +145,7 @@ Get backend env vars
 - name: ORT_PROVIDERS
   value: "ROCMExecutionProvider,CPUExecutionProvider"
 - name: HSA_OVERRIDE_GFX_VERSION
-  value: "11.5.1"
+  value: "11.0.0"
 - name: ROCBLAS_USE_HIPBLASLT
   value: "1"
 - name: HSA_ENABLE_SDMA

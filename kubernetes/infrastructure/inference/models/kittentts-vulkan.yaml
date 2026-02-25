@@ -18,7 +18,7 @@ spec:
     backend: kittentts-vulkan
 
     image:
-      digest: sha256:e513299b49dc9676a3eaeebb839325ba20793261be5c330b30c54dda2e4a0049
+      digest: sha256:8bf7087cd6fa0c004019200411e4ab95fe8195b7d650e7c66aa3544465e14452
 
     source:
       huggingface: KittenML/kitten-tts-mini-0.8

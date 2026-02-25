@@ -26,6 +26,9 @@ spec:
     download:
       enabled: false
 
+    storage:
+      sharedPvc: ""  # No PVC needed - model downloaded at startup
+
     resources:
       requests:
         memory: 1Gi

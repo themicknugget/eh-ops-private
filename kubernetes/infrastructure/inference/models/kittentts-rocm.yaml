@@ -17,6 +17,9 @@ spec:
     name: kittentts-rocm
     backend: kittentts-rocm
 
+    image:
+      digest: sha256:508b6a1e9c1e9217c4880afec511df80ee43a3c28a1928f1ba2928dcc3bedfa9
+
     source:
       huggingface: KittenML/kitten-tts-mini-0.8
 

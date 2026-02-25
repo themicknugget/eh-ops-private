@@ -16,6 +16,9 @@ spec:
       containers:
         - name: litellm
           image: ghcr.io/berriai/litellm:main-stable
+          env:
+            - name: LITELLM_HEALTH_CHECK_ENABLED
+              value: "false"
           args:
             - --config
             - /etc/litellm/config.yaml

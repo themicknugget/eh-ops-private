@@ -8,6 +8,9 @@ data:
     litellm_settings:
       timeout: 1800
       stream_timeout: 1800
+      # Disable health checks to backends - KubeElasti handles scale-to-zero
+      # Health checks would trigger scale-up of idle backends
+      disable_adding_openai_public_endpoints_to_db: true
 
     router_settings:
       # LLM cold starts can take minutes — keep retrying until KubeElasti scales the pod up

@@ -29,6 +29,4 @@ resources:
   - glm-4-7-flash.yaml
   - whisper-large-v3-turbo.yaml
   - orpheus-3b.yaml
-  - kittentts-cpu.yaml
-  - kittentts-rocm.yaml
-  - kittentts-vulkan.yaml
+  - kittentts.yaml

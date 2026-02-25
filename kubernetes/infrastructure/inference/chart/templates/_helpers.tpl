@@ -33,15 +33,9 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- else if eq $backendName "whisper-cpp" -}}
 {{- $repo = "ghcr.io/kth8/whisper-server-vulkan" -}}
 {{- $tag = "latest" -}}
-{{- else if eq $backendName "kittentts-cpu" -}}
+{{- else if eq $backendName "kittentts" -}}
 {{- $repo = "ghcr.io/themicknugget/kittentts-server" -}}
-{{- $tag = "cpu" -}}
-{{- else if eq $backendName "kittentts-rocm" -}}
-{{- $repo = "ghcr.io/themicknugget/kittentts-server" -}}
-{{- $tag = "rocm" -}}
-{{- else if eq $backendName "kittentts-vulkan" -}}
-{{- $repo = "ghcr.io/themicknugget/kittentts-server" -}}
-{{- $tag = "vulkan" -}}
+{{- $tag = "latest" -}}
 {{- else -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}
@@ -134,27 +128,9 @@ Get backend env vars
   value: "1024"
 - name: LLAMA_ARG_ENDPOINT_METRICS
   value: "1"
-{{- else if eq $backendName "kittentts-cpu" -}}
+{{- else if eq $backendName "kittentts" -}}
 - name: KITTENTTS_MODEL
   value: "$(HF_SOURCE)"
-- name: ORT_PROVIDERS
-  value: CPUExecutionProvider
-{{- else if eq $backendName "kittentts-rocm" -}}
-- name: KITTENTTS_MODEL
-  value: "$(HF_SOURCE)"
-- name: ORT_PROVIDERS
-  value: "ROCMExecutionProvider,CPUExecutionProvider"
-- name: HSA_OVERRIDE_GFX_VERSION
-  value: "11.0.0"
-- name: ROCBLAS_USE_HIPBLASLT
-  value: "1"
-- name: HSA_ENABLE_SDMA
-  value: "0"
-{{- else if eq $backendName "kittentts-vulkan" -}}
-- name: KITTENTTS_MODEL
-  value: "$(HF_SOURCE)"
-- name: ORT_PROVIDERS
-  value: "VulkanExecutionProvider,CPUExecutionProvider"
 {{- end -}}
 {{- end -}}
 
@@ -222,7 +198,7 @@ Get backend security context
 */}}
 {{- define "inference-model.securityContext" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") (eq $backendName "kittentts-rocm") (eq $backendName "kittentts-vulkan") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 capabilities:
   add: [SYS_PTRACE]
 seccompProfile:
@@ -235,7 +211,7 @@ Get backend volumes
 */}}
 {{- define "inference-model.volumes" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") (eq $backendName "kittentts-rocm") (eq $backendName "kittentts-vulkan") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - name: dri
   hostPath:
     path: /dev/dri
@@ -250,7 +226,7 @@ Get backend volume mounts
 */}}
 {{- define "inference-model.volumeMounts" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") (eq $backendName "kittentts-rocm") (eq $backendName "kittentts-vulkan") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - mountPath: /dev/dri
   name: dri
 - mountPath: /dev/kfd

@@ -2,7 +2,7 @@
 name: ""
 
 # Backend configuration
-backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, llamacpp-cpu, whisper-cpp, vllm, kittentts-cpu, kittentts-rocm, kittentts-vulkan
+backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm, llamacpp-cpu, whisper-cpp, vllm, kittentts
 
 # Image (optional - defaults based on backend)
 image:

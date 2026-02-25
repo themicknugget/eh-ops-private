@@ -1,7 +1,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kittentts-vulkan
+  name: kittentts
   namespace: inference
 spec:
   interval: 5m
@@ -14,11 +14,11 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    name: kittentts-vulkan
-    backend: kittentts-vulkan
+    name: kittentts
+    backend: kittentts
 
     image:
-      digest: sha256:b36d0380e58ffcd55e6f44d6ce12108503190476fcccae345429f45999f0019c
+      digest: sha256:967cbfc560c410478023e448b1a603a0d29d8ab32480949b055f59bca8a2356d
 
     source:
       huggingface: KittenML/kitten-tts-mini-0.8

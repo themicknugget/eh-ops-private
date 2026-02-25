@@ -190,7 +190,7 @@ data:
       - model_name: kittentts
         litellm_params:
           model: openai/kittentts
-          api_base: http://kittentts-cpu.inference.svc.cluster.local:8080/v1
+          api_base: http://kittentts-vulkan.inference.svc.cluster.local:8080/v1
           api_key: dummy
         model_info:
           mode: audio_speech

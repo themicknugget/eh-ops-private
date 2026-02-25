@@ -13,8 +13,8 @@ data:
       disable_adding_openai_public_endpoints_to_db: true
 
     router_settings:
-      # LLM cold starts can take minutes — keep retrying until KubeElasti scales the pod up
-      num_retries: 120
+      # Reduced retries - KubeElasti scales up in ~2-3 min, no need for 30 min of retries
+      num_retries: 20
       retry_after: 15
       allowed_fails: 9999
       routing_strategy: simple-shuffle

@@ -20,6 +20,10 @@ spec:
     image:
       digest: sha256:3e10fb76973ca0940cbef7c9fa879e21ef14f4998c68bc5a3ed8635ca4caed4f
 
+    env:
+      - name: ORT_PROVIDERS
+        value: "CPUExecutionProvider"
+
     source:
       huggingface: KittenML/kitten-tts-mini-0.8
 

@@ -40,7 +40,7 @@ spec:
       enabled: false
 
     nodeSelector:
-      kubernetes.io/hostname: miniryzen
+      kubernetes.io/hostname: shadow
 
     tolerations:
       - key: amd.com/gpu

@@ -1,7 +1,8 @@
 {{- if .Values.name -}}
 {{- $port := include "inference-model.port" . | int -}}
 {{- $modelDir := .Values.storage.modelDir | default .Values.name -}}
-{{- $sharedPvc := .Values.storage.sharedPvc | default "model-cache" -}}
+{{- $sharedPvc := .Values.storage.sharedPvc -}}
+{{- $useStorage := and $sharedPvc (ne $sharedPvc "") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -149,8 +150,10 @@ spec:
                   key: {{ .Values.download.tokenSecretKey | default "token" }}
             {{- end }}
           volumeMounts:
+            {{- if $useStorage }}
             - name: model-cache
               mountPath: /models
+            {{- end }}
             - name: tmp
               mountPath: /tmp
       {{- end }}
@@ -215,8 +218,10 @@ spec:
           securityContext:
             {{- include "inference-model.securityContext" . | nindent 12 }}
           volumeMounts:
+            {{- if $useStorage }}
             - name: model-cache
               mountPath: /models
+            {{- end }}
             {{- if .Values.promptTemplate }}
             - name: prompt-template
               mountPath: /prompt/templates
@@ -258,9 +263,11 @@ spec:
           {{- end }}
         {{- end }}
       volumes:
+        {{- if $useStorage }}
         - name: model-cache
           persistentVolumeClaim:
             claimName: {{ $sharedPvc }}
+        {{- end }}
         - name: tmp
           emptyDir: {}
         {{- if .Values.promptTemplate }}

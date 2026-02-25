@@ -8,6 +8,7 @@ backend: llamacpp-vulkan  # llamacpp-vulkan, llamacpp-vulkan-moe, llamacpp-rocm,
 image:
   repository: ""
   tag: ""
+  digest: ""  # e.g. sha256:abc123 — bypasses tag, useful to force a specific image
 
 # Model source
 source:

@@ -47,7 +47,12 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- $tag = "server-vulkan" -}}
 {{- end -}}
 {{- end -}}
+{{- $digest := .Values.image.digest | default "" -}}
+{{- if $digest -}}
+{{- printf "%s@%s" $repo $digest -}}
+{{- else -}}
 {{- printf "%s:%s" $repo $tag -}}
+{{- end -}}
 {{- end -}}
 
 {{/*

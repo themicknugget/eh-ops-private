@@ -13,7 +13,9 @@ spec:
           image: ghcr.io/cecil-the-coder/llamacpp-tool-train:latest
           args:
             - --url
-            - http://glm-4-7-flash.inference.svc.cluster.local:8080
+            - http://litellm.inference.svc.cluster.local:4000
+            - --model
+            - glm-4-7-flash
             - --output-dir
             - /results
           volumeMounts:
@@ -23,6 +25,17 @@ spec:
             requests:
               cpu: "500m"
               memory: 256Mi
+            limits:
+              cpu: "500m"
+              memory: 256Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: results
           emptyDir: {}

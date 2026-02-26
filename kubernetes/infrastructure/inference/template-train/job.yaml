@@ -1,0 +1,56 @@
+# Template training job for GLM-4.7 Flash
+# Run once to optimize the tool-calling template
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: template-train-glm-4-7-flash
+  namespace: inference
+spec:
+  ttlSecondsAfterFinished: 3600  # Clean up after 1 hour
+  template:
+    metadata:
+      labels:
+        app: template-train
+        model: glm-4-7-flash
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: shadow
+      tolerations:
+        - key: amd.com/gpu
+          operator: Exists
+      containers:
+        - name: trainer
+          image: ghcr.io/cecil-the-coder/llamacpp-tool-train:rocm
+          args:
+            - --model
+            - /models/glm-4-7-flash/zai-org_GLM-4.7-Flash-Q4_K_M.gguf
+            - --template
+            - glm
+            - --output-dir
+            - /results
+            - --optimize
+            - --gpu-layers
+            - "99"
+            - --ctx-size
+            - "8192"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+              readOnly: true
+            - name: results
+              mountPath: /results
+          resources:
+            limits:
+              amd.com/gpu: "1"
+              memory: 24Gi
+            requests:
+              cpu: "4"
+              memory: 16Gi
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: model-cache
+        - name: results
+          emptyDir: {}
+      restartPolicy: Never
+  backoffLimit: 1

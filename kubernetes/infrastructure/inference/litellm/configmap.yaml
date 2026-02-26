@@ -5,11 +5,14 @@ metadata:
   namespace: inference
 data:
   config.yaml: |
+    general_settings:
+      # CRITICAL: Disable all background health checks to prevent scale-up of idle backends
+      # KubeElasti handles scale-to-zero, health checks would trigger unwanted scale-up
+      background_health_checks: false
+
     litellm_settings:
       timeout: 1800
       stream_timeout: 1800
-      # Disable health checks to backends - KubeElasti handles scale-to-zero
-      # Health checks would trigger scale-up of idle backends
       disable_adding_openai_public_endpoints_to_db: true
 
     router_settings:
@@ -26,6 +29,9 @@ data:
           api_base: http://minimax-m25-reap.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: minimax-m25-reap-139b
         litellm_params:
@@ -33,6 +39,9 @@ data:
           api_base: http://minimax-m25-reap-139b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: deepseek-r1-distill-70b
         litellm_params:
@@ -40,6 +49,9 @@ data:
           api_base: http://deepseek-r1-distill-70b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: llama-4-scout
         litellm_params:
@@ -47,6 +59,9 @@ data:
           api_base: http://llama-4-scout.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: llama-3-3-70b
         litellm_params:
@@ -54,6 +69,9 @@ data:
           api_base: http://llama-3-3-70b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen2-5-72b
         litellm_params:
@@ -61,6 +79,9 @@ data:
           api_base: http://qwen2-5-72b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: devstral-2-123b
         litellm_params:
@@ -68,6 +89,9 @@ data:
           api_base: http://devstral-2-123b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen3-235b-a22b
         litellm_params:
@@ -75,6 +99,9 @@ data:
           api_base: http://qwen3-235b-a22b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen3-next-80b
         litellm_params:
@@ -82,6 +109,9 @@ data:
           api_base: http://qwen3-next-80b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen3-coder-next
         litellm_params:
@@ -89,6 +119,9 @@ data:
           api_base: http://qwen3-coder-next.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: gemma-3-27b
         litellm_params:
@@ -96,6 +129,9 @@ data:
           api_base: http://gemma-3-27b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: mistral-small-3-1-24b
         litellm_params:
@@ -103,6 +139,9 @@ data:
           api_base: http://mistral-small-3-1-24b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: phi-4-reasoning-plus
         litellm_params:
@@ -110,6 +149,9 @@ data:
           api_base: http://phi-4-reasoning-plus.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: phi-4-mini
         litellm_params:
@@ -117,6 +159,9 @@ data:
           api_base: http://phi-4-mini.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: gpt-oss-120b
         litellm_params:
@@ -124,6 +169,9 @@ data:
           api_base: http://gpt-oss-120b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: gpt-oss-20b
         litellm_params:
@@ -131,6 +179,9 @@ data:
           api_base: http://gpt-oss-20b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen2-5-vl-72b
         litellm_params:
@@ -138,6 +189,9 @@ data:
           api_base: http://qwen2-5-vl-72b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen3-vl-30b
         litellm_params:
@@ -145,6 +199,9 @@ data:
           api_base: http://qwen3-vl-30b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: qwen2-5-coder-32b
         litellm_params:
@@ -152,6 +209,9 @@ data:
           api_base: http://qwen2-5-coder-32b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: deepseek-r1-0528-8b
         litellm_params:
@@ -159,6 +219,9 @@ data:
           api_base: http://deepseek-r1-0528-8b.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: command-a
         litellm_params:
@@ -166,6 +229,9 @@ data:
           api_base: http://command-a.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: glm-4-7-flash
         litellm_params:
@@ -173,6 +239,9 @@ data:
           api_base: http://glm-4-7-flash.inference.svc.cluster.local:8080/v1
           api_key: dummy
           timeout: 1800
+        model_info:
+          mode: chat
+          disable_background_health_check: true
 
       - model_name: whisper-large-v3-turbo
         litellm_params:
@@ -181,6 +250,7 @@ data:
           api_key: dummy
         model_info:
           mode: audio_transcription
+          disable_background_health_check: true
 
       - model_name: orpheus-3b
         litellm_params:
@@ -189,6 +259,7 @@ data:
           api_key: dummy
         model_info:
           mode: audio_speech
+          disable_background_health_check: true
 
       - model_name: kittentts
         litellm_params:
@@ -197,4 +268,5 @@ data:
           api_key: dummy
         model_info:
           mode: audio_speech
+          disable_background_health_check: true
 

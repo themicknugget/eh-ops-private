@@ -37,7 +37,14 @@ spec:
         app: nginx-cloudbox3
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 169.254.20.10
+        searches:
+          - kube-system.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
       tolerations:
         - key: node-role.kubernetes.io/edge
           operator: Exists

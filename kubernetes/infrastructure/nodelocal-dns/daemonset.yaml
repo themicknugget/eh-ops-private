@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nodelocal-dns
+  namespace: kube-system
+  labels:
+    k8s-app: nodelocal-dns
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      k8s-app: nodelocal-dns
+  template:
+    metadata:
+      labels:
+        k8s-app: nodelocal-dns
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      serviceAccountName: nodelocal-dns
+      tolerations:
+        - key: node-role.kubernetes.io/edge
+          operator: Exists
+          effect: NoSchedule
+      nodeSelector:
+        eh-ops.io/edge: "true"
+      containers:
+        - name: node-cache
+          image: registry.k8s.io/dns/k8s-dns-node-cache:1.23.1
+          args:
+            - -localip
+            - 169.254.20.10
+            - -conf
+            - /etc/coredns/Corefile
+            - -upstreamsvc
+            - kube-dns
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/coredns
+              readOnly: true
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+              drop:
+                - ALL
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            runAsUser: 0
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              host: 169.254.20.10
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8181
+              host: 169.254.20.10
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+      volumes:
+        - name: config
+          configMap:
+            name: nodelocal-dns
+            items:
+              - key: Corefile
+                path: Corefile
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nodelocal-dns
+  namespace: kube-system
+  labels:
+    k8s-app: nodelocal-dns

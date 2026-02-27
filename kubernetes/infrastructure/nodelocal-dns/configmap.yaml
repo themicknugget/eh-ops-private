@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nodelocal-dns
+  namespace: kube-system
+  labels:
+    k8s-app: nodelocal-dns
+data:
+  Corefile: |
+    cluster.local:53 {
+        errors
+        cache {
+            success 9984 30
+            denial 9984 5
+        }
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+        reload
+    }
+
+    in-addr.arpa:53 {
+        errors
+        cache 30
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+    }
+
+    ip6.arpa:53 {
+        errors
+        cache 30
+        bind 169.254.20.10
+        forward . 10.96.0.10 {
+            force_tcp
+        }
+    }
+
+    .:53 {
+        errors
+        cache 30
+        bind 169.254.20.10
+        forward . 1.1.1.1 8.8.8.8
+        reload
+    }

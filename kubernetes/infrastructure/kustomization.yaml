@@ -4,6 +4,7 @@ resources:
   - sources
   - spegel
   - cilium
+  - nodelocal-dns
   - cert-manager
   - gateway
   - cloudbox-ingress

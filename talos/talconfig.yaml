@@ -242,8 +242,8 @@ nodes:
         apiVersion: v1alpha1
         kind: ResolverConfig
         nameservers:
+          - address: 169.254.20.10
           - address: 1.1.1.1
-          - address: 8.8.8.8
       - *network_tuning_sysctls
       - &cloudbox_config |-
         machine:
@@ -251,6 +251,7 @@ nodes:
             extraArgs:
               register-with-taints: node-role.kubernetes.io/edge:NoSchedule
               node-labels: eh-ops.io/edge=true
+              cluster-dns: 169.254.20.10
           registries:
             mirrors:
               docker.io:

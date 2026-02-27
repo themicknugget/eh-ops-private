@@ -2,7 +2,7 @@
 # nginx stream proxy: forwards ports 80/443 arriving on cloudbox1/2 public IPs
 # to the Cilium-managed gateway service, which handles TLS termination and routing.
 # hostNetwork binds directly to the node's network interfaces (including the public IP).
-# dnsPolicy: ClusterFirstWithHostNet enables cluster DNS resolution from hostNetwork pods.
+# dnsConfig points to NodeLocal DNSCache (169.254.20.10) for cluster service resolution.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -41,7 +41,14 @@ spec:
         app: nginx-cloudbox
     spec:
       hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 169.254.20.10
+        searches:
+          - kube-system.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
       tolerations:
         - key: node-role.kubernetes.io/edge
           operator: Exists

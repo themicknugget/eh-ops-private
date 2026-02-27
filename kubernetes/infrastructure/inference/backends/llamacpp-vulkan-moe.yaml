@@ -17,12 +17,14 @@ spec:
     - --port
     - "8080"
     - --metrics
+    - --n-gpu-layers
+    - all
   readinessPath: /health
   env:
     - name: LLAMA_HIP_UMA
       value: "ON"
     - name: LLAMA_ARG_N_GPU_LAYERS
-      value: "99"
+      value: "all"
     - name: LLAMA_ARG_FLASH_ATTN
       value: "1"
     - name: LLAMA_ARG_CACHE_TYPE_K

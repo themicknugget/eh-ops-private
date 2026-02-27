@@ -17,6 +17,8 @@ spec:
     - --port
     - "8080"
     - --metrics
+    - --n-gpu-layers
+    - all
   readinessPath: /health
   env:
     - name: LLAMA_HIP_UMA

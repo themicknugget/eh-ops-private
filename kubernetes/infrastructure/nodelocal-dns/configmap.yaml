@@ -44,6 +44,6 @@ data:
         bind 169.254.20.10
         forward . 1.1.1.1 8.8.8.8
         reload
-        health localhost:8080
-        ready localhost:8181
+        health :8080
+        ready :8181
     }

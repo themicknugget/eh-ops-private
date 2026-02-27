@@ -81,7 +81,8 @@ data:
 
     bpf:
       enableTCX: false
-      hostLegacyRouting: true
+      # BPF routing required for hostNetwork→remote pod traffic in tunnel mode
+      hostLegacyRouting: false
       masquerade: true
 
     # Talos-specific cgroup configuration

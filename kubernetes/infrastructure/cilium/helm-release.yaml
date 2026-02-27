@@ -42,11 +42,9 @@ data:
     ipam:
       mode: kubernetes
 
-    # Native routing mode for direct node-to-node communication
-    routingMode: native
-    ipv4NativeRoutingCIDR: 10.244.0.0/16
-    autoDirectNodeRoutes: true
-    directRoutingSkipUnreachable: true
+    # Tunnel routing mode for mixed LAN/edge topology
+    routingMode: tunnel
+    tunnelProtocol: vxlan
 
     # 1420 for WireGuard/Tailscale overhead on edge nodes
     MTU: 1420

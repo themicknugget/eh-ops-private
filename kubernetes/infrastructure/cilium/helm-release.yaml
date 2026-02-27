@@ -79,7 +79,7 @@ data:
 
     socketLB:
       enabled: true
-      hostNamespaceOnly: true
+      hostNamespaceOnly: false
 
     bpf:
       enableTCX: false

@@ -37,6 +37,9 @@ spec:
             - /etc/coredns/Corefile
             - -upstreamsvc
             - kube-dns
+            # Talos has no iptables binary — skip NOTRACK rule setup
+            - -setupiptables=false
+            - -skipteardown
           resources:
             requests:
               cpu: 25m

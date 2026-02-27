@@ -221,6 +221,34 @@ spec:
       port: 6443
 
 ---
+# Allow hostNetwork pods (nodelocal-dns, kubelet probes) to reach CoreDNS.
+# KubeSpan delivers this traffic with Cilium's "remote-node" identity,
+# which namespaceSelector:{} in the K8s NetworkPolicy doesn't match.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: coredns-allow-host
+  namespace: kube-system
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s-app: kube-dns
+  ingress:
+  - fromEntities:
+    - host
+    - remote-node
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      - port: "9153"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+
+---
 # Allow Hubble Relay communication (if deployed)
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

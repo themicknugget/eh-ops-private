@@ -45,3 +45,11 @@ data:
         forward . 1.1.1.1 8.8.8.8
         reload
     }
+
+    health:8080 {
+        bind 127.0.0.1
+    }
+
+    ready:8181 {
+        bind 127.0.0.1
+    }

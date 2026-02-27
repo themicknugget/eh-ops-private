@@ -25,6 +25,18 @@ spec:
     remediation:
       retries: 3
   values:
+    config:
+      webhooks:
+        # Limit webhook to namespaces with active policies to prevent cluster-wide
+        # outage if Kyverno can't reach the API server (failurePolicy=Fail)
+        namespaceSelector:
+          matchExpressions:
+            - key: kubernetes.io/metadata.name
+              operator: In
+              values:
+                - tailscale
+                - kubelet-serving-cert-approver
+                - inference
     admissionController:
       replicas: 3
       topologySpreadConstraints:

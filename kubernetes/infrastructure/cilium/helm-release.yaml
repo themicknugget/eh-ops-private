@@ -81,8 +81,8 @@ data:
 
     bpf:
       enableTCX: false
-      # BPF routing required for hostNetwork→remote pod traffic in tunnel mode
-      hostLegacyRouting: false
+      # BPF host routing breaks pod→host traffic after agent restarts (Cilium 1.18.5 + Talos)
+      hostLegacyRouting: true
       masquerade: true
 
     # Talos-specific cgroup configuration

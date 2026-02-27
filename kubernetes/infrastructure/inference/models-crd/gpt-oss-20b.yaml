@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: gpt-oss-20b
+  namespace: inference
+spec:
+  modelName: gpt-oss-20b
+  backend: llamacpp-vulkan-moe
+  source:
+    huggingFace:
+      repo: unsloth/gpt-oss-20b-GGUF
+      contextSize: "131072"
+      modelFile: gpt-oss-20b-Q8_0.gguf
+      files:
+        - "*Q8_0.gguf"
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: gpt-oss-20b
+  resources:
+    memory: 13Gi
+    memoryLimit: 20Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

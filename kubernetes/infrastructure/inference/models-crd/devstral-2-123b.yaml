@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: devstral-2-123b
+  namespace: inference
+spec:
+  modelName: devstral-2-123b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: bartowski/mistralai_Devstral-2-123B-Instruct-2512-GGUF
+      contextSize: "262144"
+      modelFile: mistralai_Devstral-2-123B-Instruct-2512-Q5_K_M/mistralai_Devstral-2-123B-Instruct-2512-Q5_K_M-00001-of-00003.gguf
+      files:
+        - mistralai_Devstral-2-123B-Instruct-2512-Q5_K_M/*.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: devstral-2-123b
+  resources:
+    memory: 85Gi
+    memoryLimit: 105Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

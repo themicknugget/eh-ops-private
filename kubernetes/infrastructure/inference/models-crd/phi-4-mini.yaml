@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: phi-4-mini
+  namespace: inference
+spec:
+  modelName: phi-4-mini
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
+      contextSize: "131072"
+      modelFile: microsoft_Phi-4-mini-instruct-Q8_0.gguf
+      files:
+        - "*Q8_0.gguf"
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: phi-4-mini
+  resources:
+    memory: 5Gi
+    memoryLimit: 10Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: mistral-small-3-1-24b
+  namespace: inference
+spec:
+  modelName: mistral-small-3-1-24b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF
+      contextSize: "131072"
+      modelFile: mistralai_Mistral-Small-3.1-24B-Instruct-2503-Q5_K_M.gguf
+      files:
+        - "*Q5_K_M.gguf"
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: mistral-small-3-1-24b
+  resources:
+    memory: 18Gi
+    memoryLimit: 26Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

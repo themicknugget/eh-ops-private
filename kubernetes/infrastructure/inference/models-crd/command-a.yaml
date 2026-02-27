@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: command-a
+  namespace: inference
+spec:
+  modelName: command-a
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: bartowski/CohereForAI_c4ai-command-a-03-2025-GGUF
+      contextSize: "262144"
+      modelFile: CohereForAI_c4ai-command-a-03-2025-IQ4_XS/CohereForAI_c4ai-command-a-03-2025-IQ4_XS-00001-of-00002.gguf
+      files:
+        - CohereForAI_c4ai-command-a-03-2025-IQ4_XS/*.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: command-a
+  resources:
+    memory: 62Gi
+    memoryLimit: 95Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

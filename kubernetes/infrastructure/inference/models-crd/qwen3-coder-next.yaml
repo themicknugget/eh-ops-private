@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen3-coder-next
+  namespace: inference
+spec:
+  modelName: qwen3-coder-next
+  backend: llamacpp-vulkan-moe
+  source:
+    huggingFace:
+      repo: bartowski/Qwen_Qwen3-Coder-Next-GGUF
+      contextSize: "262144"
+      modelFile: Qwen_Qwen3-Coder-Next-Q6_K/Qwen_Qwen3-Coder-Next-Q6_K-00001-of-00002.gguf
+      files:
+        - Qwen_Qwen3-Coder-Next-Q6_K/*
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwen3-coder-next
+  resources:
+    memory: 65Gi
+    memoryLimit: 100Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen3-next-80b
+  namespace: inference
+spec:
+  modelName: qwen3-next-80b
+  backend: llamacpp-vulkan-moe
+  source:
+    huggingFace:
+      repo: bartowski/Qwen_Qwen3-Next-80B-A3B-Instruct-GGUF
+      contextSize: "262144"
+      modelFile: Qwen_Qwen3-Next-80B-A3B-Instruct-Q6_K/Qwen_Qwen3-Next-80B-A3B-Instruct-Q6_K-00001-of-00002.gguf
+      files:
+        - Qwen_Qwen3-Next-80B-A3B-Instruct-Q6_K/*
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwen3-next-80b
+  resources:
+    memory: 65Gi
+    memoryLimit: 100Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

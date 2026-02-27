@@ -1,0 +1,18 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceBackend
+metadata:
+  name: vllm
+  namespace: inference
+spec:
+  image:
+    repository: vllm/vllm-openai
+    tag: latest
+  port: 8000
+  args:
+    - --model
+    - $(HF_SOURCE)
+    - --host
+    - 0.0.0.0
+    - --port
+    - "8000"
+  readinessPath: /health

@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen2-5-coder-32b
+  namespace: inference
+spec:
+  modelName: qwen2-5-coder-32b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: bartowski/Qwen2.5-Coder-32B-Instruct-GGUF
+      contextSize: "131072"
+      modelFile: Qwen2.5-Coder-32B-Instruct-Q4_K_M.gguf
+      files:
+        - "*Q4_K_M.gguf"
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwen2-5-coder-32b
+  resources:
+    memory: 20Gi
+    memoryLimit: 30Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

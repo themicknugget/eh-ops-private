@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: orpheus-3b
+  namespace: inference
+spec:
+  modelName: orpheus-3b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: QuantFactory/orpheus-3b-0.1-ft-GGUF
+      contextSize: "8192"
+      modelFile: orpheus-3b-0.1-ft.Q8_0.gguf
+      files:
+        - "*Q8_0.gguf"
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: orpheus-3b
+  resources:
+    memory: 4Gi
+    memoryLimit: 8Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

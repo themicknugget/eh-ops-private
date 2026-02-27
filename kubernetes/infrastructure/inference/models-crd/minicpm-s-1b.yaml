@@ -1,0 +1,29 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: minicpm-s-1b
+  namespace: inference
+spec:
+  modelName: minicpm-s-1b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: openbmb/MiniCPM-S-1B-sft-gguf
+      contextSize: "4096"
+      modelFile: MiniCPM-S-1B-sft.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: minicpm-s-1b
+  resources:
+    memory: 2Gi
+    memoryLimit: 4Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

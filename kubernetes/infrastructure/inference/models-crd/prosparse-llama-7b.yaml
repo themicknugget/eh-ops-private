@@ -1,0 +1,29 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: prosparse-llama-7b
+  namespace: inference
+spec:
+  modelName: prosparse-llama-7b
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: PowerInfer/prosparse-llama-2-7b-gguf
+      contextSize: "4096"
+      modelFile: prosparse-llama-2-7b.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: prosparse-llama-7b
+  resources:
+    memory: 8Gi
+    memoryLimit: 16Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

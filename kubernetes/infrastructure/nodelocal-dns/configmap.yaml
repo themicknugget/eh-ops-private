@@ -46,10 +46,6 @@ data:
         reload
     }
 
-    health:8080 {
-        bind 127.0.0.1
-    }
+    health:8080
 
-    ready:8181 {
-        bind 127.0.0.1
-    }
+    ready:8181

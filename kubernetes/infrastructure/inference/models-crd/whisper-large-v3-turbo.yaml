@@ -1,0 +1,28 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: whisper-large-v3-turbo
+  namespace: inference
+spec:
+  modelName: whisper-large-v3-turbo
+  backend: whisper-cpp
+  source:
+    huggingFace:
+      repo: ggerganov/whisper.cpp
+      modelFile: ggml-large-v3-turbo-q8_0.bin
+      files:
+        - ggml-large-v3-turbo-q8_0.bin
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: whisper-large-v3-turbo
+  resources:
+    memory: 2Gi
+    memoryLimit: 6Gi
+  scaling:
+    enabled: false
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

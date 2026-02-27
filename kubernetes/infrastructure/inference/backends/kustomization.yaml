@@ -7,3 +7,4 @@ resources:
   - llamacpp-rocm.yaml
   - llamacpp-cpu.yaml
   - vllm.yaml
+  - whisper-cpp.yaml

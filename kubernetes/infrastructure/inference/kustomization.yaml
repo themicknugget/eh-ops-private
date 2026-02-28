@@ -12,8 +12,6 @@ resources:
   - backends/
   # InferenceModel CRDs (new controller-based approach)
   - models-crd/
-  # Model deployments (Helm chart - being migrated)
-  - models/
 
 # Common labels
 commonLabels:

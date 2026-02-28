@@ -15,10 +15,11 @@ spec:
         name: envoy-gateway
         namespace: flux-system
   install:
-    crds: CreateReplace
+    # Gateway API CRDs are managed separately (already at v1.4.1, newer than EG chart bundles)
+    crds: Skip
     remediation:
       retries: 3
   upgrade:
-    crds: CreateReplace
+    crds: Skip
     remediation:
       retries: 3

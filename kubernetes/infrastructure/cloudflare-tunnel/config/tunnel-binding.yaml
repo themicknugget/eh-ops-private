@@ -10,7 +10,8 @@ subjects:
     spec:
       fqdn: "*.${DOMAIN1}"
       protocol: http
-      target: http://envoy-kube-system-external-gateway.kube-system.svc.cluster.local
+      # Service is in envoy-gateway-system; hash suffix derived from Gateway UID (stable)
+      target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

@@ -52,9 +52,9 @@ data:
     # Enable kube-proxy replacement
     kubeProxyReplacement: true
 
-    # Gateway API support
+    # Gateway API support handed off to Envoy Gateway
     gatewayAPI:
-      enabled: true
+      enabled: false
 
     # WireGuard encryption disabled - KubeSpan handles node-to-node encryption
     encryption:

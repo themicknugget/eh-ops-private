@@ -1,12 +1,4 @@
 ---
-# GatewayClass defines Cilium as the Gateway API controller
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: cilium
-spec:
-  controllerName: io.cilium/gateway-controller
----
 # L2 Announcement Policy for Gateway LoadBalancer IPs
 # Announces from all nodes on eno1 interface
 apiVersion: cilium.io/v2alpha1
@@ -33,7 +25,12 @@ metadata:
   name: cloudbox-gateway
   namespace: kube-system
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: cloudbox-gateway-proxy
   listeners:
     - name: http
       protocol: HTTP
@@ -118,7 +115,12 @@ metadata:
   name: cloudbox3-gateway
   namespace: kube-system
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: cloudbox3-gateway-proxy
   listeners:
     - name: http
       protocol: HTTP
@@ -203,7 +205,12 @@ metadata:
   name: external-gateway
   namespace: kube-system
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: external-gateway-proxy
   listeners:
     - name: http
       protocol: HTTP

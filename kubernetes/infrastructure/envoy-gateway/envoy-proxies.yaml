@@ -1,0 +1,57 @@
+---
+# Public IPs are OCI-assigned on lo; traffic arrives on enp0s6/eth0 (covered by en+/eth+ in
+# Cilium devices). Cilium BPF intercepts at TC ingress before kernel routes to lo, so DNAT
+# to Envoy pods works without L2 announcements. externalTrafficPolicy stays Cluster (default)
+# because Envoy pods don't run on cloudbox nodes.
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: cloudbox-public-ips
+spec:
+  # /32 blocks: allowFirstLastIPs required or no IPs are allocatable
+  allowFirstLastIPs: "Yes"
+  blocks:
+    - cidr: "129.80.242.223/32"
+    - cidr: "129.80.7.123/32"
+    - cidr: "158.101.43.196/32"
+---
+# EnvoyProxy resources must be in kube-system (same namespace as the Gateways) because
+# Gateway.spec.infrastructure.parametersRef is LocalParametersReference — no namespace field.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: external-gateway-proxy
+  namespace: kube-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.1.65"
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: cloudbox-gateway-proxy
+  namespace: kube-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.1.66,129.80.242.223,129.80.7.123"
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: cloudbox3-gateway-proxy
+  namespace: kube-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.1.67,158.101.43.196"

@@ -10,7 +10,7 @@ subjects:
     spec:
       fqdn: "*.${DOMAIN1}"
       protocol: http
-      target: http://cilium-gateway-external-gateway.kube-system.svc.cluster.local
+      target: http://envoy-kube-system-external-gateway.kube-system.svc.cluster.local
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

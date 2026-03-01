@@ -8,8 +8,9 @@ spec:
     repository: ghcr.io/ggml-org/llama.cpp
     tag: server-rocm
   port: 8080
+  command:
+    - /app/llama-server
   args:
-    - llama-server
     - -m
     - $(HF_SOURCE)
     - --host
@@ -20,6 +21,8 @@ spec:
     - --n-gpu-layers
     - all
   readinessPath: /health
+  gpu:
+    shared: true
   env:
     - name: HSA_OVERRIDE_GFX_VERSION
       value: "11.5.1"

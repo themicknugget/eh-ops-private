@@ -21,6 +21,8 @@ spec:
     - --n-gpu-layers
     - all
   readinessPath: /health
+  gpu:
+    shared: true
   env:
     - name: LLAMA_HIP_UMA
       value: "ON"

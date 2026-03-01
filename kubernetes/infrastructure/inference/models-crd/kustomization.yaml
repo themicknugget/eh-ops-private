@@ -28,4 +28,5 @@ resources:
   - qwen3-coder-next.yaml
   - qwen3-next-80b.yaml
   - qwen3-vl-30b.yaml
+  - qwen35-reap-212b-a17b.yaml
   - whisper-large-v3-turbo.yaml

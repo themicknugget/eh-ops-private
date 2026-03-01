@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen35-reap-212b-a17b
+  namespace: inference
+spec:
+  modelName: qwen35-reap-212b-a17b
+  backend: llamacpp-vulkan-moe
+  source:
+    huggingFace:
+      repo: OpenMOSE/Qwen3.5-REAP-212B-A17B-GGUF
+      contextSize: "131072"
+      modelFile: IQ4_XS/Qwen3.5-REAP-212B-A17B-IQ4_XS-00001-of-00004.gguf
+      files:
+        - IQ4_XS/*.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwen35-reap-212b-a17b
+  resources:
+    memory: 110Gi
+    memoryLimit: 120Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

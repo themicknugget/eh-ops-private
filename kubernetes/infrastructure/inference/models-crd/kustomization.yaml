@@ -12,7 +12,6 @@ resources:
   - gpt-oss-20b.yaml
   - llama-3-3-70b.yaml
   - llama-4-scout.yaml
-  - minicpm-s-1b.yaml
   - minimax-m25-reap-139b.yaml
   - minimax-m25-reap.yaml
   - mistral-small-3-1-24b.yaml

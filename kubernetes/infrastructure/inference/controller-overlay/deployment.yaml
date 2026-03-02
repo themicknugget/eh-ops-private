@@ -46,7 +46,7 @@ spec:
             - /manager
           args:
             - --leader-elect
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.4
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.5
           name: manager
           securityContext:
             allowPrivilegeEscalation: false
@@ -68,10 +68,10 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 1Gi
+              memory: 256Mi
             requests:
               cpu: 10m
-              memory: 256Mi
+              memory: 64Mi
           volumeMounts:
             - name: model-cache
               mountPath: /models

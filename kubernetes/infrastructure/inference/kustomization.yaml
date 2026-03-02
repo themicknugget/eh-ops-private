@@ -14,7 +14,3 @@ resources:
   - backends/
   # InferenceModel CRDs (new controller-based approach)
   - models-crd/
-
-# Common labels
-commonLabels:
-  app.kubernetes.io/part-of: inference

@@ -41,6 +41,8 @@ spec:
                       - shadow
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65532
+        fsGroup: 65532
       containers:
         - command:
             - /manager

@@ -48,6 +48,11 @@ spec:
             - /manager
           args:
             - --leader-elect
+          env:
+            - name: MAX_MODEL_MEMORY
+              value: "120Gi"
+            - name: EVICTION_MIN_IDLE
+              value: "30s"
           image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.8
           name: manager
           securityContext:

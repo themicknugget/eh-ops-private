@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Controller-manager deployment with cluster-specific patches
+# This replaces the base deployment from inference-budget-controller
+
+resources:
+  # RBAC from base (service account, role, role binding)
+  - https://github.com/cecil-the-coder/inference-budget-controller//config/rbac?ref=main
+  # Local deployment with cluster-specific patches
+  - deployment.yaml

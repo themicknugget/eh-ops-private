@@ -8,6 +8,8 @@ resources:
   - namespace.yaml
   # Shared model cache PVC
   - model-cache.yaml
+  # Controller-manager with cluster-specific PVC mount
+  - controller-overlay/
   # InferenceBackend CRDs (new controller-based approach)
   - backends/
   # InferenceModel CRDs (new controller-based approach)

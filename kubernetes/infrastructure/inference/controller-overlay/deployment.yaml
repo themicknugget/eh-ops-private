@@ -25,12 +25,6 @@ spec:
     spec:
       # Must run on same node as model-cache PVC (ReadWriteOnce)
       affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  control-plane: controller-manager
-              topologyKey: kubernetes.io/hostname
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
@@ -53,7 +47,7 @@ spec:
               value: "120Gi"
             - name: EVICTION_MIN_IDLE
               value: "30s"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.8
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.9
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

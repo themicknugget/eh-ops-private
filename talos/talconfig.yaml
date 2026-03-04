@@ -135,7 +135,7 @@ nodes:
             gateway: 192.168.1.53
             metric: 1026
 
-  # shadow - Worker node (AMD desktop, 4TB NVMe)
+  # shadow - Worker node (AMD desktop, 4TB NVMe, 128GB RAM, AMD GPU unified memory)
   - hostname: shadow
     ipAddress: 192.168.1.56
     controlPlane: false
@@ -146,6 +146,12 @@ nodes:
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
       - "@./patches/shadow-cpu-epp.yaml"
+      - "@./patches/shadow-ephemeral.yaml"
+      - "@./patches/shadow-swap.yaml"
+      - "@./patches/shadow-zswap.yaml"
+      - "@./patches/shadow-oom-disable.yaml"
+      - "@./patches/shadow-kubelet-swap.yaml"
+      - "@./patches/shadow-kubelet-reserved.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54

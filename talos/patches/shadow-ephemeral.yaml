@@ -1,0 +1,8 @@
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  # Disk is 4.0 TB = 3725 GiB. Cap below (3725 - 32 swap) so wave=0 swap partition has space.
+  maxSize: 3660GiB
+  grow: true

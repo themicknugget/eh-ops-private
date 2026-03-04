@@ -1,0 +1,24 @@
+# Kubelet reserved resources for shadow node
+# Reserves memory and CPU for system processes and AMD GPU (unified memory)
+# Apply with: talosctl patch machineconfig -n 192.168.1.56 --patch @shadow-kubelet-reserved.yaml
+machine:
+  kubelet:
+    extraConfig:
+      kubeReserved:
+        cpu: "500m"
+        memory: "4Gi"
+        ephemeral-storage: "10Gi"
+      kubeReservedCgroup: "/kubelet"
+      systemReserved:
+        cpu: "500m"
+        memory: "4Gi"
+      systemReservedCgroup: "/system"
+      evictionHard:
+        memory.available: "500Mi"
+        nodefs.available: "10%"
+      evictionSoft:
+        memory.available: "1Gi"
+        nodefs.available: "15%"
+      evictionSoftGracePeriod:
+        memory.available: "1m30s"
+        nodefs.available: "1m30s"

@@ -49,7 +49,12 @@ spec:
               value: "0s"
             - name: HF_HOME
               value: "/models"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.18
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: token
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.19
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

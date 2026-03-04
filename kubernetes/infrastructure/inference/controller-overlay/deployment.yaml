@@ -47,7 +47,9 @@ spec:
               value: "120Gi"
             - name: EVICTION_MIN_IDLE
               value: "0s"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.15
+            - name: HF_HOME
+              value: "/models"
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.16
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

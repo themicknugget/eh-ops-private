@@ -49,7 +49,7 @@ spec:
               value: "0s"
             - name: HF_HOME
               value: "/models"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.16
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.17
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

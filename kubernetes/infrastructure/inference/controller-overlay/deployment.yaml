@@ -44,10 +44,10 @@ spec:
             - --leader-elect
           env:
             - name: MAX_MODEL_MEMORY
-              value: "40Gi"
+              value: "120Gi"
             - name: EVICTION_MIN_IDLE
               value: "0s"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.11
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.14
           name: manager
           securityContext:
             allowPrivilegeEscalation: false
@@ -69,10 +69,10 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 256Mi
+              memory: 512Mi
             requests:
               cpu: 10m
-              memory: 64Mi
+              memory: 128Mi
           volumeMounts:
             - name: model-cache
               mountPath: /models

@@ -8,3 +8,4 @@ resources:
   - helm-release.yaml
   - httproute.yaml
   - docker-cache.yaml
+  - docker-cache-httproute.yaml

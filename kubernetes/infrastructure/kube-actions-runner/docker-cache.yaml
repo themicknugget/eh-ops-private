@@ -37,6 +37,9 @@ spec:
       containers:
         - name: registry
           image: registry:2
+          env:
+            - name: REGISTRY_HTTP_RELATIVEURLS
+              value: "true"
           ports:
             - name: http
               containerPort: 5000

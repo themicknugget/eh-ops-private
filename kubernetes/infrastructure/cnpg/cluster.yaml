@@ -1,0 +1,34 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: shared
+  namespace: cnpg-system
+spec:
+  instances: 3
+
+  postgresql:
+    parameters:
+      shared_buffers: "256MB"
+      effective_cache_size: "512MB"
+      max_connections: "200"
+
+  superuserSecret:
+    name: cnpg-admin-credentials
+
+  storage:
+    storageClass: local-path
+    size: 50Gi
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+
+  # Spread instances across mini4/5/6 worker nodes
+  affinity:
+    nodeSelector:
+      node-role.kubernetes.io/worker: ""
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required

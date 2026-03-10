@@ -169,6 +169,7 @@ nodes:
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
+      - "@./patches/local-storage.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -193,6 +194,7 @@ nodes:
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
+      - "@./patches/local-storage.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -217,6 +219,7 @@ nodes:
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
+      - "@./patches/local-storage.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false

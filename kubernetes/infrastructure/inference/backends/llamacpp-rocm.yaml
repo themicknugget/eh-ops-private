@@ -5,11 +5,11 @@ metadata:
   namespace: inference
 spec:
   image:
-    repository: ghcr.io/ggml-org/llama.cpp
-    tag: server-rocm
+    repository: docker.io/kyuz0/amd-strix-halo-toolboxes
+    tag: rocm-7.2
   port: 8080
   command:
-    - /app/llama-server
+    - /usr/local/bin/llama-server
   args:
     - -m
     - $(HF_SOURCE)
@@ -24,8 +24,6 @@ spec:
   gpu:
     shared: true
   env:
-    - name: HSA_OVERRIDE_GFX_VERSION
-      value: "11.5.1"
     - name: ROCBLAS_USE_HIPBLASLT
       value: "1"
   securityContext:

@@ -5,11 +5,11 @@ metadata:
   namespace: inference
 spec:
   image:
-    repository: ghcr.io/ggml-org/llama.cpp
-    tag: server-vulkan
+    repository: docker.io/kyuz0/amd-strix-halo-toolboxes
+    tag: vulkan-radv
   port: 8080
   command:
-    - /app/llama-server
+    - /usr/bin/llama-server
   args:
     - -m
     - $(HF_SOURCE)
@@ -23,9 +23,6 @@ spec:
   readinessPath: /health
   gpu:
     shared: true
-  env:
-    - name: LLAMA_HIP_UMA
-      value: "ON"
   securityContext:
     capabilities:
       add:

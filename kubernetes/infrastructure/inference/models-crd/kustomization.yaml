@@ -15,6 +15,7 @@ resources:
   - minimax-m25-reap-139b.yaml
   - minimax-m25-reap.yaml
   - mistral-small-3-1-24b.yaml
+  - nemotron-3-super-120b.yaml
   - orpheus-3b.yaml
   - phi-4-mini.yaml
   - phi-4-reasoning-plus.yaml

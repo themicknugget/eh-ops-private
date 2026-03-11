@@ -1,0 +1,31 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: nemotron-3-super-120b
+  namespace: inference
+spec:
+  modelName: nemotron-3-super-120b
+  backend: llamacpp-vulkan-moe
+  source:
+    huggingFace:
+      repo: unsloth/NVIDIA-Nemotron-3-Super-120B-A12B-GGUF
+      contextSize: "200000"
+      modelFile: MXFP4_MOE/NVIDIA-Nemotron-3-Super-120B-A12B-MXFP4_MOE-00001-of-00003.gguf
+      files:
+        - MXFP4_MOE/*.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: nemotron-3-super-120b
+  resources:
+    memory: 85Gi
+    memoryLimit: 105Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

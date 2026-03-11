@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: inference-budget-controller
+  namespace: inference
+  labels:
+    release: kube-prometheus-stack
+spec:
+  endpoints:
+    - port: metrics
+      interval: 30s
+  selector:
+    matchLabels:
+      control-plane: controller-manager

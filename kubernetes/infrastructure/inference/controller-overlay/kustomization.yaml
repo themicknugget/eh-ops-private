@@ -9,3 +9,5 @@ resources:
   - https://github.com/cecil-the-coder/inference-budget-controller//config/rbac?ref=main
   # Local deployment with cluster-specific patches
   - deployment.yaml
+  - service.yaml
+  - servicemonitor.yaml

@@ -99,8 +99,8 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.1.1
 
-  # miniryzen - Worker node (Tailscale subnet router host)
-  - hostname: miniryzen
+  # mini8 - Worker node (AMD Ryzen, Tailscale subnet router host)
+  - hostname: mini8
     ipAddress: 192.168.1.55
     controlPlane: false
     installDisk: /dev/disk/by-id/nvme-SAMSUNG_MZVL81T0HELB-00BTW_S7HZNX0X457750
@@ -233,6 +233,24 @@ nodes:
             - permanentAddr: 78:55:36:01:1b:66
         addresses:
           - 192.168.1.59/24
+        routes: *lan_worker_routes
+
+  # mini7 - Worker node (Intel i5-14450HX, 1TB NVMe, single NIC)
+  - hostname: mini7
+    ipAddress: 192.168.1.54
+    controlPlane: false
+    installDisk: /dev/nvme0n1
+    talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
+    patches:
+      - *network_tuning_sysctls
+      - *spegel_registry_mirrors
+      - "@./patches/local-storage.yaml"
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: 68:1d:ef:5e:9a:83
+        dhcp: false
+        addresses:
+          - 192.168.1.54/24
         routes: *lan_worker_routes
 
   # cloudbox1 - Worker node (Oracle Cloud ARM64)

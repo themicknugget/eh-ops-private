@@ -1,7 +1,7 @@
 ---
 # Docker build cache registry for GitHub Actions runners
 # Provides local cache for docker buildx --cache-from/--cache-to
-# Runs on miniryzen with local-path storage for persistence
+# Runs on mini8 with local-path storage for persistence
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -33,7 +33,7 @@ spec:
         app: docker-cache
     spec:
       nodeSelector:
-        kubernetes.io/hostname: miniryzen
+        kubernetes.io/hostname: mini8
       containers:
         - name: registry
           image: registry:2

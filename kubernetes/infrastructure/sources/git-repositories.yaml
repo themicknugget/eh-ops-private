@@ -20,7 +20,7 @@ spec:
   interval: 1h
   url: https://github.com/themicknugget/kube-actions-runner.git
   ref:
-    tag: v1.0.83
+    tag: v1.0.84
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository

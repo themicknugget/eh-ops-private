@@ -9,13 +9,13 @@ spec:
   chart:
     spec:
       chart: gateway-helm
-      version: "v1.4.1"
+      version: "v1.7.1"
       sourceRef:
         kind: HelmRepository
         name: envoy-gateway
         namespace: flux-system
   install:
-    # Gateway API CRDs are managed separately (already at v1.4.1, newer than EG chart bundles)
+    # Gateway API CRDs are managed separately to control upgrade timing independently
     crds: Skip
     remediation:
       retries: 3

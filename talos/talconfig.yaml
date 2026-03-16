@@ -1,7 +1,7 @@
 ---
 clusterName: eh-ops
-talosVersion: v1.12.4
-kubernetesVersion: v1.35.0
+talosVersion: v1.12.5
+kubernetesVersion: v1.35.2
 endpoint: https://127.0.0.1:7445
 domain: cluster.local
 

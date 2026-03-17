@@ -55,25 +55,29 @@ spec:
               # Get all nodes with NVMe drives
               NODES=$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')
 
+              # Clean up any leftover jobs from prior runs before starting
+              kubectl delete jobs -n kube-system -l app.kubernetes.io/component=node-trim 2>/dev/null || true
+
               for NODE in $NODES; do
                 echo "--- Trimming $NODE ---"
 
                 # Create a one-time job to run fstrim on this node
+                # Note: $${NODE} is escaped from Flux variable substitution ($${ -> ${)
                 kubectl create -f - <<EOF
               apiVersion: batch/v1
               kind: Job
               metadata:
-                name: fstrim-${NODE}-$(date +%s)
+                name: fstrim-$${NODE}
                 namespace: kube-system
                 labels:
                   app.kubernetes.io/name: fstrim
                   app.kubernetes.io/component: node-trim
-                  node: ${NODE}
+                  node: $${NODE}
               spec:
                 ttlSecondsAfterFinished: 300
                 template:
                   spec:
-                    nodeName: ${NODE}
+                    nodeName: $${NODE}
                     tolerations:
                       - operator: Exists
                     containers:

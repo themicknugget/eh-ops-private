@@ -58,7 +58,8 @@ spec:
                         memory: 64Mi
                       limits:
                         cpu: 500m
-                        memory: 128Mi
+                        # 128Mi OOMKills due to Tailscale memory leak — observed peak 85MiB+
+                        memory: 256Mi
                     lifecycle:
                       postStart:
                         exec:

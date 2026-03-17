@@ -62,22 +62,22 @@ spec:
                 echo "--- Trimming $NODE ---"
 
                 # Create a one-time job to run fstrim on this node
-                # Note: $${NODE} is escaped from Flux variable substitution ($${ -> ${)
+                # $NODE uses no braces so Flux variable substitution ignores it
                 kubectl create -f - <<EOF
               apiVersion: batch/v1
               kind: Job
               metadata:
-                name: fstrim-$${NODE}
+                name: fstrim-$NODE
                 namespace: kube-system
                 labels:
                   app.kubernetes.io/name: fstrim
                   app.kubernetes.io/component: node-trim
-                  node: $${NODE}
+                  node: $NODE
               spec:
                 ttlSecondsAfterFinished: 300
                 template:
                   spec:
-                    nodeName: $${NODE}
+                    nodeName: $NODE
                     tolerations:
                       - operator: Exists
                     containers:
@@ -112,7 +112,7 @@ spec:
                   echo "All fstrim jobs completed!"
                   break
                 fi
-                echo "Waiting for $PENDING jobs to complete... (${ELAPSED}s/${TIMEOUT}s)"
+                echo "Waiting for $PENDING jobs to complete... ($ELAPSED s/$TIMEOUT s)"
                 sleep 10
                 ELAPSED=$((ELAPSED + 10))
               done

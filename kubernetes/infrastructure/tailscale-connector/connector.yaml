@@ -6,6 +6,7 @@ metadata:
   namespace: tailscale
 spec:
   hostnamePrefix: eh-ops-subnet
+  proxyClass: subnet-router
   replicas: 3
   subnetRouter:
     advertiseRoutes:

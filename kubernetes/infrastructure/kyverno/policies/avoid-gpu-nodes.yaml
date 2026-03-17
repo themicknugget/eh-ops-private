@@ -1,8 +1,4 @@
 ---
-# Kyverno policy to prevent non-GPU workloads from scheduling on GPU nodes
-# GPU nodes are labeled with workload-type=gpu
-# Pods requesting amd.com/gpu resources are allowed
-# System namespaces are excluded
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -35,10 +31,7 @@ spec:
                 - flux-system
                 - amd-gpu-system
                 - cert-manager
-                - monitoring
-                - cilium-system
                 - storage
-                - llama-cpp
           # Exclude DaemonSet pods (they need to run everywhere)
           - resources:
               kinds:

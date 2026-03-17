@@ -52,14 +52,6 @@ spec:
                       # iptables-nft compatibility layer.
                       - name: TS_DEBUG_FIREWALL_MODE
                         value: "none"
-                    resources:
-                      requests:
-                        cpu: 10m
-                        memory: 64Mi
-                      limits:
-                        cpu: 500m
-                        # 128Mi OOMKills due to Tailscale memory leak — observed peak 85MiB+
-                        memory: 256Mi
                     lifecycle:
                       postStart:
                         exec:

@@ -6,6 +6,9 @@ metadata:
 spec:
   modelName: qwen35-9b-claude-distilled
   backend: llamacpp-vulkan
+  args:
+    - --mmproj
+    - $(MMPROJ_SOURCE)
   source:
     huggingFace:
       repo: Jackrong/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-v2-GGUF

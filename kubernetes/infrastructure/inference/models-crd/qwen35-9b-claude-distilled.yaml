@@ -11,14 +11,16 @@ spec:
       repo: Jackrong/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-v2-GGUF
       contextSize: "32768"
       modelFile: Qwen3.5-9B.Q8_0.gguf
+      mmprojFile: mmproj-BF16.gguf
       files:
         - Qwen3.5-9B.Q8_0.gguf
+        - mmproj-BF16.gguf
       tokenSecret: hf-token
   storage:
     pvc: model-cache
     modelDir: qwen35-9b-claude-distilled
   resources:
-    memory: 10Gi
+    memory: 11Gi
     memoryLimit: 16Gi
   scaling:
     cooldownPeriod: 5m

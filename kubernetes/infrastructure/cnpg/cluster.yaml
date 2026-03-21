@@ -30,6 +30,9 @@ spec:
     limits:
       memory: 1Gi
 
+  monitoring:
+    enablePodMonitor: true
+
   # Spread instances across mini4/5/6 worker nodes
   affinity:
     nodeSelector:

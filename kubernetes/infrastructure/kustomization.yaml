@@ -24,3 +24,4 @@ resources:
   - inference
   - kasa-exporter
   - cnpg
+  - falkordb

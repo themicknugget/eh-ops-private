@@ -98,3 +98,12 @@ metadata:
 spec:
   interval: 1h
   url: https://cloudnative-pg.github.io/charts
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kubeblocks
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://apecloud.github.io/helm-charts

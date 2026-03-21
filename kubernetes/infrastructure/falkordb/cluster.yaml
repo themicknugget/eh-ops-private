@@ -1,0 +1,50 @@
+apiVersion: apps.kubeblocks.io/v1
+kind: Cluster
+metadata:
+  name: falkordb
+  namespace: falkordb
+spec:
+  # Preserves PVCs on deletion to prevent accidental data loss
+  terminationPolicy: Delete
+  clusterDef: falkordb
+  topology: replication
+  componentSpecs:
+    - name: falkordb
+      serviceVersion: "4.12.5"
+      disableExporter: false
+      replicas: 2
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "2Gi"
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+      volumeClaimTemplates:
+        - name: data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: local-path
+            resources:
+              requests:
+                storage: 20Gi
+    - name: falkordb-sent
+      serviceVersion: "4.12.5"
+      replicas: 3
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "100m"
+          memory: "128Mi"
+      volumeClaimTemplates:
+        - name: data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: local-path
+            resources:
+              requests:
+                storage: 1Gi

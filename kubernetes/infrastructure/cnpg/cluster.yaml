@@ -7,6 +7,10 @@ spec:
   instances: 3
 
   postgresql:
+    extensions:
+      - name: pgvector
+        image:
+          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
     parameters:
       shared_buffers: "256MB"
       effective_cache_size: "512MB"

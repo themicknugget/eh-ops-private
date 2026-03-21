@@ -42,14 +42,12 @@ spec:
     # FalkorDB module + persistence tuning via redis.conf
     # Bitnami mounts commonConfiguration as redis.conf and passes it to redis-server
     commonConfiguration: |-
-      loadmodule /var/lib/falkordb/bin/falkordb.so
+      loadmodule /var/lib/falkordb/bin/falkordb.so QUERY_MEM_CAPACITY 536870912 TIMEOUT_MAX 60000
       appendonly yes
       appendfsync everysec
       save 900 1 300 10
       maxmemory-policy noeviction
       timeout 0
-      query-mem-capacity 536870912
-      timeout-max 60000
 
     sentinel:
       enabled: true

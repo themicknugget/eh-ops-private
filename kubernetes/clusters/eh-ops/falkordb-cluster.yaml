@@ -1,0 +1,26 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: falkordb-cluster
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./kubernetes/infrastructure/falkordb/cluster
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  # KubeBlocks CRDs must exist before the Cluster CR can be applied
+  dependsOn:
+    - name: infrastructure
+  wait: true
+  timeout: 5m

@@ -39,8 +39,8 @@ spec:
         retentionSize: 45GB
         scrapeInterval: 30s
         # Discover all ServiceMonitors/PodMonitors regardless of release label
-        serviceMonitorSelector: {}
-        podMonitorSelector: {}
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
         resources:
           requests:
             cpu: 500m

@@ -25,6 +25,10 @@ spec:
       valuesKey: password
       targetPath: auth.password
   values:
+    global:
+      security:
+        allowInsecureImages: true
+
     image:
       registry: docker.io
       repository: falkordb/falkordb

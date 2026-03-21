@@ -102,8 +102,9 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: kubeblocks
+  name: bitnami
   namespace: flux-system
 spec:
+  type: oci
   interval: 1h
-  url: https://apecloud.github.io/helm-charts
+  url: oci://registry-1.docker.io/bitnamicharts

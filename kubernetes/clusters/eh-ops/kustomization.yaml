@@ -4,6 +4,5 @@ resources:
   - flux-system
   - cluster-secrets.sops.yaml
   - infrastructure.yaml
-  - falkordb-cluster.yaml
   - tailscale-connector.yaml
   - cloudflare-tunnel-config.yaml

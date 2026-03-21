@@ -1,59 +1,73 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kubeblocks
-  namespace: kb-system
+  name: falkordb
+  namespace: falkordb
 spec:
   interval: 30m
   chart:
     spec:
-      chart: kubeblocks
-      version: "1.0.2"
+      chart: redis
+      version: "25.3.7"
       sourceRef:
         kind: HelmRepository
-        name: kubeblocks
+        name: bitnami
         namespace: flux-system
   install:
-    crds: CreateReplace
-    createNamespace: true
     remediation:
       retries: 3
   upgrade:
-    crds: CreateReplace
     remediation:
       retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: falkordb-auth
+      valuesKey: password
+      targetPath: auth.password
   values:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: falkordb-addon
-  namespace: kb-system
-spec:
-  interval: 30m
-  dependsOn:
-    - name: kubeblocks
-  chart:
-    spec:
-      chart: falkordb
-      version: "1.0.2"
-      sourceRef:
-        kind: HelmRepository
-        name: kubeblocks
-        namespace: flux-system
-  install:
-    crds: CreateReplace
-    remediation:
-      retries: 3
-  upgrade:
-    crds: CreateReplace
-    remediation:
-      retries: 3
+    image:
+      registry: docker.io
+      repository: falkordb/falkordb
+      tag: v4.16.7
+
+    auth:
+      enabled: true
+      existingSecret: falkordb-auth
+      existingSecretPasswordKey: password
+
+    # FalkorDB module + persistence tuning via redis.conf
+    # Bitnami mounts commonConfiguration as redis.conf and passes it to redis-server
+    commonConfiguration: |-
+      loadmodule /var/lib/falkordb/bin/falkordb.so
+      appendonly yes
+      appendfsync everysec
+      save 900 1 300 10
+      maxmemory-policy noeviction
+      timeout 0
+      query-mem-capacity 536870912
+      timeout-max 60000
+
+    sentinel:
+      enabled: true
+      masterSet: falkordb-master
+      quorum: 2
+
+    replica:
+      replicaCount: 3
+      persistence:
+        enabled: true
+        size: 20Gi
+        storageClass: local-path
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2Gi
+        limits:
+          cpu: "2"
+          memory: 4Gi
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        namespace: falkordb

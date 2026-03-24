@@ -1,0 +1,35 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen3-235b-a22b-q4km
+  namespace: inference
+spec:
+  backend: llamacpp-vulkan-moe-flash
+  modelName: qwen3-235b-a22b-q4km
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  resources:
+    memory: 30Gi
+    memoryLimit: 120Gi
+  scaling:
+    cooldownPeriod: 30m
+    enabled: true
+    evictionPolicy: Default
+    maxReplicas: 1
+  service:
+    type: ClusterIP
+  source:
+    huggingFace:
+      contextSize: "8192"
+      files:
+      - 'Q4_K_M/*'
+      modelFile: Q4_K_M/Qwen3-235B-A22B-Q4_K_M-00001-of-00003.gguf
+      repo: unsloth/Qwen3-235B-A22B-GGUF
+      tokenSecret: hf-token
+      tokenSecretKey: token
+  storage:
+    modelDir: qwen3-235b-a22b-q4km
+    pvc: model-cache
+  tolerations:
+  - key: amd.com/gpu
+    operator: Exists

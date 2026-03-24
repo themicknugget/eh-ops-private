@@ -129,6 +129,8 @@ Get backend env vars
   value: "1024"
 - name: LLAMA_ARG_ENDPOINT_METRICS
   value: "1"
+- name: LLAMA_ARG_CPU_MOE
+  value: "1"
 - name: LLAMA_FLASH_MOE_ENABLED
   value: "1"
 - name: LLAMA_FLASH_MOE_IOURING

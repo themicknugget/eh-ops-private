@@ -200,7 +200,7 @@ Get backend security context
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 capabilities:
-  add: [SYS_PTRACE]
+  add: [SYS_PTRACE, IPC_LOCK]
 seccompProfile:
   type: Unconfined
 {{- end -}}

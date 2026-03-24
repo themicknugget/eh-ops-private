@@ -60,6 +60,8 @@ Required for toolbox-style images that default to /bin/bash
 {{- $backendName := include "inference-model.backendName" . -}}
 {{- if eq $backendName "llamacpp-rocm" -}}
 - /usr/local/bin/llama-server
+{{- else if eq $backendName "llamacpp-vulkan-moe-flash" -}}
+- /usr/bin/llama-server
 {{- else if eq $backendName "whisper-cpp" -}}
 - /usr/local/bin/whisper-server
 {{- end -}}

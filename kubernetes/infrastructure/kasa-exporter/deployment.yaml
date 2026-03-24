@@ -21,7 +21,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: exporter
-          image: python:3.13-slim
+          image: python:3.12-slim
           command: ["/bin/sh", "-c"]
           args:
             - pip install -q python-kasa prometheus-client && python /scripts/exporter.py

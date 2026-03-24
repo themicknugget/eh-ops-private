@@ -21,6 +21,9 @@ Checks: 1. values.image  2. backend-specific defaults
 {{- else if eq $backendName "llamacpp-vulkan-moe" -}}
 {{- $repo = "ghcr.io/ggml-org/llama.cpp" -}}
 {{- $tag = "server-vulkan" -}}
+{{- else if eq $backendName "llamacpp-vulkan-moe-flash" -}}
+{{- $repo = "ghcr.io/cecil-the-coder/llama-cpp-moe-flash" -}}
+{{- $tag = "latest" -}}
 {{- else if eq $backendName "llamacpp-rocm" -}}
 {{- $repo = "docker.io/kyuz0/amd-strix-halo-toolboxes" -}}
 {{- $tag = "rocm-7.2" -}}
@@ -105,6 +108,31 @@ Get backend env vars
   value: "1024"
 - name: LLAMA_ARG_ENDPOINT_METRICS
   value: "1"
+{{- else if eq $backendName "llamacpp-vulkan-moe-flash" -}}
+- name: LLAMA_HIP_UMA
+  value: "ON"
+- name: LLAMA_ARG_N_GPU_LAYERS
+  value: "99"
+- name: LLAMA_ARG_FLASH_ATTN
+  value: "1"
+- name: LLAMA_ARG_CACHE_TYPE_K
+  value: "q4_0"
+- name: LLAMA_ARG_CACHE_TYPE_V
+  value: "q4_0"
+- name: LLAMA_ARG_THREADS
+  value: "12"
+- name: LLAMA_ARG_BATCH_SIZE
+  value: "4096"
+- name: LLAMA_ARG_UBATCH_SIZE
+  value: "1024"
+- name: LLAMA_ARG_ENDPOINT_METRICS
+  value: "1"
+- name: LLAMA_FLASH_MOE_ENABLED
+  value: "1"
+- name: LLAMA_FLASH_MOE_IOURING
+  value: "1"
+- name: LLAMA_FLASH_MOE_GGUF_PATH
+  value: "$(HF_SOURCE)"
 {{- else if eq $backendName "llamacpp-rocm" -}}
 - name: ROCBLAS_USE_HIPBLASLT
   value: "1"
@@ -139,7 +167,7 @@ Get backend args as YAML list
 */}}
 {{- define "inference-model.backendArgs" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-vulkan-moe-flash") -}}
 - -m
 - $(HF_SOURCE)
 {{- if .Values.storage.mmprojFile }}
@@ -198,7 +226,7 @@ Get backend security context
 */}}
 {{- define "inference-model.securityContext" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-vulkan-moe-flash") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 capabilities:
   add: [SYS_PTRACE, IPC_LOCK]
 seccompProfile:
@@ -211,7 +239,7 @@ Get backend volumes
 */}}
 {{- define "inference-model.volumes" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-vulkan-moe-flash") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - name: dri
   hostPath:
     path: /dev/dri
@@ -226,7 +254,7 @@ Get backend volume mounts
 */}}
 {{- define "inference-model.volumeMounts" -}}
 {{- $backendName := include "inference-model.backendName" . -}}
-{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
+{{- if or (eq $backendName "llamacpp-vulkan") (eq $backendName "llamacpp-vulkan-moe") (eq $backendName "llamacpp-vulkan-moe-flash") (eq $backendName "llamacpp-rocm") (eq $backendName "whisper-cpp") -}}
 - mountPath: /dev/dri
   name: dri
 - mountPath: /dev/kfd

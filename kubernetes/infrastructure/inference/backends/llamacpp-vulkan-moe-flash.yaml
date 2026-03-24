@@ -1,0 +1,13 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceBackend
+metadata:
+  name: llamacpp-vulkan-moe-flash
+  namespace: inference
+spec:
+  image:
+    repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
+    tag: fecef90
+  port: 8080
+  readinessPath: /health
+  gpu:
+    shared: true

@@ -17,7 +17,7 @@ spec:
       interval: 5m
   values:
     name: glm-4-7-flash
-    backend: llamacpp-vulkan-moe
+    backend: llamacpp-vulkan-moe-flash
 
     source:
       huggingface: bartowski/zai-org_GLM-4.7-Flash-GGUF

@@ -22,6 +22,16 @@ subjects:
       fqdn: "${DOMAIN3}"
       protocol: http
       target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  - name: external-gateway-domain4
+    spec:
+      fqdn: "*.${DOMAIN4}"
+      protocol: http
+      target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  - name: external-gateway-domain4-apex
+    spec:
+      fqdn: "${DOMAIN4}"
+      protocol: http
+      target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
 tunnelRef:
   kind: ClusterTunnel
   name: eh-ops-cluster

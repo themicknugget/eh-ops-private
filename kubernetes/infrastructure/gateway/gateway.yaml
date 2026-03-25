@@ -107,6 +107,44 @@ spec:
         certificateRefs:
           - name: wildcard-domain3-tls
             namespace: kube-system
+    - name: http-domain4
+      protocol: HTTP
+      port: 80
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
+            namespace: kube-system
+    - name: http-domain4-apex
+      protocol: HTTP
+      port: 80
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
+            namespace: kube-system
 ---
 # Gateway for cloudbox3 (separate DC) — direct internet ingress
 apiVersion: gateway.networking.k8s.io/v1
@@ -197,6 +235,44 @@ spec:
         certificateRefs:
           - name: wildcard-domain3-tls
             namespace: kube-system
+    - name: http-domain4
+      protocol: HTTP
+      port: 80
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
+            namespace: kube-system
+    - name: http-domain4-apex
+      protocol: HTTP
+      port: 80
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
+            namespace: kube-system
 ---
 # External Gateway for incoming HTTP/HTTPS traffic
 apiVersion: gateway.networking.k8s.io/v1
@@ -286,4 +362,42 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: wildcard-domain3-tls
+            namespace: kube-system
+    - name: http-domain4
+      protocol: HTTP
+      port: 80
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${DOMAIN4}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
+            namespace: kube-system
+    - name: http-domain4-apex
+      protocol: HTTP
+      port: 80
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https-domain4-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "heygolem.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-domain4-tls
             namespace: kube-system

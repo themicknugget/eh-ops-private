@@ -1,0 +1,61 @@
+---
+# Crucix OSINT Intelligence Engine
+# Aggregates 29 open-source intelligence sources every 15 minutes.
+# Dashboard: http://crucix.crucix.svc:3117
+# API: http://crucix.crucix.svc:3117/api/data
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crucix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crucix
+  template:
+    metadata:
+      labels:
+        app: crucix
+    spec:
+      containers:
+        - name: crucix
+          image: ghcr.io/calesthio/crucix:latest
+          ports:
+            - name: http
+              containerPort: 3117
+          env:
+            - name: PORT
+              value: "3117"
+            - name: NODE_ENV
+              value: "production"
+            - name: REFRESH_INTERVAL_MINUTES
+              value: "15"
+          envFrom:
+            - secretRef:
+                name: crucix-env
+                optional: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3117
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3117
+            initialDelaySeconds: 60
+            periodSeconds: 60
+          volumeMounts:
+            - name: runs
+              mountPath: /app/runs
+      volumes:
+        - name: runs
+          emptyDir:
+            sizeLimit: 500Mi

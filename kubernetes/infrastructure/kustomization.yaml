@@ -24,4 +24,5 @@ resources:
   - inference
   - kasa-exporter
   - cnpg
+  - crucix
   - falkordb

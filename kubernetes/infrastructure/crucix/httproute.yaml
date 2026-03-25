@@ -1,0 +1,26 @@
+---
+# Exposes the Crucix dashboard externally for ops visibility.
+# Golem agents use the in-cluster service (crucix.crucix.svc:3117) directly.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: crucix
+  namespace: crucix
+spec:
+  parentRefs:
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: https-domain1
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: http-domain1
+  hostnames:
+    - "crucix.${DOMAIN1}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: crucix
+          port: 3117

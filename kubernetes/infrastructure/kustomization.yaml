@@ -21,7 +21,7 @@ resources:
   - kube-actions-runner
   - database
   - fstrim
-  # - inference  # temporarily unmanaged for moe-flash testing
+  - inference
   - kasa-exporter
   - cnpg
   - crucix

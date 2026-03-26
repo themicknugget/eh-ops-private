@@ -6,7 +6,7 @@ metadata:
 spec:
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: b806384
+    tag: "3153412"
   port: 8080
   command:
     - /usr/bin/llama-server
@@ -20,6 +20,8 @@ spec:
     - --metrics
     - --n-gpu-layers
     - all
+    - --ctx-size
+    - "8192"
   readinessPath: /health
   gpu:
     shared: true

@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - llamacpp-vulkan.yaml
   - llamacpp-vulkan-moe.yaml
+  - llamacpp-vulkan-moe-flash.yaml
   - llamacpp-rocm.yaml
   - llamacpp-cpu.yaml
   - vllm.yaml

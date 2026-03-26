@@ -20,6 +20,7 @@ spec:
     - --metrics
     - --n-gpu-layers
     - all
+    - --no-warmup
     - --ctx-size
     - "8192"
   readinessPath: /health

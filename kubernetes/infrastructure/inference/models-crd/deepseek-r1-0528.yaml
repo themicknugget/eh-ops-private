@@ -1,11 +1,11 @@
 apiVersion: inference.eh-ops.io/v1alpha1
 kind: InferenceModel
 metadata:
-  name: qwen3-235b-a22b-q4km
+  name: deepseek-r1-0528
   namespace: inference
 spec:
   backend: llamacpp-vulkan-moe-flash-cpumoe
-  modelName: qwen3-235b-a22b-q4km
+  modelName: deepseek-r1-0528
   nodeSelector:
     kubernetes.io/hostname: shadow
   resources:
@@ -22,13 +22,13 @@ spec:
     huggingFace:
       contextSize: "8192"
       files:
-      - 'Q4_K_M/*'
-      modelFile: Q4_K_M/Qwen3-235B-A22B-Q4_K_M-00001-of-00003.gguf
-      repo: unsloth/Qwen3-235B-A22B-GGUF
+      - 'Q2_K/*'
+      modelFile: Q2_K/DeepSeek-R1-0528-Q2_K-00001-of-00005.gguf
+      repo: unsloth/DeepSeek-R1-0528-GGUF
       tokenSecret: hf-token
       tokenSecretKey: token
   storage:
-    modelDir: qwen3-235b-a22b-q4km
+    modelDir: deepseek-r1-0528
     pvc: model-cache
   tolerations:
   - key: amd.com/gpu

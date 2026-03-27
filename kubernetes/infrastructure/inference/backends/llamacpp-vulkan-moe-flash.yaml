@@ -6,7 +6,7 @@ metadata:
 spec:
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: "d1948d1"
+    tag: "3fbe06f"
   port: 8080
   command:
     - /usr/bin/llama-server

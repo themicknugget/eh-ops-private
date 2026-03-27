@@ -25,7 +25,7 @@ resources:
   - qwen3-vl-30b.yaml
   - qwen2-5-coder-32b.yaml
   - deepseek-r1-0528-8b.yaml
-  - deepseek-r1-0528.yaml
+  # deepseek-r1-0528 moved to models-crd with cpumoe backend
   - command-a.yaml
   - glm-4-7-flash.yaml
   - whisper-large-v3-turbo.yaml

@@ -5,7 +5,7 @@ metadata:
   namespace: inference
 spec:
   modelName: qwen3-235b-a22b
-  backend: llamacpp-vulkan-moe-flash
+  backend: llamacpp-vulkan-moe-flash-cpumoe
   source:
     huggingFace:
       repo: unsloth/Qwen3-235B-A22B-GGUF

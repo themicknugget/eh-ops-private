@@ -5,7 +5,7 @@ metadata:
   namespace: inference
 spec:
   modelName: glm-4-7-flash
-  backend: llamacpp-vulkan-moe-flash
+  backend: llamacpp-vulkan-moe-flash-cpumoe
   source:
     huggingFace:
       repo: bartowski/zai-org_GLM-4.7-Flash-GGUF

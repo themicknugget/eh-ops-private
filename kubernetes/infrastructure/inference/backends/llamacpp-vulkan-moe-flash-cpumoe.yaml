@@ -1,0 +1,72 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceBackend
+metadata:
+  name: llamacpp-vulkan-moe-flash-cpumoe
+  namespace: inference
+spec:
+  args:
+  - -m
+  - $(HF_SOURCE)
+  - --host
+  - 0.0.0.0
+  - --port
+  - '8080'
+  - --metrics
+  - --n-gpu-layers
+  - all
+  - --no-warmup
+  - --ctx-size
+  - '8192'
+  command:
+  - /usr/bin/llama-server
+  env:
+  - name: LLAMA_ARG_N_GPU_LAYERS
+    value: all
+  - name: LLAMA_ARG_FLASH_ATTN
+    value: '1'
+  - name: LLAMA_ARG_CACHE_TYPE_K
+    value: q4_0
+  - name: LLAMA_ARG_CACHE_TYPE_V
+    value: q4_0
+  - name: LLAMA_ARG_THREADS
+    value: '12'
+  - name: LLAMA_ARG_BATCH_SIZE
+    value: '4096'
+  - name: LLAMA_ARG_UBATCH_SIZE
+    value: '1024'
+  - name: LLAMA_ARG_ENDPOINT_METRICS
+    value: '1'
+  - name: LLAMA_FLASH_MOE_ENABLED
+    value: '1'
+  - name: LLAMA_FLASH_MOE_IOURING
+    value: '1'
+  - name: LLAMA_FLASH_MOE_GGUF_PATH
+    value: $(HF_SOURCE)
+  - name: LLAMA_ARG_CPU_MOE
+    value: '1'
+  gpu:
+    shared: true
+  image:
+    repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
+    tag: 328946f
+  port: 8080
+  readinessPath: /health
+  securityContext:
+    capabilities:
+      add:
+      - SYS_PTRACE
+      - IPC_LOCK
+    seccompProfile:
+      type: Unconfined
+  volumeMounts:
+  - mountPath: /dev/dri
+    name: dri
+  - mountPath: /dev/kfd
+    name: kfd
+  volumes:
+  - hostPath:
+      path: /dev/dri
+    name: dri
+  - hostPath:
+      path: /dev/kfd
+    name: kfd

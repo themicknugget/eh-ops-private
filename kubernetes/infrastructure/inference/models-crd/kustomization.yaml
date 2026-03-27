@@ -9,6 +9,8 @@ resources:
   - devstral-2-123b.yaml
   - gemma-3-27b.yaml
   - glm-4-7-flash.yaml
+  - glm-5-q2k.yaml
+  - glm-5-q4km.yaml
   - gpt-oss-120b.yaml
   - gpt-oss-20b.yaml
   - llama-3-3-70b.yaml

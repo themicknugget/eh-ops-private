@@ -50,6 +50,7 @@ spec:
       - name: autoanneal
         repo: "cecil-the-coder/autoanneal"
         schedule: "*/10 * * * *"
+        reviewPrs: true
       - name: heygolem
         repo: "HeyGolem/HeyGolem"
         schedule: "*/10 * * * *"
@@ -57,3 +58,4 @@ spec:
         repo: "cecil-the-coder/Cortex"
         schedule: "*/5 * * * *"
         cronInterval: 5
+        reviewPrs: true

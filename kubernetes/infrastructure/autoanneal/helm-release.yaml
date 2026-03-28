@@ -35,7 +35,7 @@ spec:
       existingSecret: autoanneal-secrets
 
     env:
-      ANTHROPIC_BASE_URL: "https://api.z.ai/api/anthropic"
+      ANTHROPIC_BASE_URL: "https://cortex.whydontyou.work"
       ANTHROPIC_DEFAULT_SONNET_MODEL: "glm-5.1"
       CLAUDE_CODE_SUBAGENT_MODEL: "glm-5.1"
       ANTHROPIC_DEFAULT_OPUS_MODEL: "glm-5.1"
@@ -44,6 +44,8 @@ spec:
 
     defaults:
       maxBudget: "15"
+      modelAnalysis: "kimi-k2-5"
+      modelCritic: "kimi-k2-5"
 
     repos:
       - name: mysql-mcp

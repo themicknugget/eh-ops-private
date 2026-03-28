@@ -41,6 +41,7 @@ spec:
     defaults:
       maxBudget: "15"
       model: "kimi-k2-5"
+      criticModels: "kimi-k2-5,glm-5,Inception:mercury-2,qwen:coder-model"
 
     repos:
       - name: mysql-mcp

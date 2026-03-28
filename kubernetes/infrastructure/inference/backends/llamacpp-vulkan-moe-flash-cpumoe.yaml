@@ -17,6 +17,10 @@ spec:
   - --no-warmup
   - --ctx-size
   - '8192'
+  - --cache-type-k
+  - tq2_kv
+  - --cache-type-v
+  - tq2_kv
   command:
   - /usr/bin/llama-server
   env:

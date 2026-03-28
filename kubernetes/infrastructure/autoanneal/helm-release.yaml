@@ -1,0 +1,58 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: autoanneal
+  namespace: github-runners
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: charts/autoanneal
+      sourceRef:
+        kind: GitRepository
+        name: autoanneal
+        namespace: flux-system
+      interval: 12h
+  timeout: 10m
+  install:
+    createNamespace: true
+    timeout: 10m
+    remediation:
+      retries: 3
+  upgrade:
+    timeout: 10m
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    image:
+      repository: ghcr.io/cecil-the-coder/autoanneal
+      tag: latest
+      pullPolicy: Always
+
+    secrets:
+      existingSecret: autoanneal-secrets
+
+    env:
+      ANTHROPIC_BASE_URL: "https://api.z.ai/api/anthropic"
+      ANTHROPIC_DEFAULT_SONNET_MODEL: "glm-5.1"
+      CLAUDE_CODE_SUBAGENT_MODEL: "glm-5.1"
+      ANTHROPIC_DEFAULT_OPUS_MODEL: "glm-5.1"
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: "glm-5.1"
+      AUTOANNEAL_DEBUG_STREAM: "1"
+
+    defaults:
+      maxBudget: "15"
+
+    repos:
+      - name: mysql-mcp
+        repo: "cecil-the-coder/mysql-mcp"
+        schedule: "*/10 * * * *"
+        reviewPrs: true
+      - name: autoanneal
+        repo: "cecil-the-coder/autoanneal"
+        schedule: "*/10 * * * *"
+      - name: heygolem
+        repo: "HeyGolem/HeyGolem"
+        schedule: "*/10 * * * *"

@@ -25,6 +25,17 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
+  name: autoanneal
+  namespace: flux-system
+spec:
+  interval: 5m
+  url: https://github.com/cecil-the-coder/autoanneal.git
+  ref:
+    branch: main
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
   name: kubeedge
   namespace: flux-system
 spec:

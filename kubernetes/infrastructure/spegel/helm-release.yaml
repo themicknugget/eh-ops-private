@@ -35,6 +35,9 @@ spec:
     # Talos Linux configuration
     spegel:
       containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+      registryFilters:
+        - :latest$
+        - :main$
 
     # Service ports - match talconfig registry mirrors (localhost:5001)
     service:

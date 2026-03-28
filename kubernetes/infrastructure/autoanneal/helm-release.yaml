@@ -36,10 +36,6 @@ spec:
 
     env:
       ANTHROPIC_BASE_URL: "https://cortex.whydontyou.work"
-      ANTHROPIC_DEFAULT_SONNET_MODEL: "glm-5.1"
-      CLAUDE_CODE_SUBAGENT_MODEL: "glm-5.1"
-      ANTHROPIC_DEFAULT_OPUS_MODEL: "glm-5.1"
-      ANTHROPIC_DEFAULT_HAIKU_MODEL: "glm-5.1"
       AUTOANNEAL_DEBUG_STREAM: "1"
 
     defaults:
@@ -57,3 +53,6 @@ spec:
       - name: heygolem
         repo: "HeyGolem/HeyGolem"
         schedule: "*/10 * * * *"
+      - name: cortex
+        repo: "cecil-the-coder/Cortex"
+        schedule: "*/5 * * * *"

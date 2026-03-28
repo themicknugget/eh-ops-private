@@ -44,6 +44,7 @@ spec:
 
     defaults:
       maxBudget: "15"
+      model: "glm-5.1"
       modelAnalysis: "kimi-k2-5"
       modelCritic: "kimi-k2-5"
 

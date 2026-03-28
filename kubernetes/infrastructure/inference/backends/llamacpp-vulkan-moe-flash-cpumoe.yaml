@@ -17,10 +17,6 @@ spec:
   - --no-warmup
   - --ctx-size
   - '8192'
-  - --cache-type-k
-  - tq2_kv
-  - --cache-type-v
-  - tq2_kv
   command:
   - /usr/bin/llama-server
   env:
@@ -29,9 +25,9 @@ spec:
   - name: LLAMA_ARG_FLASH_ATTN
     value: '1'
   - name: LLAMA_ARG_CACHE_TYPE_K
-    value: tq2_kv
+    value: q4_0
   - name: LLAMA_ARG_CACHE_TYPE_V
-    value: tq2_kv
+    value: q4_0
   - name: LLAMA_ARG_THREADS
     value: '16'
   - name: LLAMA_ARG_BATCH_SIZE

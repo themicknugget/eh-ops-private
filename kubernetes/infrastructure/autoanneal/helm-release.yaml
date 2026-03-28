@@ -56,3 +56,4 @@ spec:
       - name: cortex
         repo: "cecil-the-coder/Cortex"
         schedule: "*/5 * * * *"
+        cronInterval: 5

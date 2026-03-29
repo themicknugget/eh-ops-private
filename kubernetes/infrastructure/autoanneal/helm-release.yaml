@@ -80,7 +80,7 @@ spec:
       # -- External PR review
       reviewPrs: true               # Review external PRs
       # reviewFilter: "all"            # "all", "labeled:<label>", or "recent"
-      reviewFixThreshold: 8            # Score below this triggers auto-fix attempt
+      reviewFixThreshold: 10            # Score below this triggers auto-fix attempt
 
       # -- Issue investigation
       # investigateIssues: ""          # Comma-separated labels to investigate (empty = disabled)

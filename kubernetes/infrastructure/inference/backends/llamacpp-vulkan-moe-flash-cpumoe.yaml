@@ -18,9 +18,7 @@ spec:
   - --ctx-size
   - '8192'
   command:
-  - /bin/sh
-  - -c
-  - "echo 'DEBUG: sleeping for manual exec'; sleep 86400"
+  - /usr/bin/llama-server
   env:
   - name: LLAMA_ARG_N_GPU_LAYERS
     value: all
@@ -46,13 +44,11 @@ spec:
     value: $(HF_SOURCE)
   - name: LLAMA_ARG_CPU_MOE
     value: '1'
-  - name: RADV_DEBUG
-    value: vm,syncshaders
   gpu:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: "cc81e1d"
+    tag: "ef1268e"
   port: 8080
   readinessPath: /health
   securityContext:

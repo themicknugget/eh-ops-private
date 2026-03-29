@@ -44,11 +44,13 @@ spec:
     value: $(HF_SOURCE)
   - name: LLAMA_ARG_CPU_MOE
     value: '1'
+  - name: RADV_DEBUG
+    value: vm,syncshaders
   gpu:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: "6a5b5ff"
+    tag: "cc81e1d"
   port: 8080
   readinessPath: /health
   securityContext:

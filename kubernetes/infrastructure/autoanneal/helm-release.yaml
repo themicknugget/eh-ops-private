@@ -128,6 +128,10 @@ spec:
         cronInterval: 5
         reviewPrs: true
 
+    manager:
+      dockerMode: false
+      namespace: "github-runners"
+
     # -- One-off Job mode (set job.enabled=true for immediate runs)
     # job:
     #   enabled: false

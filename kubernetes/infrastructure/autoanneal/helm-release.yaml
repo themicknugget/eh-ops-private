@@ -39,7 +39,6 @@ spec:
       AUTOANNEAL_DEBUG_STREAM: "1"
 
     defaults:
-      maxBudget: "15"
       model: "kimi-k2-5"
       modelImplement: "Z.ai:glm-5.1"
       criticModels: "kimi-k2-5,glm-5,Z.ai:glm-5.1,Inception:mercury-2,qwen:coder-model"
@@ -56,6 +55,7 @@ spec:
       - name: heygolem
         repo: "HeyGolem/HeyGolem"
         schedule: "*/10 * * * *"
+        fixExternalCi: true
       - name: cortex
         repo: "cecil-the-coder/Cortex"
         schedule: "*/5 * * * *"

@@ -18,7 +18,9 @@ spec:
   - --ctx-size
   - '8192'
   command:
-  - /usr/bin/llama-server
+  - /bin/sh
+  - -c
+  - "sleep 86400"
   env:
   - name: LLAMA_ARG_N_GPU_LAYERS
     value: all

@@ -48,7 +48,7 @@ spec:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: "5ae96d2"
+    tag: "6a5b5ff"
   port: 8080
   readinessPath: /health
   securityContext:

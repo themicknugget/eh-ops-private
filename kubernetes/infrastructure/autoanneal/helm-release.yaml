@@ -30,35 +30,152 @@ spec:
       repository: ghcr.io/cecil-the-coder/autoanneal
       tag: latest
       pullPolicy: Always
+      # pullSecrets: []
 
     secrets:
       existingSecret: autoanneal-secrets
+      # anthropicApiKey: ""   # Only used when existingSecret is empty
+      # githubToken: ""       # Only used when existingSecret is empty
 
     env:
       ANTHROPIC_BASE_URL: "https://cortex.whydontyou.work"
       AUTOANNEAL_DEBUG_STREAM: "1"
+      # ANTHROPIC_AUTH_TOKEN: ""       # Bearer token for proxy (takes precedence over API_KEY)
+      # OPENAI_BASE_URL: ""            # Required when using OpenAI provider
+      # OPENAI_API_KEY: ""             # Required when using OpenAI provider
+      # AUTOANNEAL_PROVIDER: ""        # "anthropic" or "openai" (auto-detected if unset)
+      # EXA_API_KEY: ""                # Exa web search API key for research tools
 
     defaults:
+      # -- Budget & timing
+      maxBudget: "25.00"              # Maximum spend per run (USD)
+      # timeout: "30m"                 # Maximum wall-clock time per run
+      # contextWindow: 128000          # Context window size in tokens
+
+      # -- Model selection
       model: "kimi-k2-5"
+      # modelRecon: ""                 # Per-phase model overrides (empty = use default model)
+      # modelAnalysis: ""
       modelImplement: "Z.ai:glm-5.1"
+      # modelCritic: ""
+      # modelPlan: ""
       criticModels: "kimi-k2-5,glm-5,Z.ai:glm-5.1,Inception:mercury-2,qwen:coder-model"
-      reviewFixThreshold: 8
+
+      # -- Analysis & implementation
+      # maxTasks: 3                    # Max improvements to implement per run
+      # minSeverity: "minor"           # Minimum severity: minor, moderate, major
+      # improveDocs: true              # Fall back to doc improvements when no code improvements
+      # dryRun: false                  # Analysis only, no PR creation
+      # setupCommand: ""               # Run after clone (e.g. "npm ci")
+
+      # -- Critic review
+      # criticThreshold: 6             # Minimum critic score (1-10) to create PR. 0 disables.
+      # docCriticThreshold: 7          # Minimum score for documentation changes
+
+      # -- CI fix & conflict resolution
+      # fixCi: true                    # Fix autoanneal PRs with failing CI
+      # fixConflicts: true             # Rebase autoanneal PRs with merge conflicts
+      fixExternalCi: true           # Fix CI failures on external (human) PRs
+
+      # -- External PR review
+      reviewPrs: true               # Review external PRs
+      # reviewFilter: "all"            # "all", "labeled:<label>", or "recent"
+      reviewFixThreshold: 8            # Score below this triggers auto-fix attempt
+
+      # -- Issue investigation
+      # investigateIssues: ""          # Comma-separated labels to investigate (empty = disabled)
+      # maxIssues: 2                   # Max issues to investigate per run
+      # issueBudget: "3.00"            # Budget per issue investigation (USD)
+
+      # -- Scheduling & concurrency
+      # concurrency: 3                 # Max parallel work items
+      # maxOpenPrs: 5                  # Skip new analysis if this many autoanneal PRs open
+      # skipAfter: 3                   # Skip if no commits in skipAfter × cronInterval minutes
+      # cronInterval: 10               # Cron interval in minutes (for staleness calc)
+
+      # -- Research tools
+      # exaSearches: 3                 # Max Exa web searches per run (0 to disable, requires EXA_API_KEY)
+
+      # -- Logging
+      # logLevel: "info"               # Log level: trace, debug, info, warn, error
 
     repos:
       - name: mysql-mcp
         repo: "cecil-the-coder/mysql-mcp"
         schedule: "*/10 * * * *"
         reviewPrs: true
+        # maxBudget: "5.00"
+        # timeout: "30m"
+        # model: "kimi-k2-5"
+        # maxTasks: 3
+        # minSeverity: "minor"
+        # setupCommand: ""
+        # dryRun: false
+
       - name: autoanneal
         repo: "cecil-the-coder/autoanneal"
         schedule: "*/10 * * * *"
         reviewPrs: true
+
       - name: heygolem
         repo: "HeyGolem/HeyGolem"
         schedule: "*/10 * * * *"
         fixExternalCi: true
+
       - name: cortex
         repo: "cecil-the-coder/Cortex"
         schedule: "*/5 * * * *"
         cronInterval: 5
         reviewPrs: true
+
+    # -- One-off Job mode (set job.enabled=true for immediate runs)
+    # job:
+    #   enabled: false
+    #   repoFilter: ""                 # Run only this repo by name (empty = all)
+
+    # -- CronJob settings
+    # cronJob:
+    #   concurrencyPolicy: Forbid
+    #   failedJobsHistoryLimit: 3
+    #   successfulJobsHistoryLimit: 3
+    #   startingDeadlineSeconds: 600
+    #   suspend: false
+    #   backoffLimit: 0
+    #   activeDeadlineSeconds: 3600
+    #   ttlSecondsAfterFinished: 86400
+
+    # -- Resource limits
+    # resources:
+    #   requests:
+    #     cpu: "1"
+    #     memory: "2Gi"
+    #   limits:
+    #     cpu: "2"
+    #     memory: "4Gi"
+
+    # -- Pod settings
+    # podAnnotations: {}
+    # podLabels: {}
+    # nodeSelector: {}
+    # tolerations: []
+    # affinity: {}
+
+    # -- Pod security
+    # podSecurityContext:
+    #   runAsNonRoot: true
+    #   runAsUser: 1000
+    #   runAsGroup: 1000
+    #   fsGroup: 1000
+    #   seccompProfile:
+    #     type: RuntimeDefault
+
+    # containerSecurityContext:
+    #   allowPrivilegeEscalation: false
+    #   readOnlyRootFilesystem: false
+    #   capabilities:
+    #     drop: ["ALL"]
+
+    # serviceAccount:
+    #   create: false
+    #   name: ""
+    #   annotations: {}

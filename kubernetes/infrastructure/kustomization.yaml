@@ -12,6 +12,7 @@ resources:
   - tailscale
   - tailscale-connector
   - k8s-gateway
+  - coredns
   - cloudflare-tunnel
   - prometheus
   - grafana

@@ -214,6 +214,18 @@ spec:
       port: 53
     - protocol: TCP
       port: 53
+  # Allow forwarding to k8s-gateway for internal stub zones.
+  # Cilium DNAT translates ClusterIP:53 → pod:1053 before policy evaluation,
+  # so port 1053 must be explicitly allowed here.
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: k8s-gateway
+    ports:
+    - protocol: UDP
+      port: 1053
+    - protocol: TCP
+      port: 1053
   # Allow API server communication for service discovery
   - to: []
     ports:

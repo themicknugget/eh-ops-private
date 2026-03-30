@@ -39,7 +39,7 @@ spec:
       # githubToken: ""       # Only used when existingSecret is empty
 
     env:
-      ANTHROPIC_BASE_URL: "https://cortex.whydontyou.work"
+      OPENAI_BASE_URL: "https://cortex.whydontyou.work"
       AUTOANNEAL_DEBUG_STREAM: "1"
       # ANTHROPIC_AUTH_TOKEN: ""       # Bearer token for proxy (takes precedence over API_KEY)
       # OPENAI_BASE_URL: ""            # Required when using OpenAI provider

@@ -1,0 +1,36 @@
+---
+# On edge nodes, pods use nodelocal-dns at 169.254.20.10 (hostNetwork).
+# K8s NetworkPolicy namespaceSelector:{} doesn't match host-network traffic,
+# so any pod with a restrictive Egress policy silently loses DNS on edge nodes.
+# This mutation appends the required egress rule to every NetworkPolicy that
+# restricts egress, keeping the fix cluster-wide without touching each app.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-nodelocal-dns-egress
+spec:
+  rules:
+  - name: append-nodelocal-dns-egress
+    match:
+      any:
+      - resources:
+          kinds:
+          - NetworkPolicy
+    preconditions:
+      all:
+      - key: "{{ request.object.spec.policyTypes[] | contains(@, 'Egress') }}"
+        operator: Equals
+        value: true
+    mutate:
+      patchesJson6902: |-
+        - op: add
+          path: /spec/egress/-
+          value:
+            to:
+            - ipBlock:
+                cidr: 169.254.20.10/32
+            ports:
+            - protocol: UDP
+              port: 53
+            - protocol: TCP
+              port: 53

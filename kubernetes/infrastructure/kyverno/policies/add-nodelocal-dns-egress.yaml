@@ -10,7 +10,6 @@ kind: ClusterPolicy
 metadata:
   name: add-nodelocal-dns-egress
 spec:
-  generateExistingOnPolicyUpdate: true
   rules:
   - name: generate-nodelocal-dns-cnp
     match:
@@ -24,6 +23,7 @@ spec:
         operator: Equals
         value: true
     generate:
+      generateExisting: true
       apiVersion: cilium.io/v2
       kind: CiliumNetworkPolicy
       name: "nodelocal-dns-egress-{{ request.object.metadata.name }}"

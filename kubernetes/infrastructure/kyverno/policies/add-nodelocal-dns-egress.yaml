@@ -9,6 +9,7 @@ kind: ClusterPolicy
 metadata:
   name: add-nodelocal-dns-egress
 spec:
+  mutateExistingOnPolicyUpdate: true
   rules:
   - name: append-nodelocal-dns-egress
     match:

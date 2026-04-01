@@ -39,7 +39,7 @@ spec:
   - name: LLAMA_FLASH_MOE_ENABLED
     value: '1'
   - name: LLAMA_FLASH_MOE_IOURING
-    value: '1'
+    value: '0'
   - name: LLAMA_FLASH_MOE_GGUF_PATH
     value: $(HF_SOURCE)
   - name: LLAMA_ARG_CPU_MOE
@@ -50,7 +50,7 @@ spec:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: 13d508e
+    tag: 64a00d8
   port: 8080
   readinessPath: /health
   securityContext:

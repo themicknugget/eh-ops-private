@@ -45,7 +45,7 @@ spec:
   - name: LLAMA_ARG_CPU_MOE
     value: '1'
   - name: LLAMA_FLASH_MOE_MODE
-    value: disabled
+    value: async_prefetch
   gpu:
     shared: true
   image:

@@ -1,17 +1,18 @@
 ---
 # On edge nodes, pods use nodelocal-dns at 169.254.20.10 (hostNetwork).
-# K8s NetworkPolicy namespaceSelector:{} doesn't match host-network traffic,
-# so any pod with a restrictive Egress policy silently loses DNS on edge nodes.
-# This mutation appends the required egress rule to every NetworkPolicy that
-# restricts egress, keeping the fix cluster-wide without touching each app.
+# Cilium maps 169.254.20.10 to reserved:host, so K8s NetworkPolicy ipBlock
+# can never match it. A CiliumNetworkPolicy with toEntities:host is required.
+# This policy generates a companion CiliumNetworkPolicy for every K8s NetworkPolicy
+# that restricts Egress, using the same podSelector so only the affected pods gain
+# the host:53 egress allow — unrestricted pods in the namespace are untouched.
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
   name: add-nodelocal-dns-egress
 spec:
-  mutateExistingOnPolicyUpdate: true
+  generateExistingOnPolicyUpdate: true
   rules:
-  - name: append-nodelocal-dns-egress
+  - name: generate-nodelocal-dns-cnp
     match:
       any:
       - resources:
@@ -22,16 +23,21 @@ spec:
       - key: "{{ request.object.spec.policyTypes[] | contains(@, 'Egress') }}"
         operator: Equals
         value: true
-    mutate:
-      patchesJson6902: |-
-        - op: add
-          path: /spec/egress/-
-          value:
-            to:
-            - ipBlock:
-                cidr: 169.254.20.10/32
-            ports:
-            - protocol: UDP
-              port: 53
-            - protocol: TCP
-              port: 53
+    generate:
+      apiVersion: cilium.io/v2
+      kind: CiliumNetworkPolicy
+      name: "nodelocal-dns-egress-{{ request.object.metadata.name }}"
+      namespace: "{{ request.object.metadata.namespace }}"
+      synchronize: true
+      data:
+        spec:
+          endpointSelector: "{{ request.object.spec.podSelector }}"
+          egress:
+          - toEntities:
+            - host
+            toPorts:
+            - ports:
+              - port: "53"
+                protocol: UDP
+              - port: "53"
+                protocol: TCP

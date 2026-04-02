@@ -46,11 +46,13 @@ spec:
     value: '1'
   - name: LLAMA_FLASH_MOE_MODE
     value: async_prefetch
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
+    value: '9090'
   gpu:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: 19fd3b2
+    tag: e0178db
   port: 8080
   readinessPath: /health
   securityContext:

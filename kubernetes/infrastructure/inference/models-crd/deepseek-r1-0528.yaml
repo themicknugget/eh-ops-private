@@ -11,6 +11,10 @@ spec:
   resources:
     memory: 30Gi
     memoryLimit: 120Gi
+  env:
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
+    value: "9090"
+
   scaling:
     cooldownPeriod: 30m
     enabled: true

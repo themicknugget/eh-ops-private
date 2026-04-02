@@ -45,7 +45,7 @@ spec:
   - name: LLAMA_ARG_CPU_MOE
     value: '1'
   - name: LLAMA_FLASH_MOE_MODE
-    value: '9090'
+    value: async_prefetch
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: '9090'
   gpu:
@@ -60,15 +60,8 @@ spec:
       add:
       - SYS_PTRACE
       - IPC_LOCK
-    failureThreshold: 300
-    httpGet:
-      path: /health
-      port: 8080
-    initialDelaySeconds: 1
-    periodSeconds: 1
     seccompProfile:
       type: Unconfined
-    timeoutSeconds: 5
   volumeMounts:
   - mountPath: /dev/dri
     name: dri

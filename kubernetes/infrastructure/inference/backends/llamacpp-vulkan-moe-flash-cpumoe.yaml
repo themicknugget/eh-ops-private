@@ -55,6 +55,15 @@ spec:
     tag: 7637f09
   port: 8080
   readinessPath: /health
+  # Increased startup probe for I17 metrics initialization
+  startupProbe:
+    httpGet:
+      path: /health
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 2
+    failureThreshold: 180  # 180 * 2s = 360s = 6 minutes
+    timeoutSeconds: 5
   securityContext:
     capabilities:
       add:

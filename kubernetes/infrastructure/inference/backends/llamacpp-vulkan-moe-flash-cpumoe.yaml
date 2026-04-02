@@ -45,13 +45,14 @@ spec:
   - name: LLAMA_ARG_CPU_MOE
     value: '1'
   - name: LLAMA_FLASH_MOE_MODE
-    value: async_prefetch
+    value: '9090'
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: '9090'
   gpu:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: 7637f09
+    tag: db51547
   port: 8080
   readinessPath: /health
   securityContext:
@@ -59,14 +60,14 @@ spec:
       add:
       - SYS_PTRACE
       - IPC_LOCK
-    seccompProfile:
-      type: Unconfined
     failureThreshold: 300
     httpGet:
       path: /health
       port: 8080
     initialDelaySeconds: 1
     periodSeconds: 1
+    seccompProfile:
+      type: Unconfined
     timeoutSeconds: 5
   volumeMounts:
   - mountPath: /dev/dri

@@ -46,7 +46,6 @@ spec:
     value: '1'
   - name: LLAMA_FLASH_MOE_MODE
     value: async_prefetch
-  - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: '9090'
   gpu:
     shared: true
@@ -55,15 +54,6 @@ spec:
     tag: 7637f09
   port: 8080
   readinessPath: /health
-  # Increased startup probe for I17 metrics initialization
-  startupProbe:
-    httpGet:
-      path: /health
-      port: 8080
-    initialDelaySeconds: 10
-    periodSeconds: 2
-    failureThreshold: 180  # 180 * 2s = 360s = 6 minutes
-    timeoutSeconds: 5
   securityContext:
     capabilities:
       add:
@@ -71,7 +61,6 @@ spec:
       - IPC_LOCK
     seccompProfile:
       type: Unconfined
-  startupProbe:
     failureThreshold: 300
     httpGet:
       path: /health

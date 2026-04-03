@@ -9,3 +9,4 @@ resources:
   - llamacpp-cpu.yaml
   - vllm.yaml
   - whisper-cpp.yaml
+  - ik-llama-cpu.yaml

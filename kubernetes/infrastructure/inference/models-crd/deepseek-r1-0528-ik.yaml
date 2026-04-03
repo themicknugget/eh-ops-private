@@ -1,0 +1,35 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: deepseek-r1-0528-ik
+  namespace: inference
+spec:
+  backend: ik-llama-cpu
+  modelName: deepseek-r1-0528-ik
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  resources:
+    memory: 30Gi
+    memoryLimit: 120Gi
+  scaling:
+    cooldownPeriod: 30m
+    enabled: true
+    evictionPolicy: Default
+    maxReplicas: 1
+  service:
+    type: ClusterIP
+  source:
+    huggingFace:
+      contextSize: "8192"
+      files:
+      - 'Q2_K/*'
+      modelFile: Q2_K/DeepSeek-R1-0528-Q2_K-00001-of-00005.gguf
+      repo: unsloth/DeepSeek-R1-0528-GGUF
+      tokenSecret: hf-token
+      tokenSecretKey: token
+  storage:
+    modelDir: deepseek-r1-0528
+    pvc: model-cache
+  tolerations:
+  - key: amd.com/gpu
+    operator: Exists

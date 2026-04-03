@@ -1,0 +1,39 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceBackend
+metadata:
+  name: ik-llama-cpu
+  namespace: inference
+spec:
+  image:
+    repository: ghcr.io/cecil-the-coder/ik-llama-cpu
+    tag: latest
+  port: 8080
+  command:
+    - /usr/bin/llama-server
+  args:
+    - -m
+    - $(HF_SOURCE)
+    - --host
+    - 0.0.0.0
+    - --port
+    - "8080"
+    - --metrics
+    - --ctx-size
+    - "8192"
+    - --no-warmup
+  readinessPath: /health
+  env:
+    - name: LLAMA_ARG_THREADS
+      value: "16"
+    - name: LLAMA_ARG_BATCH_SIZE
+      value: "4096"
+    - name: LLAMA_ARG_UBATCH_SIZE
+      value: "1024"
+    - name: LLAMA_ARG_ENDPOINT_METRICS
+      value: "1"
+    - name: LLAMA_ARG_FLASH_ATTN
+      value: "1"
+    - name: LLAMA_ARG_CACHE_TYPE_K
+      value: q4_0
+    - name: LLAMA_ARG_CACHE_TYPE_V
+      value: q4_0

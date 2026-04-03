@@ -135,6 +135,7 @@ spec:
         cronInterval: 5
         reviewPrs: true
         fixExternalCi: true
+        reviewFixThreshold: 10
 
     manager:
       dockerMode: false

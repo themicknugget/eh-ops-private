@@ -39,7 +39,7 @@ spec:
   - name: LLAMA_FLASH_MOE_ENABLED
     value: '1'
   - name: LLAMA_FLASH_MOE_IOURING
-    value: '0'
+    value: '1'  # Enable io_uring for I14 optimizations (SINGLE_ISSUER, MADV_HUGEPAGE)
   - name: LLAMA_FLASH_MOE_GGUF_PATH
     value: $(HF_SOURCE)
   - name: LLAMA_ARG_CPU_MOE

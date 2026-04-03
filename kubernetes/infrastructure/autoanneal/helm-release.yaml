@@ -129,6 +129,13 @@ spec:
         cronInterval: 5
         reviewPrs: true
 
+      - name: codecrucible
+        repo: "Code-Crucible/CodeCrucible"
+        schedule: "*/5 * * * *"
+        cronInterval: 5
+        reviewPrs: true
+        fixExternalCi: true
+
     manager:
       dockerMode: false
       namespace: "github-runners"

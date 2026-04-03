@@ -1,0 +1,54 @@
+# I14 + I10b Test Model
+# Tests io_uring polish optimizations and force-offload slot buffer
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: i14-i10b-test
+  namespace: inference
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: ./kubernetes/infrastructure/inference/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+      interval: 5m
+  values:
+    name: i14-i10b-test
+    backend: llamacpp-vulkan-moe-flash-cpumoe
+    
+    source:
+      huggingface: unsloth/Qwen3-235B-A22B-GGUF
+      contextSize: "4096"
+    
+    storage:
+      sharedPvc: model-cache
+      modelDir: qwen3-235b-a22b
+      modelFile: Q4_K_M/Qwen3-235B-A22B-Q4_K_M-00001-of-00002.gguf
+    
+    download:
+      include: "Q4_K_M/*.gguf"
+      tokenSecret: hf-token
+    
+    resources:
+      limits:
+        memory: 125Gi
+    
+    scaling:
+      cooldownPeriod: 300
+      maxReplicas: 1
+    
+    # I10b test environment variables
+    extraEnv:
+      - name: LLAMA_ARG_CPU_MOE
+        value: "1"
+      - name: LLAMA_FLASH_MOE_FORCE_OFFLOAD
+        value: "1"
+      - name: LLAMA_FLASH_MOE_CACHE_SIZE_MB
+        value: "128"
+      - name: LLAMA_FLASH_MOE_MODE
+        value: "prefetch"
+      - name: LLAMA_FLASH_MOE_LOG_ROUTING
+        value: "1"

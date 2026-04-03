@@ -31,3 +31,4 @@ resources:
   - whisper-large-v3-turbo.yaml
   - orpheus-3b.yaml
   - kittentts.yaml
+  - i14-i10b-test.yaml

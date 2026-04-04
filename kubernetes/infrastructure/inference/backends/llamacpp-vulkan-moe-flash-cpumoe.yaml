@@ -17,8 +17,6 @@ spec:
   - --no-warmup
   - --ctx-size
   - '8192'
-  - -fit
-  - 'off'
   command:
   - /usr/bin/llama-server
   env:
@@ -56,7 +54,7 @@ spec:
     shared: true
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-moe-flash
-    tag: 91fe97e
+    tag: 8eb1c6d
   port: 8080
   readinessPath: /health
   securityContext:

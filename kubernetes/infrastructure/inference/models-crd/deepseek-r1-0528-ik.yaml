@@ -12,14 +12,16 @@ spec:
     memory: 30Gi
     memoryLimit: 125Gi
   env:
-    # --cpu-moe keeps MoE expert weights on CPU via mmap, preventing
-    # ik_llama.cpp from trying to allocate them as device memory
+    # --cpu-moe keeps MoE expert weights on CPU via mmap
     - name: LLAMA_ARG_CPU_MOE
       value: "1"
     # Reduce context to minimize KV cache memory pressure
-    # DeepSeek KV cache at 8192 ctx is ~6 GB with q4_0
     - name: LLAMA_ARG_CTX_SIZE
       value: "4096"
+    # Disable flash attention to bypass FlashMLA — suspected cause of
+    # NaN logits on DeepSeek2 architecture with Q2_K over mmap
+    - name: LLAMA_ARG_FLASH_ATTN
+      value: "0"
   scaling:
     cooldownPeriod: 30m
     enabled: true

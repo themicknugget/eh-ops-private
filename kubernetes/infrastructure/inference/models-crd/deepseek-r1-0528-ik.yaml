@@ -22,6 +22,11 @@ spec:
     # NaN logits on DeepSeek2 architecture with Q2_K over mmap
     - name: LLAMA_ARG_FLASH_ATTN
       value: "0"
+    # f16 KV cache required when flash attention is disabled
+    - name: LLAMA_ARG_CACHE_TYPE_K
+      value: f16
+    - name: LLAMA_ARG_CACHE_TYPE_V
+      value: f16
   scaling:
     cooldownPeriod: 30m
     enabled: true

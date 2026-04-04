@@ -11,6 +11,15 @@ spec:
   resources:
     memory: 30Gi
     memoryLimit: 125Gi
+  env:
+    # --cpu-moe keeps MoE expert weights on CPU via mmap, preventing
+    # ik_llama.cpp from trying to allocate them as device memory
+    - name: LLAMA_ARG_CPU_MOE
+      value: "1"
+    # Reduce context to minimize KV cache memory pressure
+    # DeepSeek KV cache at 8192 ctx is ~6 GB with q4_0
+    - name: LLAMA_ARG_CTX_SIZE
+      value: "4096"
   scaling:
     cooldownPeriod: 30m
     enabled: true
@@ -20,7 +29,7 @@ spec:
     type: ClusterIP
   source:
     huggingFace:
-      contextSize: "8192"
+      contextSize: "4096"
       files:
       - 'Q2_K/*'
       modelFile: Q2_K/DeepSeek-R1-0528-Q2_K-00001-of-00005.gguf

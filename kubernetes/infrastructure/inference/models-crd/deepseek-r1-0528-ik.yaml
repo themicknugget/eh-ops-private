@@ -10,7 +10,7 @@ spec:
     kubernetes.io/hostname: shadow
   resources:
     memory: 30Gi
-    memoryLimit: 120Gi
+    memoryLimit: 125Gi
   scaling:
     cooldownPeriod: 30m
     enabled: true

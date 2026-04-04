@@ -5,6 +5,7 @@ resources:
   - command-a.yaml
   - deepseek-r1-0528.yaml
   - deepseek-r1-0528-ik.yaml
+  - qwen3-235b-a22b-ik.yaml
   - deepseek-r1-0528-8b.yaml
   - deepseek-r1-distill-70b.yaml
   - devstral-2-123b.yaml

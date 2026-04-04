@@ -14,9 +14,6 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
-  # I10b: Force GPU offload for expert matmul via slot buffer
-  - name: LLAMA_FLASH_MOE_FORCE_OFFLOAD
-    value: "1"
 
   scaling:
     cooldownPeriod: 30m

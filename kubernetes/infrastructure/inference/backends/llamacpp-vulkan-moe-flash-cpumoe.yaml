@@ -17,6 +17,8 @@ spec:
   - --no-warmup
   - --ctx-size
   - '8192'
+  - -fit
+  - 'off'
   command:
   - /usr/bin/llama-server
   env:

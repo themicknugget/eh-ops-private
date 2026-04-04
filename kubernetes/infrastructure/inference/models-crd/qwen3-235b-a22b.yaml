@@ -23,6 +23,9 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
+  # Override CPU_MOE=0 — this 80 GB model fits in GTT, use full GPU
+  - name: LLAMA_ARG_CPU_MOE
+    value: "0"
 
   scaling:
     cooldownPeriod: 5m

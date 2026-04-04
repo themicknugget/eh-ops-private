@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/zai-org_GLM-4.7-Flash-GGUF
-      contextSize: "131072"
+      contextSize: "8192"
       modelFile: zai-org_GLM-4.7-Flash-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"

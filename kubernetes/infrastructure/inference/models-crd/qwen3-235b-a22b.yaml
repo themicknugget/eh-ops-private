@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: unsloth/Qwen3-235B-A22B-GGUF
-      contextSize: "131072"
+      contextSize: "8192"
       modelFile: Q2_K/Qwen3-235B-A22B-Q2_K-00001-of-00002.gguf
       files:
         - Q2_K/*.gguf

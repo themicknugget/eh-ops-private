@@ -17,6 +17,10 @@ spec:
   # Test: disable flash-moe to use standard CPU→GPU path with expert cache
   - name: LLAMA_FLASH_MOE_ENABLED
     value: "0"
+  - name: LLAMA_FLASH_MOE_MODE
+    value: "disabled"
+  - name: LLAMA_FLASH_MOE_IOURING
+    value: "0"
 
   scaling:
     cooldownPeriod: 30m

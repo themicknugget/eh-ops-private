@@ -14,6 +14,9 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
+  # Test: disable flash-moe to use standard CPU→GPU path with expert cache
+  - name: LLAMA_FLASH_MOE_ENABLED
+    value: "0"
 
   scaling:
     cooldownPeriod: 30m

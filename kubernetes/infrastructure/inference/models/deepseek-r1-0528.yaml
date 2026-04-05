@@ -17,7 +17,7 @@ spec:
       interval: 5m
   values:
     name: deepseek-r1-0528
-    backend: llamacpp-vulkan-moe-flash
+    backend: llamacpp-vulkan-moe-flash-cpumoe
 
     source:
       huggingface: unsloth/DeepSeek-R1-0528-GGUF

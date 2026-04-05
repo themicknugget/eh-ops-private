@@ -23,7 +23,6 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
-    value: "0"
 
   scaling:
     cooldownPeriod: 5m

@@ -21,9 +21,10 @@ spec:
     value: "disabled"
   - name: LLAMA_FLASH_MOE_IOURING
     value: "0"
-  # 96 slots = 75% of 128 experts, ~90 GB buffer pool, 97% hit rate, ~11 t/s
+  # 64 slots = 50% of 128 experts, ~60 GB pool, 94% hit rate, ~9 t/s
+  # N_SLOTS=96 (~90 GB) crashes 128 GB node — pool + mmap exceeds RAM
   - name: GGML_MOE_N_SLOTS
-    value: "96"
+    value: "64"
 
   scaling:
     cooldownPeriod: 30m

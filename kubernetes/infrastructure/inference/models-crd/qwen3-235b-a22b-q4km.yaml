@@ -22,7 +22,7 @@ spec:
   - name: LLAMA_FLASH_MOE_IOURING
     value: "0"
   - name: GGML_MOE_N_SLOTS
-    value: "64"
+    value: "128"
 
   scaling:
     cooldownPeriod: 30m

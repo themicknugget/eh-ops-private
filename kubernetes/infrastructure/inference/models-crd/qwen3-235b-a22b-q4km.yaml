@@ -21,6 +21,7 @@ spec:
     value: "disabled"
   - name: LLAMA_FLASH_MOE_IOURING
     value: "0"
+  # 96 slots = 75% of 128 experts, ~90 GB buffer pool, 97% hit rate, ~11 t/s
   - name: GGML_MOE_N_SLOTS
     value: "96"
 

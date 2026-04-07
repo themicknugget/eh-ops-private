@@ -14,15 +14,16 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
-  # Disable flash-moe: standard CPU→GPU path with slot buffer is faster
   - name: LLAMA_FLASH_MOE_ENABLED
-    value: "0"
+    value: "1"
   - name: LLAMA_FLASH_MOE_MODE
-    value: "disabled"
+    value: "async_prefetch"
   - name: LLAMA_FLASH_MOE_IOURING
+    value: "1"
+  # Override CPU_MOE from backend to test GPU pool batch allocation
+  - name: LLAMA_ARG_CPU_MOE
     value: "0"
-  # 64 slots = 50% of 128 experts, ~60 GB pool, 94% hit rate, ~9 t/s
-  # N_SLOTS=96 (~90 GB) crashes 128 GB node — pool + mmap exceeds RAM
+  # 64 slots = 50% of 128 experts — test 0024 batch allocation
   - name: GGML_MOE_N_SLOTS
     value: "64"
 

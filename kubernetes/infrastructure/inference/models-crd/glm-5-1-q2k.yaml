@@ -32,7 +32,7 @@ spec:
       contextSize: "2048"
       files:
       - 'UD-Q2_K_XL/*'
-      modelFile: UD-Q2_K_XL/GLM-5.1-UD-Q2_K_XL-00001-of-00006.gguf
+      modelFile: UD-Q2_K_XL/GLM-5.1-UD-Q2_K_XL-00001-of-00007.gguf
       repo: unsloth/GLM-5.1-GGUF
       tokenSecret: hf-token
       tokenSecretKey: token

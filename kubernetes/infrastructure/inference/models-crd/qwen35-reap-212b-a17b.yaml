@@ -29,8 +29,11 @@ spec:
     value: "disabled"
   - name: LLAMA_FLASH_MOE_IOURING
     value: "0"
-  # Pool slot remapping not reached with CPU_MOE — experts stay on CPU
-  # Batch allocation (0024) will activate when GPU MoE path is used
+  # Force slot remapping: override GTT threshold so auto-detect keeps CPU_MOE
+  - name: LLAMA_FLASH_MOE_GTT_MB
+    value: "1"
+  - name: GGML_MOE_N_SLOTS
+    value: "128"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

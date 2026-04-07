@@ -24,16 +24,13 @@ spec:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
   - name: LLAMA_FLASH_MOE_ENABLED
-    value: "1"
+    value: "0"
   - name: LLAMA_FLASH_MOE_MODE
-    value: "async_prefetch"
+    value: "disabled"
   - name: LLAMA_FLASH_MOE_IOURING
-    value: "1"
-  - name: GGML_MOE_N_SLOTS
-    value: "128"
-  - name: LLAMA_FLASH_MOE_GTT_MB
-    value: "1"
-  # Test 0024: batch pool allocation with N_SLOTS=128
+    value: "0"
+  # Pool slot remapping not reached with CPU_MOE — experts stay on CPU
+  # Batch allocation (0024) will activate when GPU MoE path is used
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

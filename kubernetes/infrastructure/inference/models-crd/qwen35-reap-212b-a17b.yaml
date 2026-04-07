@@ -31,11 +31,6 @@ spec:
     value: "0"
   # Test: force slot remapping to reduce GTT usage (108 GB → ~25 GB)
   # 267 experts, K=10, 64 slots = 24% cached
-  - name: GGML_MOE_N_SLOTS
-    value: "128"
-  # Force CPU_MOE to enable slot remapping (override auto-detect)
-  - name: LLAMA_FLASH_MOE_GTT_MB
-    value: "1"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

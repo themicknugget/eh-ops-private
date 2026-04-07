@@ -24,13 +24,16 @@ spec:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
   - name: LLAMA_FLASH_MOE_ENABLED
-    value: "0"
+    value: "1"
   - name: LLAMA_FLASH_MOE_MODE
-    value: "disabled"
+    value: "async_prefetch"
   - name: LLAMA_FLASH_MOE_IOURING
-    value: "0"
-  # Test: force slot remapping to reduce GTT usage (108 GB → ~25 GB)
-  # 267 experts, K=10, 64 slots = 24% cached
+    value: "1"
+  - name: GGML_MOE_N_SLOTS
+    value: "128"
+  - name: LLAMA_FLASH_MOE_GTT_MB
+    value: "1"
+  # Test 0024: batch pool allocation with N_SLOTS=128
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

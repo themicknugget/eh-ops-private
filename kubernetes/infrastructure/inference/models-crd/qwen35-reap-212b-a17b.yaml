@@ -23,13 +23,19 @@ spec:
   env:
   - name: LLAMA_FLASH_MOE_METRICS_PORT
     value: "9090"
-  # 110 GB is near GTT boundary — disable flash-moe, let auto-detect handle GPU path
   - name: LLAMA_FLASH_MOE_ENABLED
     value: "0"
   - name: LLAMA_FLASH_MOE_MODE
     value: "disabled"
   - name: LLAMA_FLASH_MOE_IOURING
     value: "0"
+  # Test: force slot remapping to reduce GTT usage (108 GB → ~25 GB)
+  # 267 experts, K=10, 64 slots = 24% cached
+  - name: GGML_MOE_N_SLOTS
+    value: "64"
+  # Force CPU_MOE to enable slot remapping (override auto-detect)
+  - name: LLAMA_FLASH_MOE_GTT_MB
+    value: "1"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

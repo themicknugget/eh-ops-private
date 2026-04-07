@@ -5,11 +5,11 @@ metadata:
   namespace: inference
 spec:
   modelName: minimax-m25-reap
-  backend: llamacpp-vulkan-moe
+  backend: llamacpp-vulkan-moe-flash-cpumoe
   source:
     huggingFace:
       repo: exdysa/MiniMax-M2.5-REAP-172B-A10B-GGUF-Q4_K_M
-      contextSize: "196608"
+      contextSize: "8192"
       modelFile: MiniMax-M2.5-REAP-172B-A10B-Q4_K_M.gguf
       tokenSecret: hf-token
   storage:
@@ -18,6 +18,16 @@ spec:
   resources:
     memory: 100Gi
     memoryLimit: 120Gi
+  env:
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
+    value: "9090"
+  # 100 GB fits in GTT — should auto-detect as full GPU, no slot remapping needed
+  - name: LLAMA_FLASH_MOE_ENABLED
+    value: "0"
+  - name: LLAMA_FLASH_MOE_MODE
+    value: "disabled"
+  - name: LLAMA_FLASH_MOE_IOURING
+    value: "0"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

@@ -5,11 +5,11 @@ metadata:
   namespace: inference
 spec:
   modelName: qwen35-reap-212b-a17b
-  backend: llamacpp-vulkan-moe
+  backend: llamacpp-vulkan-moe-flash-cpumoe
   source:
     huggingFace:
       repo: OpenMOSE/Qwen3.5-REAP-212B-A17B-GGUF
-      contextSize: "131072"
+      contextSize: "8192"
       modelFile: IQ4_XS/Qwen3.5-REAP-212B-A17B-IQ4_XS-00001-of-00004.gguf
       files:
         - IQ4_XS/*.gguf
@@ -20,6 +20,16 @@ spec:
   resources:
     memory: 110Gi
     memoryLimit: 120Gi
+  env:
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
+    value: "9090"
+  # 110 GB is near GTT boundary — disable flash-moe, let auto-detect handle GPU path
+  - name: LLAMA_FLASH_MOE_ENABLED
+    value: "0"
+  - name: LLAMA_FLASH_MOE_MODE
+    value: "disabled"
+  - name: LLAMA_FLASH_MOE_IOURING
+    value: "0"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

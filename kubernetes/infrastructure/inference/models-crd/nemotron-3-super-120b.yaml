@@ -5,11 +5,11 @@ metadata:
   namespace: inference
 spec:
   modelName: nemotron-3-super-120b
-  backend: llamacpp-vulkan-moe
+  backend: llamacpp-vulkan-moe-flash-cpumoe
   source:
     huggingFace:
       repo: unsloth/NVIDIA-Nemotron-3-Super-120B-A12B-GGUF
-      contextSize: "200000"
+      contextSize: "8192"
       modelFile: MXFP4_MOE/NVIDIA-Nemotron-3-Super-120B-A12B-MXFP4_MOE-00001-of-00003.gguf
       files:
         - MXFP4_MOE/*.gguf
@@ -20,6 +20,16 @@ spec:
   resources:
     memory: 85Gi
     memoryLimit: 105Gi
+  env:
+  - name: LLAMA_FLASH_MOE_METRICS_PORT
+    value: "9090"
+  # 85 GB well under GTT — should auto-detect as full GPU, no slot remapping needed
+  - name: LLAMA_FLASH_MOE_ENABLED
+    value: "0"
+  - name: LLAMA_FLASH_MOE_MODE
+    value: "disabled"
+  - name: LLAMA_FLASH_MOE_IOURING
+    value: "0"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

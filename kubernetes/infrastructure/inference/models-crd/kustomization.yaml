@@ -11,6 +11,7 @@ resources:
   - deepseek-r1-distill-70b.yaml
   - devstral-2-123b.yaml
   - gemma-3-27b.yaml
+  - gemma-4-26b-a4b-claude-distilled.yaml
   - glm-4-7-flash.yaml
   - glm-5-q2k.yaml
   - glm-5-1-q2k.yaml

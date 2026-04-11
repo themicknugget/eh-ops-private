@@ -1,0 +1,36 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: gemma-4-26b-a4b-claude-distilled
+  namespace: inference
+spec:
+  modelName: gemma-4-26b-a4b-claude-distilled
+  backend: llamacpp-vulkan-moe
+  args:
+    - --mmproj
+    - $(MMPROJ_SOURCE)
+  source:
+    huggingFace:
+      repo: TeichAI/gemma-4-26B-A4B-it-Claude-Opus-Distill-GGUF
+      contextSize: "262144"
+      modelFile: gemma-4-26B-A4B-it-Claude-Opus-Distill.q4_k_m.gguf
+      mmprojFile: mmproj-BF16.gguf
+      files:
+        - gemma-4-26B-A4B-it-Claude-Opus-Distill.q4_k_m.gguf
+        - mmproj-BF16.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: gemma-4-26b-a4b-claude-distilled
+  resources:
+    memory: 22Gi
+    memoryLimit: 40Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

@@ -8,6 +8,9 @@ spec:
     - name: external-gateway
       namespace: kube-system
       sectionName: https-domain1
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: http-domain1
   hostnames:
     - "forgejo.${DOMAIN1}"
   rules:
@@ -24,23 +27,3 @@ spec:
       backendRefs:
         - name: forgejo-http
           port: 3000
----
-# Redirect HTTP to HTTPS so the client-side URL check always passes
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: forgejo-http-redirect
-  namespace: forgejo
-spec:
-  parentRefs:
-    - name: external-gateway
-      namespace: kube-system
-      sectionName: http-domain1
-  hostnames:
-    - "forgejo.${DOMAIN1}"
-  rules:
-    - filters:
-        - type: RequestRedirect
-          requestRedirect:
-            scheme: https
-            statusCode: 301

@@ -102,6 +102,16 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
+  name: forgejo
+  namespace: flux-system
+spec:
+  type: oci
+  interval: 1h
+  url: oci://code.forgejo.org/forgejo-helm
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
   name: bitnami
   namespace: flux-system
 spec:

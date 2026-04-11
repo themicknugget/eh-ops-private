@@ -60,7 +60,7 @@ spec:
       modelImplement: "Z.ai:glm-5.1"
       # modelCritic: ""
       # modelPlan: ""
-      criticModels: "kimi-k2-5,glm-5,Z.ai:glm-5.1,Inception:mercury-2,qwen:coder-model"
+      criticModels: "kimi-k2-5,glm-5,Z.ai:glm-5.1,Inception:mercury-2,Groq:openai/gpt-oss-120b"
 
       # -- Analysis & implementation
       # maxTasks: 3                    # Max improvements to implement per run
@@ -130,7 +130,7 @@ spec:
         reviewPrs: true
 
       - name: codecrucible
-        repo: "Code-Crucible/CodeCrucible"
+        repo: "Code-Crucible/Code-Crucible"
         schedule: "*/5 * * * *"
         cronInterval: 5
         reviewPrs: true

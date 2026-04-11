@@ -35,6 +35,9 @@ spec:
           SSH_PORT: 22
           SSH_USER: forgejo
           LFS_START_SERVER: true
+          # Trust X-Forwarded-Proto from Envoy so scheme matches ROOT_URL
+          REVERSE_PROXY_TRUSTED_PROXIES: "*"
+          REVERSE_PROXY_LIMIT: 1
 
         service:
           DISABLE_REGISTRATION: true

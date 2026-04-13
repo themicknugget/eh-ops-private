@@ -114,6 +114,7 @@ spec:
 
       - name: autoanneal
         repo: "cecil-the-coder/autoanneal"
+        model: "openrouter:openrouter/elephant-alpha"
         schedule: "*/10 * * * *"
         reviewPrs: true
 

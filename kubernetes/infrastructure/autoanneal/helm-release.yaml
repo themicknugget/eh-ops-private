@@ -54,7 +54,8 @@ spec:
       # contextWindow: 128000          # Context window size in tokens
 
       # -- Model selection
-      model: "kimi-k2-5"
+      # model: "kimi-k2-5"
+      model: "openrouter:openrouter/elephant-alpha"
       # modelRecon: ""                 # Per-phase model overrides (empty = use default model)
       # modelAnalysis: ""
       # modelImplement: ""
@@ -114,7 +115,6 @@ spec:
 
       - name: autoanneal
         repo: "cecil-the-coder/autoanneal"
-        model: "openrouter:openrouter/elephant-alpha"
         schedule: "*/10 * * * *"
         reviewPrs: true
 

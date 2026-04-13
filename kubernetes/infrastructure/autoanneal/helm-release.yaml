@@ -133,7 +133,13 @@ spec:
         schedule: "*/5 * * * *"
         cronInterval: 5
         reviewPrs: true
-        fixExternalCi: true
+        reviewFixThreshold: 10
+
+      - name: mobile-harness
+        repo: "cecil-the-coder/mobile-harness"
+        schedule: "*/5 * * * *"
+        cronInterval: 5
+        reviewPrs: true
         reviewFixThreshold: 10
 
     manager:

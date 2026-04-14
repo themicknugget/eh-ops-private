@@ -100,48 +100,48 @@ spec:
       # -- Logging
       # logLevel: "info"               # Log level: trace, debug, info, warn, error
 
-    repos:
-      - name: mysql-mcp
-        repo: "cecil-the-coder/mysql-mcp"
-        schedule: "*/10 * * * *"
-        reviewPrs: true
-        # maxBudget: "5.00"
-        # timeout: "30m"
-        # model: "kimi-k2-5"
-        # maxTasks: 3
-        # minSeverity: "minor"
-        # setupCommand: ""
-        # dryRun: false
+    # repos:
+    #   - name: mysql-mcp
+    #     repo: "cecil-the-coder/mysql-mcp"
+    #     schedule: "*/10 * * * *"
+    #     reviewPrs: true
+    #     # maxBudget: "5.00"
+    #     # timeout: "30m"
+    #     # model: "kimi-k2-5"
+    #     # maxTasks: 3
+    #     # minSeverity: "minor"
+    #     # setupCommand: ""
+    #     # dryRun: false
 
-      - name: autoanneal
-        repo: "cecil-the-coder/autoanneal"
-        schedule: "*/10 * * * *"
-        reviewPrs: true
+    #   - name: autoanneal
+    #     repo: "cecil-the-coder/autoanneal"
+    #     schedule: "*/10 * * * *"
+    #     reviewPrs: true
 
-      - name: heygolem
-        repo: "HeyGolem/HeyGolem"
-        schedule: "*/10 * * * *"
-        fixExternalCi: true
+    #   - name: heygolem
+    #     repo: "HeyGolem/HeyGolem"
+    #     schedule: "*/10 * * * *"
+    #     fixExternalCi: true
 
-      - name: cortex
-        repo: "cecil-the-coder/Cortex"
-        schedule: "*/5 * * * *"
-        cronInterval: 5
-        reviewPrs: true
+    #   - name: cortex
+    #     repo: "cecil-the-coder/Cortex"
+    #     schedule: "*/5 * * * *"
+    #     cronInterval: 5
+    #     reviewPrs: true
 
-      - name: codecrucible
-        repo: "Code-Crucible/Code-Crucible"
-        schedule: "*/5 * * * *"
-        cronInterval: 5
-        reviewPrs: true
-        reviewFixThreshold: 10
+    #   - name: codecrucible
+    #     repo: "Code-Crucible/Code-Crucible"
+    #     schedule: "*/5 * * * *"
+    #     cronInterval: 5
+    #     reviewPrs: true
+    #     reviewFixThreshold: 10
 
-      - name: mobile-harness
-        repo: "cecil-the-coder/mobile-harness"
-        schedule: "*/5 * * * *"
-        cronInterval: 5
-        reviewPrs: true
-        reviewFixThreshold: 10
+    #   - name: mobile-harness
+    #     repo: "cecil-the-coder/mobile-harness"
+    #     schedule: "*/5 * * * *"
+    #     cronInterval: 5
+    #     reviewPrs: true
+    #     reviewFixThreshold: 10
 
     manager:
       dockerMode: false

@@ -13,9 +13,7 @@ resources:
   - gemma-3-27b.yaml
   - gemma-4-26b-a4b-claude-distilled.yaml
   - glm-4-7-flash.yaml
-  - glm-5-q2k.yaml
   - glm-5-1-q2k.yaml
-  - glm-5-q4km.yaml
   - gpt-oss-120b.yaml
   - gpt-oss-20b.yaml
   - llama-3-3-70b.yaml

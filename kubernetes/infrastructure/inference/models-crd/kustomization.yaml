@@ -32,6 +32,9 @@ resources:
   - qwen2-5-vl-72b.yaml
   - qwen3-235b-a22b.yaml
   - qwen3-235b-a22b-q4km.yaml
+  - qwen3-6-35b-a3b-q4-xl.yaml
+  - qwen3-6-35b-a3b-q6-k.yaml
+  - qwen3-6-35b-a3b-q8.yaml
   - qwen3-coder-next.yaml
   - qwen3-next-80b.yaml
   - qwen3-vl-30b.yaml

@@ -27,5 +27,5 @@ resources:
   - cnpg
   - crucix
   - falkordb
-  - autoanneal
+# - autoanneal
   - forgejo

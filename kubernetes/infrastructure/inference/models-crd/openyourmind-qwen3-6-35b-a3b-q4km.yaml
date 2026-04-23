@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: OpenYourMind/OpenYourMind-Qwen3.6-35B-A3B-kuato-DPO-abliterated-uncensored
-      contextSize: "32768"
+      contextSize: "262144"
       modelFile: OpenYourMind-Qwen3.6-35B-A3B-kuato-DPO-abliterated-uncensored.Q4_K_M.gguf
       files:
         - OpenYourMind-Qwen3.6-35B-A3B-kuato-DPO-abliterated-uncensored.Q4_K_M.gguf

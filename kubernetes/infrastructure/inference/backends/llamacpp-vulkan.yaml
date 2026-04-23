@@ -20,6 +20,7 @@ spec:
     - --metrics
     - --n-gpu-layers
     - all
+    - --jinja
   readinessPath: /health
   gpu:
     shared: true

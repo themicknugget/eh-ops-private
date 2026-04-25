@@ -1,0 +1,31 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: plexus-db
+  namespace: plexus
+spec:
+  instances: 1
+
+  postgresql:
+    parameters:
+      shared_buffers: "64MB"
+      effective_cache_size: "128MB"
+      max_connections: "100"
+
+  storage:
+    storageClass: local-path
+    size: 5Gi
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+  monitoring:
+    enablePodMonitor: true
+
+  affinity:
+    nodeSelector:
+      node-role.kubernetes.io/worker: ""

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plexus
+  namespace: plexus
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: plexus
+  template:
+    metadata:
+      labels:
+        app: plexus
+    spec:
+      containers:
+        - name: plexus
+          image: ghcr.io/mcowger/plexus:latest
+          ports:
+            - name: http
+              containerPort: 4000
+          env:
+            - name: PORT
+              value: "4000"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: plexus-db-app
+                  key: uri
+            - name: ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: plexus-secrets
+                  key: ADMIN_KEY
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: plexus-secrets
+                  key: ENCRYPTION_KEY
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false

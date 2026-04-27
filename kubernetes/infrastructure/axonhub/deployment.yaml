@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axonhub
+  namespace: axonhub
+  labels:
+    app: axonhub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: axonhub
+  template:
+    metadata:
+      labels:
+        app: axonhub
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z axonhub-db-rw.axonhub.svc.cluster.local 5432; do echo waiting for postgresql; sleep 2; done;']
+      containers:
+        - name: axonhub
+          image: looplj/axonhub:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8090
+              protocol: TCP
+          env:
+            - name: AXONHUB_DB_DIALECT
+              value: postgres
+            - name: AXONHUB_DB_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: axonhub-db-app
+                  key: uri
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8090
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""

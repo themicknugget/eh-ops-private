@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: axonhub
+  namespace: axonhub
+spec:
+  parentRefs:
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: https-domain1
+    - name: external-gateway
+      namespace: kube-system
+      sectionName: http-domain1
+  hostnames:
+    - "llm.whydontyou.work"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+      backendRefs:
+        - name: axonhub
+          port: 8090

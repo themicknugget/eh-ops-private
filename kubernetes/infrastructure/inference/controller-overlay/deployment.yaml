@@ -54,7 +54,7 @@ spec:
                 secretKeyRef:
                   name: hf-token
                   key: token
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.37
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.38
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

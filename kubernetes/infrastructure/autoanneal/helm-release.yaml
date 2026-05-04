@@ -54,8 +54,8 @@ spec:
       # contextWindow: 128000          # Context window size in tokens
 
       # -- Model selection
-      # model: "kimi-k2-5"
-      model: "openrouter:openrouter/owl-alpha"
+      model: "kimi-k2-5"
+      # model: "openrouter:openrouter/owl-alpha"
       # modelRecon: ""                 # Per-phase model overrides (empty = use default model)
       # modelAnalysis: ""
       # modelImplement: ""

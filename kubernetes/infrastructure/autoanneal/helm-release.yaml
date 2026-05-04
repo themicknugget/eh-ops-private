@@ -54,8 +54,8 @@ spec:
       # contextWindow: 128000          # Context window size in tokens
 
       # -- Model selection
-      model: "kimi-k2-5"
-      # model: "openrouter:openrouter/elephant-alpha"
+      # model: "kimi-k2-5"
+      model: "openrouter:openrouter/owl-alpha"
       # modelRecon: ""                 # Per-phase model overrides (empty = use default model)
       # modelAnalysis: ""
       # modelImplement: ""
@@ -113,21 +113,21 @@ spec:
         # setupCommand: ""
         # dryRun: false
 
-      - name: autoanneal
-        repo: "cecil-the-coder/autoanneal"
-        schedule: "*/10 * * * *"
-        reviewPrs: true
+      # - name: autoanneal
+      #   repo: "cecil-the-coder/autoanneal"
+      #   schedule: "*/10 * * * *"
+      #   reviewPrs: true
 
-      - name: heygolem
-        repo: "HeyGolem/HeyGolem"
-        schedule: "*/10 * * * *"
-        fixExternalCi: true
+      # - name: heygolem
+      #   repo: "HeyGolem/HeyGolem"
+      #   schedule: "*/10 * * * *"
+      #   fixExternalCi: true
 
-      - name: cortex
-        repo: "cecil-the-coder/Cortex"
-        schedule: "*/5 * * * *"
-        cronInterval: 5
-        reviewPrs: true
+      # - name: cortex
+      #   repo: "cecil-the-coder/Cortex"
+      #   schedule: "*/5 * * * *"
+      #   cronInterval: 5
+      #   reviewPrs: true
 
       - name: codecrucible
         repo: "Code-Crucible/Code-Crucible"

@@ -28,7 +28,7 @@ spec:
       path: ${NFS_PATH}
       mountOptions:
         - hard
-        - nfsvers=4.1
+        - nfsvers=4.2
 
     # StorageClass configuration
     storageClass:

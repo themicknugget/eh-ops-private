@@ -22,12 +22,11 @@ resources:
   - kube-actions-runner
   - database
   - fstrim
-  - inference
   - kasa-exporter
   - cnpg
   - crucix
   - falkordb
-  # - autoanneal
   - forgejo
+  - forgejo-runners
   - plexus
   - axonhub

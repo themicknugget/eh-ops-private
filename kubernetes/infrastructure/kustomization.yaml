@@ -27,6 +27,5 @@ resources:
   - crucix
   - falkordb
   - forgejo
-  - forgejo-runners
   - plexus
   - axonhub

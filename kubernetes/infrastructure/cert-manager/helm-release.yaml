@@ -61,10 +61,11 @@ spec:
           operator: Exists
           effect: NoSchedule
 
-    # cert-manager queries authoritative NS servers directly via raw UDP/53 by default,
-    # which Cilium blocks from pods. Route propagation checks through CoreDNS instead.
+    # cert-manager's default propagation check queries authoritative NS servers directly.
+    # CoreDNS caches negative (NXDOMAIN) responses and returns stale results for TXT records
+    # that were recently added. Use public recursive resolvers directly instead.
     extraArgs:
-      - --dns01-recursive-nameservers=10.96.0.10:53
+      - --dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53
       - --dns01-recursive-nameservers-only
 
     # Enable Prometheus metrics

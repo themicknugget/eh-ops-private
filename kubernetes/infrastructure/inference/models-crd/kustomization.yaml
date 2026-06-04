@@ -43,3 +43,7 @@ resources:
   - qwen35-reap-212b-a17b.yaml
   - whisper-large-v3-turbo.yaml
   - gemma-4-12b-abliterated.yaml
+  - qwen2-5-7b.yaml
+  - selene-1-mini.yaml
+  - qwen3-30b-a3b-2507.yaml
+  - mistral-small-3-2-24b.yaml

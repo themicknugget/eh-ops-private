@@ -1,25 +1,25 @@
 apiVersion: inference.eh-ops.io/v1alpha1
 kind: InferenceModel
 metadata:
-  name: phi-4-mini
+  name: selene-1-mini
   namespace: inference
 spec:
-  modelName: phi-4-mini
+  modelName: selene-1-mini
   backend: llamacpp-vulkan
   source:
     huggingFace:
-      repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
+      repo: bartowski/Selene-1-Mini-Llama-3.1-8B-GGUF
       contextSize: "131072"
-      modelFile: microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
+      modelFile: Selene-1-Mini-Llama-3.1-8B-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
       tokenSecret: hf-token
   storage:
     pvc: model-cache
-    modelDir: phi-4-mini
+    modelDir: selene-1-mini
   resources:
-    memory: 5Gi
-    memoryLimit: 10Gi
+    memory: 6Gi
+    memoryLimit: 14Gi
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

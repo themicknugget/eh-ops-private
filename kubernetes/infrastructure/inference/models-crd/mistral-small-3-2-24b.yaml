@@ -1,25 +1,25 @@
 apiVersion: inference.eh-ops.io/v1alpha1
 kind: InferenceModel
 metadata:
-  name: phi-4-mini
+  name: mistral-small-3-2-24b
   namespace: inference
 spec:
-  modelName: phi-4-mini
+  modelName: mistral-small-3-2-24b
   backend: llamacpp-vulkan
   source:
     huggingFace:
-      repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
+      repo: bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF
       contextSize: "131072"
-      modelFile: microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
+      modelFile: mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
       tokenSecret: hf-token
   storage:
     pvc: model-cache
-    modelDir: phi-4-mini
+    modelDir: mistral-small-3-2-24b
   resources:
-    memory: 5Gi
-    memoryLimit: 10Gi
+    memory: 16Gi
+    memoryLimit: 24Gi
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

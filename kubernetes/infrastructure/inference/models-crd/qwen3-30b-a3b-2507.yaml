@@ -1,25 +1,25 @@
 apiVersion: inference.eh-ops.io/v1alpha1
 kind: InferenceModel
 metadata:
-  name: phi-4-mini
+  name: qwen3-30b-a3b-2507
   namespace: inference
 spec:
-  modelName: phi-4-mini
-  backend: llamacpp-vulkan
+  modelName: qwen3-30b-a3b-2507
+  backend: llamacpp-vulkan-moe
   source:
     huggingFace:
-      repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
+      repo: bartowski/Qwen_Qwen3-30B-A3B-Instruct-2507-GGUF
       contextSize: "131072"
-      modelFile: microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
+      modelFile: Qwen_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
       tokenSecret: hf-token
   storage:
     pvc: model-cache
-    modelDir: phi-4-mini
+    modelDir: qwen3-30b-a3b-2507
   resources:
-    memory: 5Gi
-    memoryLimit: 10Gi
+    memory: 20Gi
+    memoryLimit: 30Gi
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

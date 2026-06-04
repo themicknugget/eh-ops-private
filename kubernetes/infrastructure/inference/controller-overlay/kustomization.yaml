@@ -5,8 +5,8 @@ kind: Kustomization
 # This replaces the base deployment from inference-budget-controller
 
 resources:
-  # RBAC from base (service account, role, role binding)
-  - https://github.com/cecil-the-coder/inference-budget-controller//config/rbac?ref=main
+  # RBAC vendored locally (avoids remote fetch at kustomize build time)
+  - rbac/
   # Local deployment with cluster-specific patches
   - deployment.yaml
   - service.yaml

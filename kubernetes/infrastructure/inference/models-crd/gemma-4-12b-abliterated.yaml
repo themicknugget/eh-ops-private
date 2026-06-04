@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: OpenYourMind/gemma-4-12B-it-abliterated-uncensored
-      contextSize: "131072"
+      contextSize: "32768"
       modelFile: gemma-4-12b-abliterated.Q6_K.gguf
       tokenSecret: hf-token
   storage:

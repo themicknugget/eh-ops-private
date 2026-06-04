@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF
-      contextSize: "131072"
+      contextSize: "32768"
       modelFile: mistralai_Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
@@ -20,6 +20,9 @@ spec:
   resources:
     memory: 16Gi
     memoryLimit: 24Gi
+  env:
+    - name: LLAMA_ARG_CTX_SIZE
+      value: "32768"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

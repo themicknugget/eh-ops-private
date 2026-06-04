@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/Qwen2.5-7B-Instruct-GGUF
-      contextSize: "131072"
+      contextSize: "32768"
       modelFile: Qwen2.5-7B-Instruct-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
@@ -20,6 +20,9 @@ spec:
   resources:
     memory: 6Gi
     memoryLimit: 12Gi
+  env:
+    - name: LLAMA_ARG_CTX_SIZE
+      value: "32768"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

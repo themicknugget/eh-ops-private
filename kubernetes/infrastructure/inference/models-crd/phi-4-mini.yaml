@@ -10,9 +10,9 @@ spec:
     huggingFace:
       repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
       contextSize: "131072"
-      modelFile: microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
+      modelFile: microsoft_Phi-4-mini-instruct-Q8_0.gguf
       files:
-        - "*Q4_K_M.gguf"
+        - "*Q8_0.gguf"
       tokenSecret: hf-token
   storage:
     pvc: model-cache

@@ -32,7 +32,6 @@ spec:
     cooldownPeriod: 5m
     maxReplicas: 1
     enabled: true
-    evictionPolicy: MemoryPressureOnly
   nodeSelector:
     kubernetes.io/hostname: shadow
   tolerations:

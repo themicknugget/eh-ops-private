@@ -69,8 +69,17 @@ spec:
               rm -f "$GGUF_F16"
               rm -rf "$MODEL_DIR/src"
 
+              echo "=== Writing .manifest for controller ==="
+              SIZE=$(stat -c %s "$GGUF_OUT")
+              printf '{"files":{"%s":%d}}' "$(basename $GGUF_OUT)" "$SIZE" > "$MODEL_DIR/.manifest"
+              echo "Manifest: $(cat $MODEL_DIR/.manifest)"
+
               touch "$MODEL_DIR/.ready"
-              echo "=== Done: $GGUF_OUT ==="
+
+              echo "=== Fixing ownership for controller (uid 65532) ==="
+              chown -R 65532:65532 "$MODEL_DIR"
+
+              echo "=== Done: $GGUF_OUT ($SIZE bytes) ==="
           env:
             - name: HF_HOME
               value: /models

@@ -16,6 +16,6 @@ resources:
   - models-crd/
   # External access via Envoy Gateway
   - httproute.yaml
-  # Basic auth for web UI
-  - basic-auth-secret.yaml
+  # API key auth
+  - api-key-secret.yaml
   - security-policy.yaml

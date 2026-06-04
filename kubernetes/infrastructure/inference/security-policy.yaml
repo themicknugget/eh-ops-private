@@ -1,14 +1,17 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: inference-basic-auth
+  name: inference-api-key-auth
   namespace: inference
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: inference
-  basicAuth:
-    users:
-      name: inference-basic-auth
-      namespace: inference
+  apiKeyAuth:
+    credentialRefs:
+      - name: inference-api-key
+        namespace: inference
+    extractFrom:
+      - headers: ["Authorization"]
+      - headers: ["x-api-key"]

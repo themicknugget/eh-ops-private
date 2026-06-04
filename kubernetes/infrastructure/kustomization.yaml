@@ -29,3 +29,4 @@ resources:
   - forgejo
   - plexus
   - axonhub
+  - inference

@@ -30,7 +30,6 @@ resources:
   - qwen2-5-vl-72b.yaml
   - qwen3-235b-a22b.yaml
   - qwen3-235b-a22b-q4km.yaml
-  - openyourmind-qwen3-6-35b-a3b-q4km.yaml
   - qwen3-6-27b-q8.yaml
   - qwen3-6-35b-a3b-mxfp4.yaml
   - qwen3-6-35b-a3b-q4-xl.yaml

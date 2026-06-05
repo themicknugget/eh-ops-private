@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
-      contextSize: "32768"
+      contextSize: "65536"
       modelFile: microsoft_Phi-4-mini-instruct-Q8_0.gguf
       files:
         - "*Q8_0.gguf"
@@ -22,7 +22,7 @@ spec:
     memoryLimit: 10Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
-      value: "32768"
+      value: "65536"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

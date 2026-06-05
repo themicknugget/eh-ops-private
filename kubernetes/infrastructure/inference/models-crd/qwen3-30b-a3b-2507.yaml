@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/Qwen_Qwen3-30B-A3B-Instruct-2507-GGUF
-      contextSize: "32768"
+      contextSize: "65536"
       modelFile: Qwen_Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
@@ -22,7 +22,7 @@ spec:
     memoryLimit: 30Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
-      value: "32768"
+      value: "65536"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

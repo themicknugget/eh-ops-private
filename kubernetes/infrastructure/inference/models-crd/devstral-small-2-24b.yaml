@@ -1,28 +1,28 @@
 apiVersion: inference.eh-ops.io/v1alpha1
 kind: InferenceModel
 metadata:
-  name: qwen2-5-7b
+  name: devstral-small-2-24b
   namespace: inference
 spec:
-  modelName: qwen2-5-7b
+  modelName: devstral-small-2-24b
   backend: llamacpp-vulkan
   source:
     huggingFace:
-      repo: bartowski/Qwen2.5-7B-Instruct-GGUF
-      contextSize: "65536"
-      modelFile: Qwen2.5-7B-Instruct-Q4_K_M.gguf
+      repo: unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF
+      contextSize: "131072"
+      modelFile: Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
       tokenSecret: hf-token
   storage:
     pvc: model-cache
-    modelDir: qwen2-5-7b
+    modelDir: devstral-small-2-24b
   resources:
-    memory: 6Gi
-    memoryLimit: 12Gi
+    memory: 16Gi
+    memoryLimit: 24Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
-      value: "65536"
+      value: "131072"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

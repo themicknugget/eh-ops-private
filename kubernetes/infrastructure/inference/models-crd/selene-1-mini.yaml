@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: bartowski/Selene-1-Mini-Llama-3.1-8B-GGUF
-      contextSize: "32768"
+      contextSize: "65536"
       modelFile: Selene-1-Mini-Llama-3.1-8B-Q4_K_M.gguf
       files:
         - "*Q4_K_M.gguf"
@@ -22,7 +22,7 @@ spec:
     memoryLimit: 14Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
-      value: "32768"
+      value: "65536"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

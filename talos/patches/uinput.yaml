@@ -1,0 +1,7 @@
+# The siderolabs/uinput schematic extension only ships uinput.ko; the module
+# must be loaded explicitly here to create /dev/uinput. Applied to all workers
+# (the node's schematic must include siderolabs/uinput for the .ko to exist).
+machine:
+  kernel:
+    modules:
+      - name: uinput

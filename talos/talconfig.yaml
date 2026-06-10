@@ -104,7 +104,7 @@ nodes:
     ipAddress: 192.168.1.55
     controlPlane: false
     installDisk: /dev/disk/by-id/nvme-SAMSUNG_MZVL81T0HELB-00BTW_S7HZNX0X457750
-    talosImageURL: factory.talos.dev/metal-installer-secureboot/9c1d1b442d73f96dcd04e81463eb20000ab014062d22e1b083e1773336bc1dd5
+    talosImageURL: factory.talos.dev/metal-installer-secureboot/3a2b47de3cf2e955054ab5656b6d125c101745e488e0bcf431206f5351f0094d
     patches:
       - &network_tuning_sysctls |-
         machine:
@@ -121,6 +121,7 @@ nodes:
             net.ipv4.ip_local_reserved_ports: "50000-50100,51820"
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/uinput.yaml"
       - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:
@@ -157,6 +158,7 @@ nodes:
       - "@./patches/shadow-oom-disable.yaml"
       - "@./patches/shadow-kubelet-swap.yaml"
       - "@./patches/shadow-kubelet-reserved.yaml"
+      - "@./patches/uinput.yaml"
       - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:
@@ -171,11 +173,12 @@ nodes:
     ipAddress: 192.168.1.57
     controlPlane: false
     installDisk: /dev/nvme0n1
-    talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
+    talosImageURL: factory.talos.dev/metal-installer/6c8359f4c50e25e8c7af4dcae58392c13e8fdb984c202eaceb728c971b74f0cd
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/uinput.yaml"
       - "@./patches/worker-label.yaml"
     networkInterfaces:
       - interface: bond0
@@ -197,11 +200,12 @@ nodes:
     ipAddress: 192.168.1.58
     controlPlane: false
     installDisk: /dev/nvme0n1
-    talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
+    talosImageURL: factory.talos.dev/metal-installer/6c8359f4c50e25e8c7af4dcae58392c13e8fdb984c202eaceb728c971b74f0cd
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/uinput.yaml"
       - "@./patches/worker-label.yaml"
     networkInterfaces:
       - interface: bond0
@@ -249,11 +253,12 @@ nodes:
     ipAddress: 192.168.1.54
     controlPlane: false
     installDisk: /dev/nvme0n1
-    talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
+    talosImageURL: factory.talos.dev/metal-installer/6c8359f4c50e25e8c7af4dcae58392c13e8fdb984c202eaceb728c971b74f0cd
     patches:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/uinput.yaml"
       - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:

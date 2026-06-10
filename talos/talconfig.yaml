@@ -1,6 +1,6 @@
 ---
 clusterName: eh-ops
-talosVersion: v1.12.5
+talosVersion: v1.13.4
 kubernetesVersion: v1.35.2
 endpoint: https://127.0.0.1:7445
 domain: cluster.local
@@ -115,8 +115,13 @@ nodes:
             net.ipv4.tcp_wmem: "4096 65536 134217728"
             net.ipv4.tcp_congestion_control: "bbr"
             net.core.default_qdisc: "fq"
+            # Prevent kernel from auto-assigning these as ephemeral source ports.
+            # 50000-50100: Talos apid/trustd (50000-50001) + orchestrator gRPC (50061) + headroom for future cluster services
+            # 51820: KubeSpan WireGuard peer port
+            net.ipv4.ip_local_reserved_ports: "50000-50100,51820"
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 1c:83:41:32:d6:e6
@@ -152,6 +157,7 @@ nodes:
       - "@./patches/shadow-oom-disable.yaml"
       - "@./patches/shadow-kubelet-swap.yaml"
       - "@./patches/shadow-kubelet-reserved.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 9c:bf:0d:00:f2:54
@@ -170,6 +176,7 @@ nodes:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -195,6 +202,7 @@ nodes:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -220,6 +228,7 @@ nodes:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - interface: bond0
         dhcp: false
@@ -245,6 +254,7 @@ nodes:
       - *network_tuning_sysctls
       - *spegel_registry_mirrors
       - "@./patches/local-storage.yaml"
+      - "@./patches/worker-label.yaml"
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: 68:1d:ef:5e:9a:83
@@ -252,6 +262,7 @@ nodes:
         addresses:
           - 192.168.1.54/24
         routes: *lan_worker_routes
+
 
   # cloudbox1 - Worker node (Oracle Cloud ARM64)
   - hostname: cloudbox1
@@ -377,11 +388,10 @@ nodes:
 
 patches:
   - |-
-    machine:
-      network:
-        kubespan:
-          enabled: true
-          advertiseKubernetesNetworks: true
+    apiVersion: v1alpha1
+    kind: KubeSpanConfig
+    enabled: true
+    advertiseKubernetesNetworks: true
   - |-
     apiVersion: v1alpha1
     kind: ResolverConfig
@@ -439,6 +449,7 @@ controlPlane:
         sysctls:
           net.ipv4.ip_forward: "1"
           net.ipv4.conf.all.forwarding: "1"
+          net.ipv4.ip_local_reserved_ports: "50000-50100,51820"
     - |-
       cluster:
         etcd:

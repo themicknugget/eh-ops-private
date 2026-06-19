@@ -35,7 +35,6 @@ Example output: `10.102.166.107` (will be an IP in 10.96.0.0/12 range)
 |--------|---------|
 | `whydontyou.work` | Primary infrastructure |
 | `eversafe.app` | Application domain |
-| `codecrucible.app` | Application domain |
 
 ### 3. Verify Configuration
 
@@ -44,7 +43,6 @@ The DNS settings should show:
 Custom nameservers:
 10.x.x.x (restricted to whydontyou.work)
 10.x.x.x (restricted to eversafe.app)
-10.x.x.x (restricted to codecrucible.app)
 ```
 
 ## How It Works

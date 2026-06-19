@@ -26,7 +26,6 @@ spec:
         dnsZones:
         - "${DOMAIN1}"
         - "${DOMAIN2}"
-        - "${DOMAIN3}"
         - "${DOMAIN4}"
 
 ---
@@ -57,5 +56,4 @@ spec:
         dnsZones:
         - "${DOMAIN1}"
         - "${DOMAIN2}"
-        - "${DOMAIN3}"
         - "${DOMAIN4}"

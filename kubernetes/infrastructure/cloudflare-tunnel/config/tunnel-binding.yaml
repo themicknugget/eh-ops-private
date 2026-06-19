@@ -12,16 +12,6 @@ subjects:
       protocol: http
       # Service is in envoy-gateway-system; hash suffix derived from Gateway UID (stable)
       target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
-  - name: external-gateway-domain3
-    spec:
-      fqdn: "*.${DOMAIN3}"
-      protocol: http
-      target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
-  - name: external-gateway-domain3-apex
-    spec:
-      fqdn: "${DOMAIN3}"
-      protocol: http
-      target: http://envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
   - name: external-gateway-domain4
     spec:
       fqdn: "*.${DOMAIN4}"

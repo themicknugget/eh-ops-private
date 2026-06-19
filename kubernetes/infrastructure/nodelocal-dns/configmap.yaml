@@ -52,12 +52,6 @@ data:
         bind 169.254.20.10
         forward . 10.105.17.248
     }
-    codecrucible.app:53 {
-        errors
-        cache 30
-        bind 169.254.20.10
-        forward . 10.105.17.248
-    }
 
     .:53 {
         errors

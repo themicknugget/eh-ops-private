@@ -69,44 +69,6 @@ spec:
         certificateRefs:
           - name: wildcard-domain2-tls
             namespace: kube-system
-    - name: http-domain3
-      protocol: HTTP
-      port: 80
-      hostname: "*.codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN3}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
-    - name: http-domain3-apex
-      protocol: HTTP
-      port: 80
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3-apex
-      protocol: HTTPS
-      port: 443
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
     - name: http-domain4
       protocol: HTTP
       port: 80
@@ -197,44 +159,6 @@ spec:
         certificateRefs:
           - name: wildcard-domain2-tls
             namespace: kube-system
-    - name: http-domain3
-      protocol: HTTP
-      port: 80
-      hostname: "*.codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN3}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
-    - name: http-domain3-apex
-      protocol: HTTP
-      port: 80
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3-apex
-      protocol: HTTPS
-      port: 443
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
     - name: http-domain4
       protocol: HTTP
       port: 80
@@ -324,44 +248,6 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: wildcard-domain2-tls
-            namespace: kube-system
-    - name: http-domain3
-      protocol: HTTP
-      port: 80
-      hostname: "*.codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3
-      protocol: HTTPS
-      port: 443
-      hostname: "*.${DOMAIN3}"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
-            namespace: kube-system
-    - name: http-domain3-apex
-      protocol: HTTP
-      port: 80
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https-domain3-apex
-      protocol: HTTPS
-      port: 443
-      hostname: "codecrucible.app"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-domain3-tls
             namespace: kube-system
     - name: http-domain4
       protocol: HTTP

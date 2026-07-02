@@ -222,32 +222,6 @@ nodes:
           - 192.168.1.58/24
         routes: *lan_worker_routes
 
-  # mini6 - Worker node
-  - hostname: mini6
-    ipAddress: 192.168.1.59
-    controlPlane: false
-    installDisk: /dev/nvme0n1
-    talosImageURL: factory.talos.dev/metal-installer/4b3cd373a192c8469e859b7a0cfbed3ecc3577c4a2d346a37b0aeff9cd17cdb0
-    patches:
-      - *network_tuning_sysctls
-      - *spegel_registry_mirrors
-      - "@./patches/local-storage.yaml"
-      - "@./patches/worker-label.yaml"
-    networkInterfaces:
-      - interface: bond0
-        dhcp: false
-        bond:
-          mode: 802.3ad
-          lacpRate: fast
-          xmitHashPolicy: encap3+4
-          miimon: 100
-          deviceSelectors:
-            - permanentAddr: 78:55:36:01:1b:65
-            - permanentAddr: 78:55:36:01:1b:66
-        addresses:
-          - 192.168.1.59/24
-        routes: *lan_worker_routes
-
   # mini7 - Worker node (Intel i5-14450HX, 1TB NVMe, single NIC)
   - hostname: mini7
     ipAddress: 192.168.1.54

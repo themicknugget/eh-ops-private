@@ -1,0 +1,41 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwopus3-5-122b-a10b-k26
+  namespace: inference
+spec:
+  modelName: qwopus3-5-122b-a10b-k26
+  backend: llamacpp-vulkan-moe
+  args:
+    - --mmproj
+    - $(MMPROJ_SOURCE)
+    - --chat-template-kwargs
+    - '{"enable_thinking":false}'
+  source:
+    huggingFace:
+      repo: OpenYourMind/Qwopus3.5-122B-A10B-Kimi-K2.6-destill-healed-abliterated-GGUF
+      contextSize: "32768"
+      modelFile: Qwopus3.5-122B-A10B-Kimi-K2.6-destill-healed-abliterated-Q4_K_M.gguf
+      mmprojFile: mmproj-Qwopus3.5-122B-A10B-Kimi-K2.6-destill-healed-abliterated-F16.gguf
+      files:
+        - Qwopus3.5-122B-A10B-Kimi-K2.6-destill-healed-abliterated-Q4_K_M.gguf
+        - mmproj-Qwopus3.5-122B-A10B-Kimi-K2.6-destill-healed-abliterated-F16.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwopus3-5-122b-a10b-k26
+  resources:
+    memory: 80Gi
+    memoryLimit: 100Gi
+  env:
+    - name: LLAMA_ARG_CTX_SIZE
+      value: "32768"
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

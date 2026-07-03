@@ -47,3 +47,4 @@ resources:
   - qwen3-30b-a3b-2507.yaml
   - mistral-small-3-2-24b.yaml
   - devstral-small-2-24b.yaml
+  - qwopus3-5-122b-a10b-k26.yaml

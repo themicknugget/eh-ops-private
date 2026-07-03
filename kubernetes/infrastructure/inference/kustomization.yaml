@@ -17,5 +17,5 @@ resources:
   # External access via Envoy Gateway
   - httproute.yaml
   # API key auth
-  - api-key-secret.yaml
+  - api-key-secret.sops.yaml
   - security-policy.yaml

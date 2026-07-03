@@ -18,6 +18,13 @@ spec:
   resources:
     memory: 16Gi
     memoryLimit: 28Gi
+  # Abliteration destabilized the model's channel-based chat template: at the
+  # GGUF's default temp (1.0), it frequently mis-transitions out of the empty
+  # thinking-channel scaffold, leaking <|channel> tokens or 500ing the jinja
+  # parser. temp=0.3 tested 8/8 clean across varied prompts vs ~50% failure at 1.0.
+  args:
+    - --temp
+    - "0.3"
   env:
     - name: LLAMA_ARG_CTX_SIZE
       value: "131072"

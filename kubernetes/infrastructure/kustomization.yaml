@@ -30,3 +30,4 @@ resources:
   - plexus
   - axonhub
   - inference
+  - reddit-gateway

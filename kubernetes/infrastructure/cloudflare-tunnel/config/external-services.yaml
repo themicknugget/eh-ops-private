@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-gateway
+  namespace: cloudflare-operator-system
+spec:
+  type: ExternalName
+  externalName: envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-gateway-domain3
+  namespace: cloudflare-operator-system
+spec:
+  type: ExternalName
+  externalName: envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-gateway-domain3-apex
+  namespace: cloudflare-operator-system
+spec:
+  type: ExternalName
+  externalName: envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-gateway-domain4
+  namespace: cloudflare-operator-system
+spec:
+  type: ExternalName
+  externalName: envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-gateway-domain4-apex
+  namespace: cloudflare-operator-system
+spec:
+  type: ExternalName
+  externalName: envoy-kube-system-external-gateway-c658385b.envoy-gateway-system.svc.cluster.local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      protocol: TCP

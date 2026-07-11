@@ -1,0 +1,45 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: qwen3-6-35b-a3b-q8-xl
+  namespace: inference
+spec:
+  modelName: qwen3-6-35b-a3b-q8-xl
+  backend: llamacpp-vulkan-moe
+  args:
+    - --mmproj
+    - $(MMPROJ_SOURCE)
+    # Override the backend's default q4_0 KV cache: at 35B-A3B, KV-cache
+    # precision drives high-context quality more than the weight quant, so a
+    # Q8 weight deployment is only worth it paired with a Q8 cache.
+    - --cache-type-k
+    - q8_0
+    - --cache-type-v
+    - q8_0
+  source:
+    huggingFace:
+      repo: unsloth/Qwen3.6-35B-A3B-GGUF
+      contextSize: "262144"
+      modelFile: Qwen3.6-35B-A3B-UD-Q8_K_XL.gguf
+      mmprojFile: mmproj-BF16.gguf
+      files:
+        - Qwen3.6-35B-A3B-UD-Q8_K_XL.gguf
+        - mmproj-BF16.gguf
+      tokenSecret: hf-token
+  storage:
+    pvc: model-cache
+    modelDir: qwen3-6-35b-a3b-q8-xl
+  resources:
+    # ~38.4GB weights + 0.9GB mmproj, loaded resident (--no-mmap); limit leaves
+    # headroom for the Q8 KV cache at long context.
+    memory: 44Gi
+    memoryLimit: 64Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: shadow
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

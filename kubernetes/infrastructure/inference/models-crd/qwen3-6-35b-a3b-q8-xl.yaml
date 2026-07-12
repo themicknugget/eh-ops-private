@@ -38,6 +38,9 @@ spec:
     cooldownPeriod: 5m
     maxReplicas: 1
     enabled: true
+    # Keep resident once loaded; only evict under actual memory pressure from
+    # another model, rather than scaling to zero on the idle cooldown.
+    evictionPolicy: MemoryPressureOnly
   nodeSelector:
     kubernetes.io/hostname: shadow
   tolerations:

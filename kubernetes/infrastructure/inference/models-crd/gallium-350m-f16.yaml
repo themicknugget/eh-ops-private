@@ -27,6 +27,9 @@ spec:
     cooldownPeriod: 5m
     maxReplicas: 1
     enabled: true
+    # Tiny model (~2.3GB resident even at 128k) — cheap to keep hot; only evict
+    # under real memory pressure rather than on the idle cooldown.
+    evictionPolicy: MemoryPressureOnly
   nodeSelector:
     kubernetes.io/hostname: shadow
   tolerations:

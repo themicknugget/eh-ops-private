@@ -8,6 +8,8 @@ resources:
   - namespace.yaml
   # Shared model cache PVC
   - model-cache.yaml
+  # Dedicated cache for mini8-pinned models (shared cache is shadow-local)
+  - model-cache-mini8.yaml
   # Controller-manager with cluster-specific PVC mount
   - controller-overlay/
   # InferenceBackend CRDs (new controller-based approach)

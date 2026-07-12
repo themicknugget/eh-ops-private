@@ -1,0 +1,34 @@
+apiVersion: inference.eh-ops.io/v1alpha1
+kind: InferenceModel
+metadata:
+  name: gallium-350m-f16-mini8
+  namespace: inference
+spec:
+  modelName: gallium-350m-f16-mini8
+  backend: llamacpp-vulkan
+  source:
+    huggingFace:
+      repo: mradermacher/Gallium-350M-GGUF
+      contextSize: "128000"
+      modelFile: Gallium-350M.f16.gguf
+      files:
+        - Gallium-350M.f16.gguf
+      tokenSecret: hf-token
+  storage:
+    # Separate volume: the shared model-cache is local-path RWO pinned to shadow.
+    pvc: model-cache-mini8
+    modelDir: gallium-350m-f16-mini8
+  resources:
+    memory: 3Gi
+    memoryLimit: 6Gi
+  scaling:
+    cooldownPeriod: 5m
+    maxReplicas: 1
+    enabled: true
+  # Pin to mini8 (Ryzen 5625U + Radeon Vega 7, 15G) to benchmark against the
+  # shadow (Strix Halo, 120G) copy on identical weights/backend.
+  nodeSelector:
+    kubernetes.io/hostname: mini8
+  tolerations:
+    - key: amd.com/gpu
+      operator: Exists

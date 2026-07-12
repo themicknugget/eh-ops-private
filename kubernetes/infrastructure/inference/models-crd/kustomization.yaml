@@ -36,6 +36,7 @@ resources:
   - qwen3-6-35b-a3b-q6-k.yaml
   - qwen3-6-35b-a3b-q8-xl.yaml
   - gallium-350m-f16.yaml
+  - gallium-350m-f16-mini8.yaml
   - qwen3-coder-next.yaml
   - qwen3-next-80b.yaml
   - qwen3-vl-30b.yaml

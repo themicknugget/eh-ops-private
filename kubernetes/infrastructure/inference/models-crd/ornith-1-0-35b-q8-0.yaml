@@ -9,7 +9,7 @@ spec:
   source:
     huggingFace:
       repo: deepreinforce-ai/Ornith-1.0-35B-GGUF
-      contextSize: "65536"
+      contextSize: "262144"
       modelFile: ornith-1.0-35b-Q8_0.gguf
       files:
         - ornith-1.0-35b-Q8_0.gguf
@@ -22,7 +22,7 @@ spec:
     memoryLimit: 55Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
-      value: "65536"
+      value: "262144"
   scaling:
     cooldownPeriod: 5m
     maxReplicas: 1

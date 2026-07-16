@@ -18,8 +18,8 @@ spec:
     pvc: model-cache
     modelDir: ornith-1-0-35b-q8-0
   resources:
-    memory: 42Gi
-    memoryLimit: 55Gi
+    memory: 40Gi
+    memoryLimit: 46Gi
   env:
     - name: LLAMA_ARG_CTX_SIZE
       value: "262144"

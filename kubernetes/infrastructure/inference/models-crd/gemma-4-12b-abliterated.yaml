@@ -38,7 +38,9 @@ spec:
     cooldownPeriod: 5m
     maxReplicas: 1
     enabled: true
-    evictionPolicy: MemoryPressureOnly
+    # Temporarily switched from MemoryPressureOnly to Default (idle scale-to-zero)
+    # to free up headroom on shadow when not actively serving.
+    evictionPolicy: Default
   nodeSelector:
     kubernetes.io/hostname: shadow
   tolerations:

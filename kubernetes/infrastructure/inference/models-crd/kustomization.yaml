@@ -50,3 +50,4 @@ resources:
   - devstral-small-2-24b.yaml
   - qwopus3-5-122b-a10b-k26.yaml
   - ornith-1-0-35b-q8-0.yaml
+  - laguna-s-2-1-q4km.yaml

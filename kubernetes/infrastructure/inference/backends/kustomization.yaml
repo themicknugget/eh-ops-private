@@ -7,6 +7,7 @@ resources:
   - llamacpp-vulkan-moe-flash.yaml
   - llamacpp-vulkan-moe-flash-cpumoe.yaml
   - llamacpp-rocm.yaml
+  - llamacpp-laguna.yaml
   - llamacpp-cpu.yaml
   - vllm.yaml
   - whisper-cpp.yaml

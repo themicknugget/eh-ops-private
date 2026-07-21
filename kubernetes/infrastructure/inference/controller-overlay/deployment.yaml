@@ -55,7 +55,11 @@ spec:
                 secretKeyRef:
                   name: hf-token
                   key: token
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.59
+            # Non-IBC pods on these nodes (e.g. fine-tuning jobs) reserve memory
+            # against the budget too, using max(request, limit) per container
+            - name: BUDGET_NODES
+              value: "shadow"
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.60
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

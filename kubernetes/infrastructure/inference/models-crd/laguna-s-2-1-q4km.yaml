@@ -29,7 +29,7 @@ spec:
     pvc: model-cache
     modelDir: laguna-s-2-1-q4km
   resources:
-    memory: 85Gi
+    memory: 80Gi
     memoryLimit: 110Gi
   scaling:
     cooldownPeriod: 15m

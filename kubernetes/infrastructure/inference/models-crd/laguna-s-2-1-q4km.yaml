@@ -5,7 +5,7 @@ metadata:
   namespace: inference
 spec:
   modelName: laguna-s-2-1-q4km
-  backend: llamacpp-laguna
+  backend: llamacpp-vulkan-laguna
   # DFlash speculative decoding: draft model is co-located with main model
   # The controller doesn't have $(DRAFT_SOURCE), so we use the model directory path
   args:

@@ -15,6 +15,8 @@ spec:
     - draft-dflash
     - --spec-draft-n-max
     - "15"
+    - --ctx-size
+    - "32768"
   source:
     huggingFace:
       repo: poolside/Laguna-S-2.1-GGUF

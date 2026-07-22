@@ -6,7 +6,7 @@ metadata:
 spec:
   image:
     repository: ghcr.io/cecil-the-coder/llama-cpp-laguna-vulkan
-    tag: dflash-fix-v2
+    tag: latest
   port: 8080
   command:
     - /usr/bin/llama-server

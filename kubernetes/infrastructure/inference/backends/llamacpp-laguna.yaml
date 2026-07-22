@@ -23,12 +23,25 @@ spec:
     - --jinja
     - -fa
     - "on"
+    - --verbose
   readinessPath: /health
   gpu:
     shared: true
   env:
     - name: ROCBLAS_USE_HIPBLASLT
       value: "1"
+    - name: LLAMA_TRACE
+      value: "1"
+    - name: LLAMA_ARG_CACHE_TYPE_K
+      value: q4_0
+    - name: LLAMA_ARG_CACHE_TYPE_V
+      value: q4_0
+    - name: LLAMA_ARG_BATCH_SIZE
+      value: "4096"
+    - name: LLAMA_ARG_UBATCH_SIZE
+      value: "1024"
+    - name: LLAMA_ARG_THREADS
+      value: "12"
   securityContext:
     capabilities:
       add:

@@ -6,8 +6,6 @@ metadata:
 spec:
   modelName: laguna-s-2-1-q4km
   backend: llamacpp-vulkan-laguna
-  # DFlash speculative decoding: draft model is co-located with main model
-  # The controller doesn't have $(DRAFT_SOURCE), so we use the model directory path
   args:
     - --ctx-size
     - "32768"
@@ -18,7 +16,6 @@ spec:
       modelFile: laguna-s-2.1-Q4_K_M.gguf
       files:
         - laguna-s-2.1-Q4_K_M.gguf
-        - laguna-s-2.1-DFlash-BF16.gguf
       tokenSecret: hf-token
       tokenSecretKey: token
   storage:

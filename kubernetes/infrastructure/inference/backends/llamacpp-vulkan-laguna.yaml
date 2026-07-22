@@ -23,6 +23,7 @@ spec:
     - --jinja
     - -fa
     - "on"
+    - --no-warmup
     - --verbose
   readinessPath: /health
   gpu:

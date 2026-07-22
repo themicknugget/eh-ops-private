@@ -8,11 +8,11 @@ spec:
   backend: llamacpp-vulkan-laguna
   args:
     - --ctx-size
-    - "65536"
+    - "131072"
   source:
     huggingFace:
       repo: poolside/Laguna-S-2.1-GGUF
-      contextSize: "65536"
+      contextSize: "131072"
       modelFile: laguna-s-2.1-Q4_K_M.gguf
       files:
         - laguna-s-2.1-Q4_K_M.gguf

@@ -9,12 +9,6 @@ spec:
   # DFlash speculative decoding: draft model is co-located with main model
   # The controller doesn't have $(DRAFT_SOURCE), so we use the model directory path
   args:
-    - -md
-    - /models/laguna-s-2-1-q4km/laguna-s-2.1-DFlash-BF16.gguf
-    - --spec-type
-    - draft-dflash
-    - --spec-draft-n-max
-    - "15"
     - --ctx-size
     - "32768"
   source:
@@ -24,7 +18,6 @@ spec:
       modelFile: laguna-s-2.1-Q4_K_M.gguf
       files:
         - laguna-s-2.1-Q4_K_M.gguf
-        - laguna-s-2.1-DFlash-BF16.gguf
       tokenSecret: hf-token
       tokenSecretKey: token
   storage:

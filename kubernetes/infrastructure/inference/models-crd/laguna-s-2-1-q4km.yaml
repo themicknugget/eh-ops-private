@@ -18,7 +18,7 @@ spec:
   source:
     huggingFace:
       repo: poolside/Laguna-S-2.1-GGUF
-      contextSize: "262144"
+      contextSize: "32768"
       modelFile: laguna-s-2.1-Q4_K_M.gguf
       files:
         - laguna-s-2.1-Q4_K_M.gguf

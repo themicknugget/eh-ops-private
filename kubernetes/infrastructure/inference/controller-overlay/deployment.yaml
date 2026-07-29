@@ -59,7 +59,7 @@ spec:
             # against the budget too, using max(request, limit) per container
             - name: BUDGET_NODES
               value: "shadow"
-          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.60
+          image: ghcr.io/cecil-the-coder/inference-budget-controller:0.5.61
           name: manager
           securityContext:
             allowPrivilegeEscalation: false

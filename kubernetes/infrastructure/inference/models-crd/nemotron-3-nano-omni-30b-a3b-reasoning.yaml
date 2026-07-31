@@ -15,10 +15,10 @@ spec:
     huggingFace:
       repo: unsloth/NVIDIA-Nemotron-3-Nano-Omni-30B-A3B-Reasoning-GGUF
       contextSize: "262144"
-      modelFile: NVIDIA-Nemotron-3-Nano-Omni-30B-A3B-Reasoning-UD-Q8_0.gguf
+      modelFile: NVIDIA-Nemotron-3-Nano-Omni-30B-A3B-Reasoning-Q8_0.gguf
       mmprojFile: mmproj-BF16.gguf
       files:
-        - NVIDIA-Nemotron-3-Nano-Omni-30B-A3B-Reasoning-UD-Q8_0.gguf
+        - NVIDIA-Nemotron-3-Nano-Omni-30B-A3B-Reasoning-Q8_0.gguf
         - mmproj-BF16.gguf
       tokenSecret: hf-token
   storage:
